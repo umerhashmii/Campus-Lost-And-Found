@@ -109,13 +109,36 @@ c:\University\DBMS Project 4th Semester\
 | **M5: Frontend Prototype UI (Phase 1)** | DONE | Precision rebuilt navbar with Clay pill tabs, brand cluster, and avatar profile pill. |
 | **M6: Advanced Academic Features (Phase 2-4)** | DONE | Live concurrency race simulator, match score explainer, campus hotspot map, custody handover voucher. |
 | **M7: GitHub Sync & Viva Defense (Phase 5)** | DONE | Complete VIVA_PREP.md guide, finalize README.md, local Git commits clean on main (user will push remote later). |
-
-
+| **M8: Official Campus App Overhaul (Next)** | 🟡 PLANNED | Integrating real UBIT department floor plan map, official logo & seal, and full mobile-first UI/UX overhaul. |
 
 ---
 
-## 6. How to Resume Work (For Future AI Sessions)
-1. Read this `context.md` file completely.
-2. Check `docs/TASKS.md` for current in-progress tasks.
-3. Test MySQL service using: `mysql -u root -padmin123 campus_lost_and_found -e "SELECT COUNT(*) FROM users;"`
-4. Check if user provided `docs/UI.md` or UI specifications, and continue with the next task.
+## 6. Official Campus Application Strategy (Next Session Directive)
+
+Per user directive on 2026-10-21, the team is elevating this project from a semester academic prototype to an **official, department-wide campus application** for UBIT and the University of Karachi.
+
+* **Tomorrow's Inputs from Department Visit:**
+  1. Real UBIT building floor plan / blueprint (for interactive SVG coordinate pin-drop).
+  2. Official UBIT Department crest and University of Karachi logo.
+  3. Real room/lab nomenclature (Turing Hall, Hopper Lab, Seminar Library, etc.).
+* **Comprehensive Feature Roadmap:** Full details and ideas documented in [`docs/CAMPUS_SCALE_BLUEPRINT.md`](file:///c:/University/DBMS%20Project%204th%20Semester/docs/CAMPUS_SCALE_BLUEPRINT.md):
+  * **Feature 1:** Student ID Card Quick-Lookup & automated notification.
+  * **Feature 2:** Zero-paper Dynamic QR Code Custody Handover (guard smartphone scanner).
+  * **Feature 3:** Physical Locker / Storage Bin & Shelf Location tracking.
+  * **Feature 4:** Interactive Multi-Floor SVG Map with spatial density hotspots.
+  * **Feature 5:** Secret Verification Challenge (Anti-fraud blind questioning before release).
+  * **Feature 6:** Civic Karma & Good Samaritan "Campus Honor Roll" leaderboard.
+  * **Feature 7:** Automated 90-day unclaimed disposal / charity audit lifecycle.
+* **UI/UX Rebuild Objective:**
+  * Transform current prototype tables into a modern, mobile-first app with card grids, 3-step filing wizards, dynamic micro-badges, and high-contrast accessibility.
+
+---
+
+## 7. How to Resume Work (For Future AI Sessions / Tomorrow)
+1. Read this `context.md` file completely to restore full project state.
+2. Review [`docs/CAMPUS_SCALE_BLUEPRINT.md`](file:///c:/University/DBMS%20Project%204th%20Semester/docs/CAMPUS_SCALE_BLUEPRINT.md) for the detailed campus-scale feature specifications.
+3. Check if user has uploaded the real UBIT floor plan image/SVG and department logos into the workspace.
+4. Verify MySQL service is active: `mysql -u root -padmin123 campus_lost_and_found -e "SELECT COUNT(*) FROM users;"`
+5. Verify Node server is active on `http://localhost:3000`.
+6. Proceed directly with the UI/UX redesign and interactive map integration.
+
