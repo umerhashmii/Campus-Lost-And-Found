@@ -79,6 +79,7 @@ c:\University\DBMS Project 4th Semester\
 ├── .gitignore                          # Git ignore rules for node_modules, .env, build files
 ├── README.md                           # University project description & team details
 ├── context.md                          # Living state tracker (THIS FILE)
+├── DESIGN.md                           # Clay Design System specification for UI
 ├── DBMS_Project_Proposal_LostAndFound.xlsx # Original submitted university proposal
 ├── database/
 │   ├── 01_schema.sql                   # 3NF table definitions, constraints, and indexes

@@ -1,0 +1,25 @@
+{
+  "name": "campus-lost-and-found",
+  "version": "1.0.0",
+  "description": "Campus Lost & Found Recovery and Claim Verification System - UBIT 4th Semester DBMS Project",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js"
+  },
+  "keywords": [
+    "dbms",
+    "mysql",
+    "lost-and-found",
+    "ubit",
+    "clay-design"
+  ],
+  "author": "Syed Umer Hashmi, Maaz Malick, Muzammil Rizwan",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "mysql2": "^3.12.0"
+  }
+}

@@ -14,7 +14,7 @@
 - [x] Create Product Requirements Document (`docs/PRD.md`)
 - [x] Create System Architecture & Normalization Specification (`docs/design.md`)
 - [x] Create REST API Specification (`docs/API.md`)
-- [ ] Receive User's UI specification document / preferences
+- [x] Adopt Clay Design System (`DESIGN.md`) for complete UI styling & token definitions
 
 ---
 

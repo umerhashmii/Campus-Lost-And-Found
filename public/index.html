@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campus Lost & Found Recovery System | UBIT DBMS Project</title>
+  <meta name="description" content="A relational DBMS-driven lost and found recovery and verification platform built with MySQL 8.0 for UBIT, University of Karachi.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ========================================================
+       TOP NAVIGATION (Clay Style)
+       ======================================================== -->
+  <header class="top-nav">
+    <div class="brand-cluster">
+      <div class="logo-badge">UBIT DBMS</div>
+      <div class="brand-text">
+        <h1>Campus Lost & Found</h1>
+        <span>Recovery & Claim Verification Platform</span>
+      </div>
+    </div>
+
+    <nav class="nav-tabs" role="tablist">
+      <button class="nav-tab-btn active" data-view="view-matches">
+        <span>⚡ Live Matches</span>
+      </button>
+      <button class="nav-tab-btn" data-view="view-file-lost">
+        <span>📝 Report Lost</span>
+      </button>
+      <button class="nav-tab-btn" data-view="view-file-found">
+        <span>📦 Report Found</span>
+      </button>
+      <button class="nav-tab-btn" data-view="view-security">
+        <span>🛡️ Security Queue</span>
+      </button>
+      <button class="nav-tab-btn" data-view="view-analytics">
+        <span>📊 Analytics</span>
+      </button>
+    </nav>
+
+    <div class="user-selector-cluster">
+      <span class="user-dropdown-label">Active User:</span>
+      <select id="userSelector" class="clay-select" aria-label="Select active user">
+        <!-- Injected via JavaScript -->
+      </select>
+    </div>
+  </header>
+
+  <!-- ========================================================
+       HERO STATS BAND (Clay Saturated Accents)
+       ======================================================== -->
+  <section class="hero-band">
+    <div class="hero-grid">
+      <div class="hero-content">
+        <h2>Smart Campus Recovery, Automated by Relational DBMS.</h2>
+        <p>
+          Replacing informal notice boards with two-way cross matching, ACID-locked claim verification, and real-time security tracking across UBIT & University of Karachi.
+        </p>
+        <div style="display: flex; gap: 12px; align-items: center;">
+          <button class="btn-primary" onclick="switchView('view-file-lost')">File a Lost Item</button>
+          <button class="btn-secondary" onclick="switchView('view-file-found')">I Found Something</button>
+          <span style="font-size: 13px; color: var(--color-muted); margin-left: 8px;">
+            ● MySQL 8.0 Concurrency Engine Active
+          </span>
+        </div>
+      </div>
+
+      <div class="hero-stat-cards">
+        <div class="stat-card mint">
+          <span class="label">Total Lost Filed</span>
+          <span class="value" id="statTotalLost">0</span>
+        </div>
+        <div class="stat-card peach">
+          <span class="label">Available in Custody</span>
+          <span class="value" id="statAvailableFound">0</span>
+        </div>
+        <div class="stat-card lavender">
+          <span class="label">High Matches Found</span>
+          <span class="value" id="statHighMatches">0</span>
+        </div>
+        <div class="stat-card teal">
+          <span class="label">Claims Resolved</span>
+          <span class="value" id="statResolvedClaims">0</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       MAIN VIEWS CONTAINER
+       ======================================================== -->
+  <main class="main-container">
+
+    <!-- VIEW 1: LIVE MATCH FEED -->
+    <section id="view-matches" class="view-section active">
+      <div class="section-header">
+        <div class="section-title-wrap">
+          <h3>Automated Match Suggestions</h3>
+          <p>Calculated by Stored Procedure <code>sp_GenerateMatchesForLostReport</code> based on Category (40%), Location (25%), Proximity (25%), and Brand/Color (10%).</p>
+        </div>
+        <button class="btn-secondary" onclick="loadMatches()">↻ Refresh Feed</button>
+      </div>
+
+      <div id="matchesContainer" class="card-grid-3">
+        <!-- Injected via JavaScript -->
+      </div>
+    </section>
+
+    <!-- VIEW 2: FILE LOST REPORT -->
+    <section id="view-file-lost" class="view-section">
+      <div class="section-header">
+        <div class="section-title-wrap">
+          <h3>File a Lost Item Report</h3>
+          <p>Your report will immediately trigger the automated matching engine to check existing found items in campus custody.</p>
+        </div>
+      </div>
+
+      <div class="form-card">
+        <form id="lostItemForm" onsubmit="handleLostSubmit(event)">
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="lostCategory">Item Category *</label>
+              <select id="lostCategory" class="clay-select-field" required>
+                <option value="">Select Category...</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="lostLocation">Last Known Campus Location *</label>
+              <select id="lostLocation" class="clay-select-field" required>
+                <option value="">Select Location...</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="lostItemName">Item Name & Model *</label>
+            <input type="text" id="lostItemName" class="clay-input" placeholder="e.g. UBIT Student Smart Card, Dell 65W Charger, Wallet" required>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="lostColor">Primary Color</label>
+              <input type="text" id="lostColor" class="clay-input" placeholder="e.g. Blue, Black, Silver">
+            </div>
+            <div class="form-group">
+              <label for="lostBrand">Brand / Manufacturer</label>
+              <input type="text" id="lostBrand" class="clay-input" placeholder="e.g. Dell, SanDisk, Honda, Nike">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="lostDateTime">Approximate Date & Time Lost *</label>
+            <input type="datetime-local" id="lostDateTime" class="clay-input" required>
+          </div>
+
+          <div class="form-group">
+            <label for="lostDescription">Detailed Description *</label>
+            <textarea id="lostDescription" class="clay-textarea" placeholder="Include serial numbers, stickers, keychains, CNIC or roll numbers that help verify ownership..." required></textarea>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px;">
+            <button type="button" class="btn-secondary" onclick="switchView('view-matches')">Cancel</button>
+            <button type="submit" class="btn-primary">Submit Report & Run Matcher ⚡</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- VIEW 3: FILE FOUND REPORT -->
+    <section id="view-file-found" class="view-section">
+      <div class="section-header">
+        <div class="section-title-wrap">
+          <h3>Record a Found Item</h3>
+          <p>Deposit found belongings to campus security and log them into the custody pool.</p>
+        </div>
+      </div>
+
+      <div class="form-card">
+        <form id="foundItemForm" onsubmit="handleFoundSubmit(event)">
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="foundCategory">Item Category *</label>
+              <select id="foundCategory" class="clay-select-field" required>
+                <option value="">Select Category...</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="foundLocation">Location Where Found *</label>
+              <select id="foundLocation" class="clay-select-field" required>
+                <option value="">Select Location...</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="foundItemName">Item Name / Summary *</label>
+            <input type="text" id="foundItemName" class="clay-input" placeholder="e.g. Blue Lanyard with ID Card, Men Leather Wallet" required>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="foundColor">Color</label>
+              <input type="text" id="foundColor" class="clay-input" placeholder="e.g. Black, Brown, Red">
+            </div>
+            <div class="form-group">
+              <label for="foundBrand">Brand (if visible)</label>
+              <input type="text" id="foundBrand" class="clay-input" placeholder="e.g. Dell, HP, Leather">
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="foundDateTime">Date & Time Found *</label>
+              <input type="datetime-local" id="foundDateTime" class="clay-input" required>
+            </div>
+            <div class="form-group">
+              <label for="foundCustody">Current Physical Custody *</label>
+              <input type="text" id="foundCustody" class="clay-input" value="UBIT Security Desk (Admin Room 02)" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="foundDescription">Description of Condition & Where Left *</label>
+            <textarea id="foundDescription" class="clay-textarea" placeholder="Describe where it was picked up and any obvious identifying marks..." required></textarea>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px;">
+            <button type="button" class="btn-secondary" onclick="switchView('view-matches')">Cancel</button>
+            <button type="submit" class="btn-primary">Record Found Item 📦</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- VIEW 4: CAMPUS SECURITY PORTAL -->
+    <section id="view-security" class="view-section">
+      <div class="section-header">
+        <div class="section-title-wrap">
+          <h3>Campus Security Verification Queue</h3>
+          <p>Direct view from <code>vw_security_claims_queue</code>. Enforces pessimistic locking during review to prevent duplicate handovers.</p>
+        </div>
+        <button class="btn-secondary" onclick="loadSecurityQueue()">↻ Refresh Queue</button>
+      </div>
+
+      <div class="table-card">
+        <table class="clay-table">
+          <thead>
+            <tr>
+              <th>Claim ID</th>
+              <th>Date</th>
+              <th>Claimant Details</th>
+              <th>Item Claimed</th>
+              <th>Custody Location</th>
+              <th>Proof Provided</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="securityQueueTableBody">
+            <!-- Injected via JavaScript -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- VIEW 5: ANALYTICS & RECOVERY REPORTS -->
+    <section id="view-analytics" class="view-section">
+      <div class="section-header">
+        <div class="section-title-wrap">
+          <h3>Campus Recovery Metrics & Incident Hotspots</h3>
+          <p>Powered by database views <code>vw_campus_recovery_rate</code> and <code>vw_location_hotspots</code>.</p>
+        </div>
+        <button class="btn-secondary" onclick="loadAnalytics()">↻ Refresh Analytics</button>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-xl); margin-top: 16px;">
+        <!-- Recovery Rates by Category -->
+        <div class="table-card">
+          <div style="padding: 18px; border-bottom: 1px solid var(--color-hairline); background-color: var(--color-surface-soft);">
+            <h4 style="font-size: 16px; font-weight: 600;">Recovery Rate by Category (vw_campus_recovery_rate)</h4>
+          </div>
+          <table class="clay-table">
+            <thead>
+              <tr>
+                <th>Category</th>
+                <th>Total Lost</th>
+                <th>Recovered</th>
+                <th>Success Rate</th>
+              </tr>
+            </thead>
+            <tbody id="recoveryRateTableBody">
+              <!-- Injected via JavaScript -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Location Hotspots -->
+        <div class="table-card">
+          <div style="padding: 18px; border-bottom: 1px solid var(--color-hairline); background-color: var(--color-surface-soft);">
+            <h4 style="font-size: 16px; font-weight: 600;">Campus Loss Hotspots (vw_location_hotspots)</h4>
+          </div>
+          <table class="clay-table">
+            <thead>
+              <tr>
+                <th>Campus Location</th>
+                <th>Zone</th>
+                <th>Lost Incidents</th>
+                <th>Found</th>
+              </tr>
+            </thead>
+            <tbody id="hotspotsTableBody">
+              <!-- Injected via JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========================================================
+       MODAL: FILE CLAIM WITH CONCURRENCY LOCK
+       ======================================================== -->
+  <div id="claimModal" class="modal-backdrop">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h4>Submit Ownership Claim</h4>
+        <button class="btn-close" onclick="closeModal('claimModal')">&times;</button>
+      </div>
+      <p style="font-size: 14px; color: var(--color-muted); margin-bottom: 16px;">
+        Transactions use row-level pessimistic locking (<code>SELECT ... FOR UPDATE</code>) to guarantee no race conditions.
+      </p>
+      <form id="claimForm" onsubmit="handleClaimSubmit(event)">
+        <input type="hidden" id="claimFoundId">
+        <input type="hidden" id="claimLostId">
+
+        <div class="form-group">
+          <label>Item to Claim</label>
+          <input type="text" id="claimItemName" class="clay-input" readonly style="background-color: var(--color-surface-soft);">
+        </div>
+
+        <div class="form-group">
+          <label for="claimProof">Verification Proof / Identifying Evidence *</label>
+          <textarea id="claimProof" class="clay-textarea" placeholder="Detail specific evidence (e.g. student ID enrollment number, CNIC, lock screen wallpaper, laptop MAC address, or serial number)..." required></textarea>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
+          <button type="button" class="btn-secondary" onclick="closeModal('claimModal')">Cancel</button>
+          <button type="submit" class="btn-primary">Submit Claim Under Concurrency Lock 🔒</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================================
+       MODAL: SECURITY REVIEW (APPROVE / REJECT)
+       ======================================================== -->
+  <div id="reviewModal" class="modal-backdrop">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h4 id="reviewModalTitle">Review Claim #0</h4>
+        <button class="btn-close" onclick="closeModal('reviewModal')">&times;</button>
+      </div>
+      <p style="font-size: 14px; color: var(--color-muted); margin-bottom: 16px;">
+        Approving this claim will transition the item to <code>RESOLVED</code> and automatically reject conflicting claims.
+      </p>
+      <form id="reviewForm" onsubmit="handleReviewSubmit(event)">
+        <input type="hidden" id="reviewClaimId">
+        <input type="hidden" id="reviewDecision">
+
+        <div class="form-group">
+          <label>Claimant & Item</label>
+          <input type="text" id="reviewSummary" class="clay-input" readonly style="background-color: var(--color-surface-soft);">
+        </div>
+
+        <div class="form-group">
+          <label>Submitted Proof</label>
+          <textarea id="reviewProofDetails" class="clay-textarea" readonly style="background-color: var(--color-surface-soft);"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="reviewNotes">Security Officer Notes *</label>
+          <textarea id="reviewNotes" class="clay-textarea" placeholder="Enter physical verification notes (e.g. Verified with Student Affairs card database)..." required></textarea>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
+          <button type="button" class="btn-secondary" onclick="closeModal('reviewModal')">Cancel</button>
+          <button type="submit" id="btnReviewAction" class="btn-primary">Confirm Decision</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================================
+       MODAL: AUDIT LOG VIEWER
+       ======================================================== -->
+  <div id="auditModal" class="modal-backdrop">
+    <div class="modal-box" style="max-width: 680px;">
+      <div class="modal-header">
+        <h4>Claim Lifecycle Audit Log</h4>
+        <button class="btn-close" onclick="closeModal('auditModal')">&times;</button>
+      </div>
+      <p style="font-size: 14px; color: var(--color-muted); margin-bottom: 16px;">
+        Immutable audit records populated by database triggers (<code>trg_after_claim_status_update</code>).
+      </p>
+      <div class="table-card">
+        <table class="clay-table">
+          <thead>
+            <tr>
+              <th>Timestamp</th>
+              <th>Transition</th>
+              <th>Action By</th>
+              <th>Comments</th>
+            </tr>
+          </thead>
+          <tbody id="auditTableBody">
+            <!-- Injected via JavaScript -->
+          </tbody>
+        </table>
+      </div>
+      <div style="display: flex; justify-content: flex-end; margin-top: 20px;">
+        <button class="btn-secondary" onclick="closeModal('auditModal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
