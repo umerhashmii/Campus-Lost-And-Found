@@ -10,73 +10,85 @@
 <body>
 
   <!-- ========================================================
-       TOP NAVIGATION (Clay Style)
+       TOP NAVIGATION (Precision Rebuilt Clay Layout)
        ======================================================== -->
   <header class="top-nav">
-    <div class="brand-cluster">
-      <div class="logo-badge">UBIT DBMS</div>
-      <div class="brand-text">
-        <h1>Campus Lost & Found</h1>
-        <span>Recovery & Claim Verification Platform</span>
+    <div class="nav-container">
+      
+      <!-- Brand Cluster -->
+      <a href="#" class="brand-cluster" onclick="switchView('view-matches'); return false;">
+        <span class="logo-badge">UBIT DBMS</span>
+        <div class="brand-text">
+          <h1>Campus Lost &amp; Found</h1>
+          <span>Relational Recovery &amp; Claim System</span>
+        </div>
+      </a>
+
+      <!-- Center Pill Navigation -->
+      <nav class="nav-tabs" role="tablist">
+        <button class="nav-tab-btn active" data-view="view-matches">
+          <span>⚡ Matches</span>
+        </button>
+        <button class="nav-tab-btn" data-view="view-file-lost">
+          <span>🔍 Report Lost</span>
+        </button>
+        <button class="nav-tab-btn" data-view="view-file-found">
+          <span>📦 Report Found</span>
+        </button>
+        <button class="nav-tab-btn" data-view="view-security">
+          <span>🛡️ Security Queue</span>
+        </button>
+        <button class="nav-tab-btn" data-view="view-analytics">
+          <span>📊 Analytics</span>
+        </button>
+      </nav>
+
+      <!-- Active User Profile Pill -->
+      <div class="user-cluster">
+        <div class="user-pill">
+          <div id="userAvatar" class="user-avatar">UH</div>
+          <div class="user-select-wrap">
+            <select id="userSelector" aria-label="Select active user">
+              <!-- Injected dynamically via app.js -->
+            </select>
+          </div>
+        </div>
       </div>
-    </div>
 
-    <nav class="nav-tabs" role="tablist">
-      <button class="nav-tab-btn active" data-view="view-matches">
-        <span>⚡ Live Matches</span>
-      </button>
-      <button class="nav-tab-btn" data-view="view-file-lost">
-        <span>📝 Report Lost</span>
-      </button>
-      <button class="nav-tab-btn" data-view="view-file-found">
-        <span>📦 Report Found</span>
-      </button>
-      <button class="nav-tab-btn" data-view="view-security">
-        <span>🛡️ Security Queue</span>
-      </button>
-      <button class="nav-tab-btn" data-view="view-analytics">
-        <span>📊 Analytics</span>
-      </button>
-    </nav>
-
-    <div class="user-selector-cluster">
-      <span class="user-dropdown-label">Active User:</span>
-      <select id="userSelector" class="clay-select" aria-label="Select active user">
-        <!-- Injected via JavaScript -->
-      </select>
     </div>
   </header>
 
   <!-- ========================================================
-       HERO STATS BAND (Clay Saturated Accents)
+       HERO BANNER
        ======================================================== -->
   <section class="hero-band">
     <div class="hero-grid">
       <div class="hero-content">
         <h2>Smart Campus Recovery, Automated by Relational DBMS.</h2>
         <p>
-          Replacing informal notice boards with two-way cross matching, ACID-locked claim verification, and real-time security tracking across UBIT & University of Karachi.
+          Replacing unstructured notice boards with two-way cross matching, ACID-locked claim verification, and real-time security tracking across UBIT &amp; University of Karachi.
         </p>
-        <div style="display: flex; gap: 12px; align-items: center;">
+        <div class="hero-actions">
           <button class="btn-primary" onclick="switchView('view-file-lost')">File a Lost Item</button>
           <button class="btn-secondary" onclick="switchView('view-file-found')">I Found Something</button>
-          <span style="font-size: 13px; color: var(--color-muted); margin-left: 8px;">
-            ● MySQL 8.0 Concurrency Engine Active
-          </span>
+          <div class="engine-status-pill">
+            <span class="dot"></span>
+            <span>MySQL 8.0 Concurrency Active</span>
+          </div>
         </div>
       </div>
 
       <div class="hero-stat-cards">
         <div class="stat-card mint">
-          <span class="label">Total Lost Filed</span>
+          <span class="label">Total Lost Reports</span>
           <span class="value" id="statTotalLost">0</span>
         </div>
         <div class="stat-card peach">
-          <span class="label">Available in Custody</span>
+          <span class="label">Items In Custody</span>
           <span class="value" id="statAvailableFound">0</span>
         </div>
         <div class="stat-card lavender">
-          <span class="label">High Matches Found</span>
+          <span class="label">Active Matches</span>
           <span class="value" id="statHighMatches">0</span>
         </div>
         <div class="stat-card teal">
@@ -134,7 +146,7 @@
           </div>
 
           <div class="form-group">
-            <label for="lostItemName">Item Name & Model *</label>
+            <label for="lostItemName">Item Name &amp; Model *</label>
             <input type="text" id="lostItemName" class="clay-input" placeholder="e.g. UBIT Student Smart Card, Dell 65W Charger, Wallet" required>
           </div>
 
@@ -150,7 +162,7 @@
           </div>
 
           <div class="form-group">
-            <label for="lostDateTime">Approximate Date & Time Lost *</label>
+            <label for="lostDateTime">Approximate Date &amp; Time Lost *</label>
             <input type="datetime-local" id="lostDateTime" class="clay-input" required>
           </div>
 
@@ -159,9 +171,9 @@
             <textarea id="lostDescription" class="clay-textarea" placeholder="Include serial numbers, stickers, keychains, CNIC or roll numbers that help verify ownership..." required></textarea>
           </div>
 
-          <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px;">
+          <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
             <button type="button" class="btn-secondary" onclick="switchView('view-matches')">Cancel</button>
-            <button type="submit" class="btn-primary">Submit Report & Run Matcher ⚡</button>
+            <button type="submit" class="btn-primary">Submit Report &amp; Run Matcher ⚡</button>
           </div>
         </form>
       </div>
@@ -211,7 +223,7 @@
 
           <div class="form-grid-2">
             <div class="form-group">
-              <label for="foundDateTime">Date & Time Found *</label>
+              <label for="foundDateTime">Date &amp; Time Found *</label>
               <input type="datetime-local" id="foundDateTime" class="clay-input" required>
             </div>
             <div class="form-group">
@@ -221,11 +233,11 @@
           </div>
 
           <div class="form-group">
-            <label for="foundDescription">Description of Condition & Where Left *</label>
+            <label for="foundDescription">Description of Condition &amp; Where Left *</label>
             <textarea id="foundDescription" class="clay-textarea" placeholder="Describe where it was picked up and any obvious identifying marks..." required></textarea>
           </div>
 
-          <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px;">
+          <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
             <button type="button" class="btn-secondary" onclick="switchView('view-matches')">Cancel</button>
             <button type="submit" class="btn-primary">Record Found Item 📦</button>
           </div>
@@ -268,7 +280,7 @@
     <section id="view-analytics" class="view-section">
       <div class="section-header">
         <div class="section-title-wrap">
-          <h3>Campus Recovery Metrics & Incident Hotspots</h3>
+          <h3>Campus Recovery Metrics &amp; Incident Hotspots</h3>
           <p>Powered by database views <code>vw_campus_recovery_rate</code> and <code>vw_location_hotspots</code>.</p>
         </div>
         <button class="btn-secondary" onclick="loadAnalytics()">↻ Refresh Analytics</button>
@@ -277,8 +289,8 @@
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-xl); margin-top: 16px;">
         <!-- Recovery Rates by Category -->
         <div class="table-card">
-          <div style="padding: 18px; border-bottom: 1px solid var(--color-hairline); background-color: var(--color-surface-soft);">
-            <h4 style="font-size: 16px; font-weight: 600;">Recovery Rate by Category (vw_campus_recovery_rate)</h4>
+          <div style="padding: 16px 20px; border-bottom: 1px solid var(--color-hairline); background-color: var(--color-surface-soft);">
+            <h4 style="font-size: 15px; font-weight: 700; color: var(--color-ink);">Recovery Rate by Category (vw_campus_recovery_rate)</h4>
           </div>
           <table class="clay-table">
             <thead>
@@ -297,8 +309,8 @@
 
         <!-- Location Hotspots -->
         <div class="table-card">
-          <div style="padding: 18px; border-bottom: 1px solid var(--color-hairline); background-color: var(--color-surface-soft);">
-            <h4 style="font-size: 16px; font-weight: 600;">Campus Loss Hotspots (vw_location_hotspots)</h4>
+          <div style="padding: 16px 20px; border-bottom: 1px solid var(--color-hairline); background-color: var(--color-surface-soft);">
+            <h4 style="font-size: 15px; font-weight: 700; color: var(--color-ink);">Campus Loss Hotspots (vw_location_hotspots)</h4>
           </div>
           <table class="clay-table">
             <thead>
@@ -370,7 +382,7 @@
         <input type="hidden" id="reviewDecision">
 
         <div class="form-group">
-          <label>Claimant & Item</label>
+          <label>Claimant &amp; Item</label>
           <input type="text" id="reviewSummary" class="clay-input" readonly style="background-color: var(--color-surface-soft);">
         </div>
 

@@ -73,21 +73,35 @@ async function loadUsers() {
       allUsers.forEach(u => {
         const opt = document.createElement('option');
         opt.value = u.user_id;
-        opt.textContent = `${u.full_name} (${u.role} - ${u.enrollment_no})`;
+        opt.textContent = `${u.full_name} (${u.role})`;
         selector.appendChild(opt);
       });
 
       // Default to Syed Umer Hashmi
       currentUser = allUsers[0];
       selector.value = currentUser.user_id;
+      updateAvatar(currentUser);
 
       selector.addEventListener('change', (e) => {
         currentUser = allUsers.find(u => u.user_id == e.target.value);
+        updateAvatar(currentUser);
         showToast(`Switched active user to ${currentUser.full_name}`, 'info');
       });
     }
   } catch (err) {
     console.error('Failed to load users:', err);
+  }
+}
+
+function updateAvatar(user) {
+  const avatar = document.getElementById('userAvatar');
+  if (!avatar || !user) return;
+  const initials = user.full_name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+  avatar.textContent = initials;
+  if (user.role === 'SECURITY' || user.role === 'ADMIN') {
+    avatar.classList.add('security');
+  } else {
+    avatar.classList.remove('security');
   }
 }
 
