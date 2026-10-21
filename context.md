@@ -113,32 +113,33 @@ c:\University\DBMS Project 4th Semester\
 
 ---
 
-## 6. Official Campus Application Strategy (Next Session Directive)
+## 6. Official Campus Application Strategy (Pragmatic Scope)
 
-Per user directive on 2026-10-21, the team is elevating this project from a semester academic prototype to an **official, department-wide campus application** for UBIT and the University of Karachi.
+Per user directive on 2026-10-21 (post-Phase 5 review), the scope is strictly grounded in real UBIT operational constraints:
 
-* **Tomorrow's Inputs from Department Visit:**
-  1. Real UBIT building floor plan / blueprint (for interactive SVG coordinate pin-drop).
-  2. Official UBIT Department crest and University of Karachi logo.
-  3. Real room/lab nomenclature (Turing Hall, Hopper Lab, Seminar Library, etc.).
-* **Comprehensive Feature Roadmap:** Full details and ideas documented in [`docs/CAMPUS_SCALE_BLUEPRINT.md`](file:///c:/University/DBMS%20Project%204th%20Semester/docs/CAMPUS_SCALE_BLUEPRINT.md):
-  * **Feature 1:** Student ID Card Quick-Lookup & automated notification.
-  * **Feature 2:** Zero-paper Dynamic QR Code Custody Handover (guard smartphone scanner).
-  * **Feature 3:** Physical Locker / Storage Bin & Shelf Location tracking.
-  * **Feature 4:** Interactive Multi-Floor SVG Map with spatial density hotspots.
-  * **Feature 5:** Secret Verification Challenge (Anti-fraud blind questioning before release).
-  * **Feature 6:** Civic Karma & Good Samaritan "Campus Honor Roll" leaderboard.
-  * **Feature 7:** Automated 90-day unclaimed disposal / charity audit lifecycle.
-* **UI/UX Rebuild Objective:**
-  * Transform current prototype tables into a modern, mobile-first app with card grids, 3-step filing wizards, dynamic micro-badges, and high-contrast accessibility.
+* **Pruned Out (Not needed / No hardware at UBIT):**
+  * ❌ No barcode / RFID scanners.
+  * ❌ No WhatsApp / SMS gateway APIs.
+  * ❌ No complex storage bin / cabinet matrix (Admin Officer simply keeps items safely in the office).
+  * ❌ No in-app secret challenge questions (Admin Officer investigates verbally face-to-face).
+* **Approved Core Scope for Official Rollout:**
+  * ✅ **Interactive Multi-Floor SVG Map:** Ground Floor (Labs, Chairman Office, Canteen) & 1st Floor (Classrooms, Seminar Library, Faculty Offices). User will bring the real floor plan blueprint tomorrow.
+  * ✅ **Official Department Branding:** UBIT Crest & University of Karachi official logo (user will bring tomorrow).
+  * ✅ **90-Day Unclaimed Item Charity & Disposal Lifecycle:** Database-driven tracking with administrative sign-off report.
+  * ✅ **In-Person Admin Officer Verification Workflow:** Simple, clean queue with official handover voucher printing.
+* **Top Priority for Tomorrow: COMPLETE UI & UX OVERHAUL:**
+  * Complete redesign away from prototype data tables into clean, beautiful, tactile cards.
+  * Mobile-first navigation and layout so students can report/search items effortlessly on their phones.
+  * Clean typography, balanced whitespace, and intuitive interaction design.
 
 ---
 
 ## 7. How to Resume Work (For Future AI Sessions / Tomorrow)
 1. Read this `context.md` file completely to restore full project state.
-2. Review [`docs/CAMPUS_SCALE_BLUEPRINT.md`](file:///c:/University/DBMS%20Project%204th%20Semester/docs/CAMPUS_SCALE_BLUEPRINT.md) for the detailed campus-scale feature specifications.
-3. Check if user has uploaded the real UBIT floor plan image/SVG and department logos into the workspace.
+2. Review [`docs/CAMPUS_SCALE_BLUEPRINT.md`](file:///c:/University/DBMS%20Project%204th%20Semester/docs/CAMPUS_SCALE_BLUEPRINT.md) for the pragmatic feature specifications.
+3. Check for user-provided real UBIT floor plan blueprint and department logos.
 4. Verify MySQL service is active: `mysql -u root -padmin123 campus_lost_and_found -e "SELECT COUNT(*) FROM users;"`
 5. Verify Node server is active on `http://localhost:3000`.
-6. Proceed directly with the UI/UX redesign and interactive map integration.
+6. Proceed directly with the complete UI & UX redesign and interactive SVG map integration.
+
 
