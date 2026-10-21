@@ -104,10 +104,10 @@ c:\University\DBMS Project 4th Semester\
 | :--- | :---: | :--- |
 | **M1: Development Environment Setup** | DONE | Node.js LTS, Git, MySQL 8.0 running and verified. |
 | **M2: Database Core & Schema (3NF)** | DONE | 8 tables, constraints, seed data, stored procedures, triggers, views deployed to MySQL. |
-| **M3: Documentation & Planning** | IN PROGRESS | Creating PRD.md, design.md, API.md, TASKS.md; awaiting user's UI specification file. |
-| **M4: Backend API Development** | UPCOMING | Node.js + Express REST API calling MySQL connection pool and stored procedures. |
-| **M5: Frontend Prototype UI** | UPCOMING | Building web UI based on user's upcoming UI spec file. |
-| **M6: GitHub Integration** | UPCOMING | Link GitHub remote URL and push codebase. |
+| **M3: Documentation & Planning** | DONE | Created PRD.md, design.md, API.md, TASKS.md, context.md, and adopted Clay DESIGN.md. |
+| **M4: Backend API Development** | DONE | Express REST API connected to MySQL pool, running live on port 3000. |
+| **M5: Frontend Prototype UI** | DONE | Clay Design System UI running live on http://localhost:3000. |
+| **M6: GitHub Integration** | ⏳ UPCOMING | Awaiting user's repository URL to link remote and push codebase. |
 
 ---
 
