@@ -108,7 +108,8 @@ c:\University\DBMS Project 4th Semester\
 | **M4: Backend API Development** | DONE | Express REST API connected to MySQL pool, running live on port 3000. |
 | **M5: Frontend Prototype UI (Phase 1)** | DONE | Precision rebuilt navbar with Clay pill tabs, brand cluster, and avatar profile pill. |
 | **M6: Advanced Academic Features (Phase 2-4)** | DONE | Live concurrency race simulator, match score explainer, campus hotspot map, custody handover voucher. |
-| **M7: GitHub Sync & Viva Defense (Phase 5)** | 🟡 IN PROGRESS | Complete VIVA_PREP.md guide, finalize README.md, and connect GitHub remote repository. |
+| **M7: GitHub Sync & Viva Defense (Phase 5)** | DONE | Complete VIVA_PREP.md guide, finalize README.md, local Git commits clean on main (user will push remote later). |
+
 
 
 ---
