@@ -106,8 +106,9 @@ c:\University\DBMS Project 4th Semester\
 | **M2: Database Core & Schema (3NF)** | DONE | 8 tables, constraints, seed data, stored procedures, triggers, views deployed to MySQL. |
 | **M3: Documentation & Planning** | DONE | Created PRD.md, design.md, API.md, TASKS.md, context.md, and adopted Clay DESIGN.md. |
 | **M4: Backend API Development** | DONE | Express REST API connected to MySQL pool, running live on port 3000. |
-| **M5: Frontend Prototype UI** | DONE | Clay Design System UI running live on http://localhost:3000. |
-| **M6: GitHub Integration** | ⏳ UPCOMING | Awaiting user's repository URL to link remote and push codebase. |
+| **M5: Frontend Prototype UI (Phase 1)** | DONE | Precision rebuilt navbar with Clay pill tabs, brand cluster, and avatar profile pill. |
+| **M6: Advanced Academic Features (Phase 2-4)** | 🟡 NEXT | Concurrency race-condition tester, match score explainer, heatmap, handover voucher. |
+| **M7: GitHub Integration** | ⏳ UPCOMING | Awaiting user's repository URL to link remote and push codebase. |
 
 ---
 
