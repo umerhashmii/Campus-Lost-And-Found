@@ -64,6 +64,12 @@
   padding: 0;
 }
 
+html, body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 body {
   background-color: var(--color-canvas);
   color: var(--color-body);
@@ -74,35 +80,36 @@ body {
 }
 
 /* ========================================================
-   TOP NAVIGATION - PRECISION REBUILD
+   TOP NAVIGATION - PRECISION COMPACT REBUILD
    ======================================================== */
 .top-nav {
   position: sticky;
   top: 0;
   z-index: 100;
-  background-color: rgba(255, 250, 240, 0.94);
+  background-color: rgba(255, 250, 240, 0.96);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--color-hairline);
-  height: 72px;
+  height: 64px;
+  width: 100%;
 }
 
 .nav-container {
-  max-width: 1360px;
+  max-width: 1280px;
   height: 100%;
   margin: 0 auto;
-  padding: 0 var(--space-xl);
+  padding: 0 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-md);
+  gap: 12px;
 }
 
-/* Brand cluster (Left) */
+/* Brand cluster (Left) - Compact footprint */
 .brand-cluster {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   text-decoration: none;
   flex-shrink: 0;
 }
@@ -111,9 +118,9 @@ body {
   background-color: var(--brand-teal);
   color: var(--color-on-dark);
   font-weight: 700;
-  font-size: 13px;
-  letter-spacing: 0.8px;
-  padding: 7px 12px;
+  font-size: 11px;
+  letter-spacing: 0.6px;
+  padding: 6px 9px;
   border-radius: var(--radius-sm);
   display: inline-flex;
   align-items: center;
@@ -126,47 +133,47 @@ body {
 }
 
 .brand-text h1 {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 700;
   color: var(--color-ink);
-  letter-spacing: -0.4px;
-  line-height: 1.2;
+  letter-spacing: -0.3px;
+  line-height: 1.15;
   white-space: nowrap;
 }
 
 .brand-text span {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--color-muted);
   font-weight: 500;
   white-space: nowrap;
 }
 
-/* Navigation Tabs (Center) */
+/* Navigation Tabs (Center) - Compact pill */
 .nav-tabs {
   display: inline-flex;
   align-items: center;
   background-color: var(--color-surface-card);
   border: 1px solid var(--color-hairline);
-  padding: 4px;
+  padding: 3px;
   border-radius: var(--radius-pill);
-  gap: 4px;
-  flex-shrink: 0;
+  gap: 2px;
+  flex-shrink: 1;
 }
 
 .nav-tab-btn {
   background: transparent;
   border: none;
   font-family: 'Inter', sans-serif;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
   color: var(--color-muted);
-  padding: 7px 15px;
+  padding: 6px 12px;
   border-radius: var(--radius-pill);
   cursor: pointer;
   transition: all 0.15s ease;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   white-space: nowrap;
 }
 
@@ -178,10 +185,10 @@ body {
   background-color: var(--color-primary);
   color: var(--color-on-primary);
   font-weight: 600;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
 }
 
-/* User Cluster (Right) */
+/* User Cluster (Right) - Fixed width with ellipsis */
 .user-cluster {
   display: flex;
   align-items: center;
@@ -191,25 +198,25 @@ body {
 .user-pill {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   background-color: var(--color-surface-soft);
   border: 1px solid var(--color-hairline);
-  padding: 4px 12px 4px 6px;
+  padding: 3px 10px 3px 5px;
   border-radius: var(--radius-pill);
 }
 
 .user-avatar {
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
   border-radius: var(--radius-pill);
   background-color: var(--brand-teal);
   color: #fff;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  letter-spacing: 0.5px;
+  flex-shrink: 0;
 }
 
 .user-avatar.security {
@@ -221,11 +228,14 @@ body {
   border: none;
   outline: none;
   font-family: 'Inter', sans-serif;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--color-ink);
   cursor: pointer;
-  max-width: 220px;
+  max-width: 140px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 /* ========================================================

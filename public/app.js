@@ -73,7 +73,8 @@ async function loadUsers() {
       allUsers.forEach(u => {
         const opt = document.createElement('option');
         opt.value = u.user_id;
-        opt.textContent = `${u.full_name} (${u.role})`;
+        const roleLabel = u.role.charAt(0) + u.role.slice(1).toLowerCase();
+        opt.textContent = `${u.full_name} (${roleLabel})`;
         selector.appendChild(opt);
       });
 
