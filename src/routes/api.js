@@ -249,6 +249,74 @@ router.post('/claims', async (req, res) => {
   }
 });
 
+// ==========================================
+// 6.1 ACID CONCURRENCY RACE-CONDITION SIMULATOR
+// (Academic Demonstration Tool for Viva Defense)
+// ==========================================
+router.post('/claims/simulate-race', async (req, res) => {
+  let { found_id, claimant_a_id, claimant_b_id } = req.body;
+  found_id = found_id ? parseInt(found_id, 10) : 2; // Default to Dell Charger
+  claimant_a_id = claimant_a_id ? parseInt(claimant_a_id, 10) : 2; // Maaz Malick
+  claimant_b_id = claimant_b_id ? parseInt(claimant_b_id, 10) : 3; // Muzammil Rizwan
+
+  // Ensure item is AVAILABLE before running the race condition test
+  await db.query("UPDATE found_reports SET status = 'AVAILABLE' WHERE found_id = ?", [found_id]);
+  await db.query("DELETE FROM claims WHERE found_id = ? AND claimant_id IN (?, ?)", [found_id, claimant_a_id, claimant_b_id]);
+
+  // Helper to execute claim on a separate database connection
+  const executeClaim = async (claimantId, threadName) => {
+    const conn = await db.getConnection();
+    const startTime = Date.now();
+    try {
+      await conn.query('SET @claim_id = 0, @res = "", @msg = "";');
+      await conn.query(
+        'CALL sp_SubmitClaim(?, ?, NULL, ?, @claim_id, @res, @msg);',
+        [found_id, claimantId, `Simulated concurrent proof submission from ${threadName}`]
+      );
+      const [rows] = await conn.query('SELECT @claim_id AS claim_id, @res AS result_code, @msg AS message;');
+      const elapsedMs = Date.now() - startTime;
+      return {
+        thread: threadName,
+        claimant_id: claimantId,
+        elapsed_ms: elapsedMs,
+        ...rows[0]
+      };
+    } catch (err) {
+      return {
+        thread: threadName,
+        claimant_id: claimantId,
+        error: err.message,
+        result_code: 'ERROR'
+      };
+    } finally {
+      conn.release();
+    }
+  };
+
+  // Launch both transactions at the exact same millisecond
+  const [resultA, resultB] = await Promise.all([
+    executeClaim(claimant_a_id, 'Thread A (Maaz Malick)'),
+    executeClaim(claimant_b_id, 'Thread B (Muzammil Rizwan)')
+  ]);
+
+  // Fetch final item state from MySQL
+  const [itemRows] = await db.query('SELECT found_id, item_name, status FROM found_reports WHERE found_id = ?', [found_id]);
+  const [auditRows] = await db.query(
+    'SELECT * FROM claim_audit_log WHERE claim_id IN (?, ?) ORDER BY action_timestamp DESC',
+    [resultA.claim_id || 0, resultB.claim_id || 0]
+  );
+
+  res.json({
+    success: true,
+    target_item: itemRows[0],
+    thread_a: resultA,
+    thread_b: resultB,
+    winner: resultA.result_code === 'SUCCESS' ? 'Thread A' : (resultB.result_code === 'SUCCESS' ? 'Thread B' : 'None'),
+    explanation: 'MySQL InnoDB exclusive lock (SELECT ... FOR UPDATE) inside sp_SubmitClaim allowed the first arriving transaction to commit, while atomically blocking the second. When the second transaction acquired the lock, the item was already UNDER_CLAIM, preventing a double-claim race condition.',
+    audit_trail: auditRows
+  });
+});
+
 router.patch('/claims/:id/review', async (req, res) => {
   const connection = await db.getConnection();
   try {

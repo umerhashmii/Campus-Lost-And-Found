@@ -120,10 +120,10 @@ proc_label: BEGIN
         LEAVE proc_label;
     END IF;
 
-    IF v_item_status NOT IN ('AVAILABLE', 'UNDER_CLAIM') THEN
+    IF v_item_status <> 'AVAILABLE' THEN
         ROLLBACK;
         SET p_result_code = 'UNAVAILABLE';
-        SET p_message = CONCAT('Item is not available for claim. Current status: ', v_item_status);
+        SET p_message = CONCAT('Item is no longer available for claim. Current status: ', v_item_status, ' (held under lock).');
         LEAVE proc_label;
     END IF;
 

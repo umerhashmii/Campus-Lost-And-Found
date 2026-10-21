@@ -252,7 +252,10 @@ async function loadMatches() {
 
         <div style="display: flex; gap: 8px; margin-top: 16px;">
           <button class="btn-primary" style="flex: 1;" onclick="openClaimModal(${m.found_id}, ${m.lost_id}, '${escapeQuotes(m.found_item_name)}')">
-            File Ownership Claim 🔒
+            File Claim 🔒
+          </button>
+          <button class="btn-secondary" onclick="openScoreExplainer('${escapeQuotes(m.lost_item_name)}', '${m.match_score}', '${escapeQuotes(m.category_name)}')">
+            Explain 💡
           </button>
         </div>
       `;
@@ -393,6 +396,9 @@ async function loadSecurityQueue() {
               <button class="btn-success" onclick="openReviewModal(${c.claim_id}, 'APPROVED', '${escapeQuotes(c.claimant_name)}', '${escapeQuotes(c.found_item_name)}', '${escapeQuotes(c.proof_details)}')">Approve</button>
               <button class="btn-danger" onclick="openReviewModal(${c.claim_id}, 'REJECTED', '${escapeQuotes(c.claimant_name)}', '${escapeQuotes(c.found_item_name)}', '${escapeQuotes(c.proof_details)}')">Reject</button>
             ` : ''}
+            ${c.claim_status === 'APPROVED' ? `
+              <button class="btn-primary" style="height: 38px; padding: 0 10px; background-color: var(--brand-teal);" onclick="openReceiptModal(${c.claim_id}, '${escapeQuotes(c.claimant_name)}', '${escapeQuotes(c.claimant_enrollment)}', '${escapeQuotes(c.claimant_phone)}', '${escapeQuotes(c.found_item_name)}', '${escapeQuotes(c.category_name)}', '${escapeQuotes(c.custody_location)}', '${escapeQuotes(c.proof_details)}')">Voucher 📄</button>
+            ` : ''}
             <button class="btn-secondary" style="height: 38px; padding: 0 10px;" onclick="viewAuditLog(${c.claim_id})">Audit</button>
           </div>
         </td>
@@ -404,9 +410,9 @@ async function loadSecurityQueue() {
   }
 }
 
-// ========================================================
+// ==========================================
 // VIEW 5: ANALYTICS (RECOVERY RATES & HOTSPOTS)
-// ========================================================
+// ==========================================
 async function loadAnalytics() {
   try {
     const [rateRes, spotRes] = await Promise.all([
@@ -439,9 +445,12 @@ async function loadAnalytics() {
       });
     }
 
-    // Render Hotspots
+    // Render Hotspots Table & Visual Grid
     const spotBody = document.getElementById('hotspotsTableBody');
+    const zoneGrid = document.getElementById('hotspotZoneGrid');
     spotBody.innerHTML = '';
+    if (zoneGrid) zoneGrid.innerHTML = '';
+
     if (spotData.success) {
       spotData.data.forEach(s => {
         const tr = document.createElement('tr');
@@ -455,6 +464,35 @@ async function loadAnalytics() {
           <td><strong style="color: var(--color-success);">${s.found_items_count}</strong></td>
         `;
         spotBody.appendChild(tr);
+
+        // Visual Zone Intensity Card
+        if (zoneGrid) {
+          const zoneCard = document.createElement('div');
+          const isHigh = s.lost_items_count >= 2;
+          const isMed = s.lost_items_count === 1;
+          const statusText = isHigh ? 'High Loss Activity' : (isMed ? 'Moderate Activity' : 'Low Activity');
+          const statusColor = isHigh ? 'var(--color-error)' : (isMed ? 'var(--color-warning)' : 'var(--color-success)');
+
+          zoneCard.className = 'stat-card';
+          zoneCard.style.backgroundColor = 'var(--color-surface-card)';
+          zoneCard.style.border = '1px solid var(--color-hairline)';
+          zoneCard.innerHTML = `
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span class="category-tag">${s.zone_type}</span>
+                <span style="font-size: 11px; font-weight: 700; color: ${statusColor};">${statusText}</span>
+              </div>
+              <h5 style="font-size: 15px; font-weight: 700; color: var(--color-ink); margin-bottom: 2px;">${s.building_name}</h5>
+              <p style="font-size: 12px; color: var(--color-muted);">${s.room_floor}</p>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 12px; margin-top: 14px; border-top: 1px solid var(--color-hairline); padding-top: 8px;">
+              <span>Lost: <strong style="color: var(--color-error);">${s.lost_items_count}</strong></span>
+              <span>Found: <strong style="color: var(--color-success);">${s.found_items_count}</strong></span>
+              <span>Resolved: <strong>${s.resolved_items_count}</strong></span>
+            </div>
+          `;
+          zoneGrid.appendChild(zoneCard);
+        }
       });
     }
   } catch (err) {
@@ -593,6 +631,94 @@ async function viewAuditLog(claimId) {
   }
 }
 
+// ========================================================
+// PHASE 2 & 3: CONCURRENCY RACE & SCORE EXPLAINER
+// ========================================================
+function openConcurrencyModal() {
+  document.getElementById('concurrencyModal').classList.add('open');
+}
+
+async function runConcurrencyRace() {
+  const btn = document.getElementById('btnRunRace');
+  const threadACard = document.getElementById('threadACard');
+  const threadBCard = document.getElementById('threadBCard');
+  const threadABadge = document.getElementById('threadABadge');
+  const threadBBadge = document.getElementById('threadBBadge');
+  const threadAMsg = document.getElementById('threadAMsg');
+  const threadBMsg = document.getElementById('threadBMsg');
+  const threadATime = document.getElementById('threadATime');
+  const threadBTime = document.getElementById('threadBTime');
+
+  btn.disabled = true;
+  btn.textContent = 'Acquiring Row Locks...';
+
+  threadACard.className = 'thread-card';
+  threadBCard.className = 'thread-card';
+  threadABadge.className = 'thread-status-badge';
+  threadBBadge.className = 'thread-status-badge';
+  threadABadge.textContent = 'Executing SELECT FOR UPDATE...';
+  threadBBadge.textContent = 'Executing SELECT FOR UPDATE...';
+
+  try {
+    const res = await fetch(`${API_BASE}/claims/simulate-race`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ found_id: 2, claimant_a_id: 2, claimant_b_id: 3 })
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      const a = data.thread_a;
+      const b = data.thread_b;
+
+      threadATime.textContent = `T+${a.elapsed_ms}ms`;
+      threadBTime.textContent = `T+${b.elapsed_ms}ms`;
+
+      // Thread A render
+      if (a.result_code === 'SUCCESS') {
+        threadACard.className = 'thread-card winner';
+        threadABadge.className = 'thread-status-badge success';
+        threadABadge.textContent = '🏆 200 OK - Lock Acquired & Committed';
+        threadAMsg.textContent = `Claim #${a.claim_id} created under pessimistic row lock. Status moved to UNDER_CLAIM.`;
+      } else {
+        threadACard.className = 'thread-card blocked';
+        threadABadge.className = 'thread-status-badge blocked';
+        threadABadge.textContent = `🚫 409 Conflict - Blocked & Aborted`;
+        threadAMsg.textContent = a.message;
+      }
+
+      // Thread B render
+      if (b.result_code === 'SUCCESS') {
+        threadBCard.className = 'thread-card winner';
+        threadBBadge.className = 'thread-status-badge success';
+        threadBBadge.textContent = '🏆 200 OK - Lock Acquired & Committed';
+        threadBMsg.textContent = `Claim #${b.claim_id} created under pessimistic row lock. Status moved to UNDER_CLAIM.`;
+      } else {
+        threadBCard.className = 'thread-card blocked';
+        threadBBadge.className = 'thread-status-badge blocked';
+        threadBBadge.textContent = `🚫 409 Conflict - Blocked & Aborted`;
+        threadBMsg.textContent = b.message;
+      }
+
+      showToast(`Race complete! ${data.winner} won the row lock; competing thread was safely blocked.`, 'info');
+      await refreshAll();
+    } else {
+      showToast('Error running simulation: ' + data.error, 'error');
+    }
+  } catch (err) {
+    showToast('Network error running simulation: ' + err.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '🚀 Re-Run Concurrent Race';
+  }
+}
+
+function openScoreExplainer(itemName, score, category) {
+  document.getElementById('explainerItemName').textContent = itemName;
+  document.getElementById('explainerTotalScore').textContent = `${score}% Match`;
+  document.getElementById('scoreExplainerModal').classList.add('open');
+}
+
 function closeModal(modalId) {
   document.getElementById(modalId).classList.remove('open');
 }
@@ -617,3 +743,16 @@ function showToast(message, type = 'info') {
     setTimeout(() => toast.remove(), 300);
   }, 4000);
 }
+
+function openReceiptModal(claimId, claimantName, claimantEnrollment, claimantPhone, itemName, categoryName, custodyLocation, proofDetails) {
+  document.getElementById('rcptVoucherId').textContent = `UBIT-REC-${String(claimId).padStart(4, '0')}`;
+  document.getElementById('rcptDateTime').textContent = new Date().toLocaleString();
+  document.getElementById('rcptClaimantName').textContent = claimantName || 'N/A';
+  document.getElementById('rcptEnrollment').textContent = claimantEnrollment || 'N/A';
+  document.getElementById('rcptPhone').textContent = claimantPhone || 'N/A';
+  document.getElementById('rcptItemName').textContent = itemName || 'N/A';
+  document.getElementById('rcptCategoryCustody').textContent = `${categoryName || 'General'} · Custody at: ${custodyLocation || 'Campus Security Desk'}`;
+  document.getElementById('rcptProof').textContent = proofDetails || 'Verification documents inspected and confirmed.';
+  document.getElementById('receiptModal').classList.add('open');
+}
+

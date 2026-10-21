@@ -71,6 +71,7 @@
         <div class="hero-actions">
           <button class="btn-primary" onclick="switchView('view-file-lost')">File a Lost Item</button>
           <button class="btn-secondary" onclick="switchView('view-file-found')">I Found Something</button>
+          <button class="btn-primary" style="background-color: var(--brand-pink);" onclick="openConcurrencyModal()">⚡ Concurrency Race Demo</button>
           <div class="engine-status-pill">
             <span class="dot"></span>
             <span>MySQL 8.0 Concurrency Active</span>
@@ -327,6 +328,14 @@
           </table>
         </div>
       </div>
+
+      <!-- Campus Visual Hotspot Grid -->
+      <div style="margin-top: 28px;">
+        <h4 style="font-size: 17px; font-weight: 700; color: var(--color-ink); margin-bottom: 12px;">Campus Zone Incident Intensity Map (vw_location_hotspots)</h4>
+        <div id="hotspotZoneGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px;">
+          <!-- Injected via JavaScript -->
+        </div>
+      </div>
     </section>
 
   </main>
@@ -433,6 +442,185 @@
       </div>
       <div style="display: flex; justify-content: flex-end; margin-top: 20px;">
         <button class="btn-secondary" onclick="closeModal('auditModal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================
+       MODAL: CONCURRENCY RACE CONDITION TESTER (VIVA TOOL)
+       ======================================================== -->
+  <div id="concurrencyModal" class="modal-backdrop">
+    <div class="modal-box" style="max-width: 740px;">
+      <div class="modal-header">
+        <div>
+          <h4>ACID Concurrency Race Condition Demo</h4>
+          <span style="font-size: 12px; color: var(--color-muted);">Demonstrates InnoDB Row-Level Locking (<code>SELECT ... FOR UPDATE</code>)</span>
+        </div>
+        <button class="btn-close" onclick="closeModal('concurrencyModal')">&times;</button>
+      </div>
+
+      <p style="font-size: 13.5px; color: var(--color-body); line-height: 1.5;">
+        Simulates two students (<strong>Maaz Malick</strong> &amp; <strong>Muzammil Rizwan</strong>) clicking "Claim" on the <em>exact same found item</em> at the exact same millisecond via concurrent database threads.
+      </p>
+
+      <div style="display: flex; align-items: center; justify-content: space-between; background: var(--color-surface-soft); padding: 12px 16px; border-radius: var(--radius-md); border: 1px solid var(--color-hairline); margin: 14px 0;">
+        <span style="font-size: 13px; font-weight: 600;">Target Item: Found Item #2 (Dell USB-C 65W Power Adapter)</span>
+        <button class="btn-primary" id="btnRunRace" onclick="runConcurrencyRace()" style="height: 38px;">
+          🚀 Fire Concurrent Transactions
+        </button>
+      </div>
+
+      <div class="concurrency-grid" id="raceResultsGrid">
+        <!-- Thread A Card -->
+        <div class="thread-card" id="threadACard">
+          <div class="thread-header">
+            <span class="thread-title">Thread A: Maaz Malick</span>
+            <span class="thread-time" id="threadATime">T+0ms</span>
+          </div>
+          <span class="thread-status-badge" id="threadABadge">Ready to Run</span>
+          <p style="font-size: 12.5px; color: var(--color-muted);" id="threadAMsg">Awaiting trigger...</p>
+          <div class="sql-trace-box" id="threadASql">
+            START TRANSACTION;<br>
+            SELECT status FROM found_reports<br>
+            WHERE found_id = 2 FOR UPDATE;
+          </div>
+        </div>
+
+        <!-- Thread B Card -->
+        <div class="thread-card" id="threadBCard">
+          <div class="thread-header">
+            <span class="thread-title">Thread B: Muzammil Rizwan</span>
+            <span class="thread-time" id="threadBTime">T+0ms</span>
+          </div>
+          <span class="thread-status-badge" id="threadBBadge">Ready to Run</span>
+          <p style="font-size: 12.5px; color: var(--color-muted);" id="threadBMsg">Awaiting trigger...</p>
+          <div class="sql-trace-box" id="threadBSql">
+            START TRANSACTION;<br>
+            SELECT status FROM found_reports<br>
+            WHERE found_id = 2 FOR UPDATE;
+          </div>
+        </div>
+      </div>
+
+      <div class="acid-card" id="concurrencyExplanation">
+        <strong>💡 Academic Viva Explanation:</strong> Both threads executed <code>sp_SubmitClaim</code> simultaneously. The InnoDB lock manager granted an exclusive write lock (X-lock) to the first arriving thread. The second thread was forced into a lock wait state. Once the winner committed, the second thread was evaluated against <code>UNDER_CLAIM</code> and safely aborted, preventing a phantom duplicate claim anomaly.
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; margin-top: 18px;">
+        <button class="btn-secondary" onclick="closeModal('concurrencyModal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================
+       MODAL: MATCH SCORE EXPLAINER BREAKDOWN
+       ======================================================== -->
+  <div id="scoreExplainerModal" class="modal-backdrop">
+    <div class="modal-box" style="max-width: 600px;">
+      <div class="modal-header">
+        <div>
+          <h4 id="explainerTitle">Match Score Breakdown</h4>
+          <span style="font-size: 12px; color: var(--color-muted);">Calculated by Stored Procedure <code>sp_GenerateMatchesForLostReport</code></span>
+        </div>
+        <button class="btn-close" onclick="closeModal('scoreExplainerModal')">&times;</button>
+      </div>
+
+      <div style="background-color: var(--color-surface-soft); padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--color-hairline); margin-bottom: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-size: 16px; font-weight: 700; color: var(--color-ink);" id="explainerItemName">Item Match</span>
+          <span class="score-badge perfect" id="explainerTotalScore" style="font-size: 15px; padding: 6px 14px;">100% Match</span>
+        </div>
+      </div>
+
+      <!-- Breakdown Bars -->
+      <div class="score-breakdown-row">
+        <div class="score-row-header">
+          <span>1. Category Match (Exact Match)</span>
+          <span style="color: var(--brand-pink);">+40% / 40%</span>
+        </div>
+        <div class="score-bar-bg"><div class="score-bar-fill" style="width: 100%;"></div></div>
+      </div>
+
+      <div class="score-breakdown-row">
+        <div class="score-row-header">
+          <span>2. Location Match (Same Room / Floor)</span>
+          <span style="color: var(--brand-pink);">+25% / 25%</span>
+        </div>
+        <div class="score-bar-bg"><div class="score-bar-fill" style="width: 100%;"></div></div>
+      </div>
+
+      <div class="score-breakdown-row">
+        <div class="score-row-header">
+          <span>3. Date &amp; Time Proximity (&le; 24h Window)</span>
+          <span style="color: var(--brand-pink);">+25% / 25%</span>
+        </div>
+        <div class="score-bar-bg"><div class="score-bar-fill" style="width: 100%;"></div></div>
+      </div>
+
+      <div class="score-breakdown-row">
+        <div class="score-row-header">
+          <span>4. Attribute Match (Color &amp; Brand)</span>
+          <span style="color: var(--brand-pink);">+10% / 10%</span>
+        </div>
+        <div class="score-bar-bg"><div class="score-bar-fill" style="width: 100%;"></div></div>
+      </div>
+
+      <div class="acid-card" style="margin-top: 16px;">
+        <strong>Formula:</strong> <code>Score = W(category: 40) + W(location: 25) + W(time: 25) + W(attribute: 10)</code>. Items with &ge; 40% are proposed; items with &ge; 60% mark the lost report as <code>MATCHED</code>.
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; margin-top: 20px;">
+        <button class="btn-secondary" onclick="closeModal('scoreExplainerModal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================
+       MODAL: PRINTABLE OFFICIAL CUSTODY HANDOVER RECEIPT
+       ======================================================== -->
+  <div id="receiptModal" class="modal-backdrop">
+    <div class="modal-box" style="max-width: 620px; border: 2px solid var(--color-ink); padding: 32px;">
+      <div style="text-align: center; border-bottom: 2px solid var(--color-ink); padding-bottom: 14px; margin-bottom: 18px;">
+        <span style="font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--color-muted);">University of Karachi</span>
+        <h3 style="font-size: 18px; font-weight: 800; color: var(--color-ink); margin: 2px 0;">UMAER BASHA INSTITUTE OF INFORMATION TECHNOLOGY</h3>
+        <p style="font-size: 12px; font-weight: 600; color: var(--color-body); text-transform: uppercase; letter-spacing: 0.5px;">Campus Property Verification &amp; Handover Voucher</p>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 16px;">
+        <span><strong>Voucher ID:</strong> <span id="rcptVoucherId">UBIT-REC-0001</span></span>
+        <span><strong>Date &amp; Time:</strong> <span id="rcptDateTime">2026-10-21</span></span>
+      </div>
+
+      <div style="background-color: var(--color-surface-soft); border: 1px solid var(--color-hairline); border-radius: var(--radius-md); padding: 14px; margin-bottom: 16px; font-size: 13px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+          <div><strong style="color: var(--color-muted);">Claimant Name:</strong> <span id="rcptClaimantName"></span></div>
+          <div><strong style="color: var(--color-muted);">Enrollment No:</strong> <span id="rcptEnrollment"></span></div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+          <div><strong style="color: var(--color-muted);">Contact Phone:</strong> <span id="rcptPhone"></span></div>
+          <div><strong style="color: var(--color-muted);">Status:</strong> <span style="color: var(--color-success); font-weight: 700;">VERIFIED &amp; RELEASED</span></div>
+        </div>
+      </div>
+
+      <div style="border: 1px solid var(--color-hairline); border-radius: var(--radius-md); padding: 14px; margin-bottom: 18px; font-size: 13px;">
+        <div style="margin-bottom: 6px;"><strong style="color: var(--color-muted);">Item Handed Over:</strong> <span id="rcptItemName" style="font-weight: 700;"></span></div>
+        <div style="margin-bottom: 6px;"><strong style="color: var(--color-muted);">Category &amp; Custody:</strong> <span id="rcptCategoryCustody"></span></div>
+        <div><strong style="color: var(--color-muted);">Verification Proof Details:</strong> <span id="rcptProof"></span></div>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: flex-end; padding-top: 14px; border-top: 1px dashed var(--color-hairline);">
+        <div style="font-size: 11px; color: var(--color-muted); max-width: 300px;">
+          This voucher confirms legal verification and handover under UBIT DBMS lost-and-found protocol.
+        </div>
+        <div style="text-align: center;">
+          <div style="width: 140px; border-bottom: 1px solid var(--color-ink); margin-bottom: 4px;"></div>
+          <span style="font-size: 11px; font-weight: 600; text-transform: uppercase;">Officer Signature</span>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px;">
+        <button class="btn-secondary" onclick="closeModal('receiptModal')">Close</button>
+        <button class="btn-primary" onclick="window.print()">🖨️ Print / Save Voucher</button>
       </div>
     </div>
   </div>

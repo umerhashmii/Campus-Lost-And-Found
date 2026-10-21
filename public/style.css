@@ -788,6 +788,126 @@ body {
   to { transform: translateX(0); opacity: 1; }
 }
 
+/* ========================================================
+   CONCURRENCY RACE DEMO & SCORE EXPLAINER STYLES
+   ======================================================== */
+.concurrency-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin: 18px 0;
+}
+
+.thread-card {
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-hairline);
+  padding: 16px;
+  background-color: var(--color-surface-soft);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.thread-card.winner {
+  border-color: var(--color-success);
+  background-color: #f0fdf4;
+}
+
+.thread-card.blocked {
+  border-color: var(--color-error);
+  background-color: #fef2f2;
+}
+
+.thread-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  padding-bottom: 8px;
+}
+
+.thread-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-ink);
+}
+
+.thread-time {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  background: var(--color-canvas);
+}
+
+.thread-status-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 700;
+  width: fit-content;
+}
+
+.thread-status-badge.success {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+
+.thread-status-badge.blocked {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+.sql-trace-box {
+  background-color: #1e1e1e;
+  color: #e5e5e5;
+  font-family: monospace;
+  font-size: 11px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  line-height: 1.4;
+  margin-top: 6px;
+}
+
+.acid-card {
+  background-color: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  font-size: 13px;
+  color: #1e40af;
+  margin-top: 14px;
+  line-height: 1.5;
+}
+
+/* Score Explainer Progress Bars */
+.score-breakdown-row {
+  margin-bottom: 12px;
+}
+
+.score-row-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.score-bar-bg {
+  background-color: var(--color-hairline);
+  height: 8px;
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+}
+
+.score-bar-fill {
+  background-color: var(--brand-pink);
+  height: 100%;
+  border-radius: var(--radius-pill);
+  transition: width 0.4s ease;
+}
+
 /* Responsive adjustments */
 @media (max-width: 1100px) {
   .hero-grid { grid-template-columns: 1fr; gap: var(--space-xl); }
