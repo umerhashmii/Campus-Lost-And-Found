@@ -27,28 +27,35 @@
         </div>
       </a>
 
-      <!-- Center Pill Navigation Tabs -->
+      <!-- Center Pill Navigation Tabs (Clean Vector SVGs & Non-Clipping Width) -->
       <nav class="nav-tabs" role="tablist">
-        <button class="nav-tab-btn active" data-view="view-home">
-          <span>🏛️ Home</span>
+        <button class="nav-tab-btn active" data-view="view-home" title="Home Portal">
+          <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          <span>Home</span>
         </button>
-        <button class="nav-tab-btn" data-view="view-catalog">
-          <span>🔍 Browse</span>
+        <button class="nav-tab-btn" data-view="view-catalog" title="Browse Directory">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <span>Browse</span>
         </button>
-        <button class="nav-tab-btn" data-view="view-matches">
-          <span>⚡ Matches</span>
+        <button class="nav-tab-btn" data-view="view-matches" title="Smart Match Suggestions">
+          <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          <span>Matches</span>
         </button>
-        <button class="nav-tab-btn" data-view="view-file-lost">
-          <span>📝 Report Lost</span>
+        <button class="nav-tab-btn" data-view="view-file-lost" title="Report a Lost Item">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          <span>Lost</span>
         </button>
-        <button class="nav-tab-btn" data-view="view-file-found">
-          <span>📦 Report Found</span>
+        <button class="nav-tab-btn" data-view="view-file-found" title="Report a Found Item">
+          <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+          <span>Found</span>
         </button>
-        <button class="nav-tab-btn" data-view="view-security">
-          <span>🛡️ Security Desk</span>
+        <button class="nav-tab-btn" data-view="view-security" title="Campus Security Desk">
+          <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <span>Security</span>
         </button>
-        <button class="nav-tab-btn" data-view="view-analytics">
-          <span>📊 Analytics</span>
+        <button class="nav-tab-btn" data-view="view-analytics" title="Campus Analytics & Hotspots">
+          <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          <span>Analytics</span>
         </button>
       </nav>
 
@@ -83,17 +90,30 @@
           
           <div class="home-hero-content">
             <div class="official-crest-tag">
-              <span>🏛️ Department of Computer Science</span>
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-gold);"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+              <span>Department of Computer Science · UBIT</span>
             </div>
             <h2 class="home-hero-title">Smart Campus Property Recovery &amp; Verification</h2>
             <p class="home-hero-desc">
               The official recovery portal for UBIT students, faculty, and campus staff. Connecting misplaced property with rightful owners through automated relational matching and ACID-locked claim custody.
             </p>
             <div class="home-hero-actions">
-              <button class="btn-primary" onclick="switchView('view-file-lost')">🔍 Report Lost Item</button>
-              <button class="btn-secondary" onclick="switchView('view-file-found')">📦 I Found Something</button>
-              <button class="btn-gold" onclick="switchView('view-catalog')">Browse Directory</button>
-              <button class="btn-secondary" style="border-color: var(--color-primary); color: var(--color-primary);" onclick="openConcurrencyModal()">⚡ Concurrency Lock Demo</button>
+              <button class="btn-primary" onclick="switchView('view-file-lost')">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <span>Report Lost Item</span>
+              </button>
+              <button class="btn-secondary" onclick="switchView('view-file-found')">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                <span>I Found Something</span>
+              </button>
+              <button class="btn-gold" onclick="switchView('view-catalog')">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                <span>Browse Directory</span>
+              </button>
+              <button class="btn-secondary" style="border-color: var(--color-primary); color: var(--color-primary);" onclick="openConcurrencyModal()">
+                <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                <span>Concurrency Demo</span>
+              </button>
             </div>
           </div>
 
@@ -131,7 +151,9 @@
         <div class="action-card" onclick="switchView('view-file-lost')">
           <div>
             <div class="action-card-top">
-              <div class="action-icon-circle">🔍</div>
+              <div class="action-icon-circle">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              </div>
               <span class="action-arrow">&rarr;</span>
             </div>
             <h4>Lost Something on Campus?</h4>
@@ -143,7 +165,9 @@
         <div class="action-card gold" onclick="switchView('view-file-found')">
           <div>
             <div class="action-card-top">
-              <div class="action-icon-circle">📦</div>
+              <div class="action-icon-circle">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+              </div>
               <span class="action-arrow">&rarr;</span>
             </div>
             <h4>Found Property in a Lab?</h4>
@@ -155,7 +179,9 @@
         <div class="action-card" onclick="switchView('view-matches')">
           <div>
             <div class="action-card-top">
-              <div class="action-icon-circle">⚡</div>
+              <div class="action-icon-circle">
+                <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              </div>
               <span class="action-arrow">&rarr;</span>
             </div>
             <h4>Smart Match Suggestions</h4>
@@ -167,7 +193,9 @@
         <div class="action-card gold" onclick="switchView('view-security')">
           <div>
             <div class="action-card-top">
-              <div class="action-icon-circle">🛡️</div>
+              <div class="action-icon-circle">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              </div>
               <span class="action-arrow">&rarr;</span>
             </div>
             <h4>Security &amp; Custody Desk</h4>
@@ -215,7 +243,10 @@
             <h3>Live Campus Incident Activity</h3>
             <p>Recent reports registered across UBIT labs, lecture halls, and department grounds</p>
           </div>
-          <button class="btn-secondary" onclick="loadRecentActivity()">↻ Refresh</button>
+          <button class="btn-secondary" onclick="loadRecentActivity()">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+            <span>Refresh</span>
+          </button>
         </div>
         <div id="recentActivityTicker" class="ticker-grid">
           <!-- Dynamically populated via app.js -->
@@ -224,7 +255,9 @@
 
       <!-- Official Institutional Notice -->
       <div class="official-notice-banner">
-        <div class="notice-icon">📋</div>
+        <div class="notice-icon">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
+        </div>
         <div class="notice-text">
           <strong>Official UBIT Notice:</strong> All found items handed over to Department Security or Lab Attendants are logged under strict chain-of-custody. Unclaimed property is retained for 90 days in accordance with University of Karachi regulations before administrative review.
         </div>
@@ -244,7 +277,9 @@
       <!-- Toolbar with Search & Category Pills -->
       <div class="catalog-toolbar">
         <div class="search-box-wrap">
-          <span class="search-icon">🔍</span>
+          <span class="search-icon">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </span>
           <input type="text" id="catalogSearchInput" placeholder="Search by item name, brand, color (e.g. Dell, Calculator, Wallet)..." oninput="filterCatalog()">
         </div>
         
@@ -269,7 +304,10 @@
           <h3>Automated Match Suggestions</h3>
           <p>Calculated by Stored Procedure <code>sp_GenerateMatchesForLostReport</code> based on Category (40%), Location (25%), Proximity (25%), and Brand/Color (10%).</p>
         </div>
-        <button class="btn-secondary" onclick="loadMatches()">↻ Refresh Feed</button>
+        <button class="btn-secondary" onclick="loadMatches()">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+          <span>Refresh Feed</span>
+        </button>
       </div>
 
       <div id="matchesContainer" class="catalog-grid">
@@ -415,8 +453,14 @@
           <p>Real-time review queue populated by SQL View <code>vw_security_claims_queue</code> with ACID row-lock protections</p>
         </div>
         <div style="display: flex; gap: 10px;">
-          <button class="btn-gold" onclick="openConcurrencyModal()">⚡ Concurrency Simulator</button>
-          <button class="btn-secondary" onclick="loadSecurityQueue()">↻ Refresh Queue</button>
+          <button class="btn-gold" onclick="openConcurrencyModal()">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            <span>Concurrency Simulator</span>
+          </button>
+          <button class="btn-secondary" onclick="loadSecurityQueue()">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+            <span>Refresh Queue</span>
+          </button>
         </div>
       </div>
 
@@ -454,8 +498,9 @@
         
         <!-- Category Recovery Rates Table -->
         <div class="table-clay-wrap" style="margin-top: 0;">
-          <div style="padding: 16px 20px; border-bottom: 1px solid var(--color-hairline); font-family: var(--font-display); font-weight: 700; color: var(--color-primary);">
-            📊 Recovery Rate by Item Category
+          <div style="padding: 16px 20px; border-bottom: 1px solid var(--color-hairline); font-family: var(--font-display); font-weight: 700; color: var(--color-primary); display: flex; align-items: center; gap: 8px;">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            <span>Recovery Rate by Item Category</span>
           </div>
           <table class="clay-table">
             <thead>
@@ -474,8 +519,9 @@
 
         <!-- Campus Hotspots Summary -->
         <div class="table-clay-wrap" style="margin-top: 0;">
-          <div style="padding: 16px 20px; border-bottom: 1px solid var(--color-hairline); font-family: var(--font-display); font-weight: 700; color: var(--color-gold-hover);">
-            📍 Top Campus Incident Hotspots
+          <div style="padding: 16px 20px; border-bottom: 1px solid var(--color-hairline); font-family: var(--font-display); font-weight: 700; color: var(--color-gold-hover); display: flex; align-items: center; gap: 8px;">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            <span>Top Campus Incident Hotspots</span>
           </div>
           <table class="clay-table">
             <thead>
@@ -609,7 +655,10 @@
     <div class="modal-box" style="max-width: 720px;">
       <div class="modal-header">
         <div>
-          <h3>⚡ Live Concurrency Race Simulator</h3>
+          <h3 style="display: flex; align-items: center; gap: 8px;">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="var(--color-primary)"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            <span>Live Concurrency Race Simulator</span>
+          </h3>
           <p style="font-size: 12px; color: var(--color-text-muted); margin-top: 2px;">
             Demonstrates ACID Isolation via InnoDB <code>SELECT ... FOR UPDATE</code> row lock
           </p>
@@ -643,7 +692,10 @@
 
       <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
         <button class="btn-secondary" onclick="closeModal('concurrencyModal')">Close</button>
-        <button id="btnRunRace" class="btn-gold" onclick="runConcurrencyRace()">🚀 Fire Concurrent Race</button>
+        <button id="btnRunRace" class="btn-gold" onclick="runConcurrencyRace()">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          <span>Fire Concurrent Race</span>
+        </button>
       </div>
     </div>
   </div>
@@ -760,7 +812,10 @@
 
       <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px;">
         <button class="btn-secondary" onclick="closeModal('receiptModal')">Close</button>
-        <button class="btn-primary" onclick="window.print()">🖨️ Print / Save Voucher</button>
+        <button class="btn-primary" onclick="window.print()">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          <span>Print / Save Voucher</span>
+        </button>
       </div>
 
     </div>

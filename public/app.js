@@ -271,7 +271,10 @@ async function loadRecentActivity() {
       div.style.cursor = 'pointer';
       div.innerHTML = `
         <div class="ticker-type-icon ${isLost ? '' : 'found'}">
-          ${isLost ? '🔍' : '📦'}
+          ${isLost 
+            ? '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>'
+            : '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>'
+          }
         </div>
         <div class="ticker-content">
           <div class="ticker-title">${item.item_name}</div>
@@ -417,10 +420,20 @@ function filterCatalog() {
 
         <h4 style="font-size: 16px; font-weight: 700; color: var(--color-text-main); margin-bottom: 6px;">${item.item_name}</h4>
         
-        <div style="font-size: 12px; color: var(--color-text-muted); margin-bottom: 12px;">
-          <div>📍 ${item.location}</div>
-          <div>📅 ${new Date(item.date).toLocaleDateString()}</div>
-          ${item.brand || item.color ? `<div>🏷️ ${[item.brand, item.color].filter(Boolean).join(' · ')}</div>` : ''}
+        <div style="font-size: 12px; color: var(--color-text-muted); margin-bottom: 12px; display: flex; flex-direction: column; gap: 4px;">
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-primary); flex-shrink: 0;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            <span>${item.location}</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-text-muted); flex-shrink: 0;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            <span>${new Date(item.date).toLocaleDateString()}</span>
+          </div>
+          ${item.brand || item.color ? `
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-gold); flex-shrink: 0;"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+            <span>${[item.brand, item.color].filter(Boolean).join(' · ')}</span>
+          </div>` : ''}
         </div>
 
         ${item.description ? `<p style="font-size: 12px; color: var(--color-text-body); background: var(--color-surface-soft); padding: 8px 12px; border-radius: var(--radius-sm); margin-bottom: 14px;">${item.description}</p>` : ''}
@@ -471,8 +484,11 @@ async function loadMatches() {
       card.innerHTML = `
         <div>
           <div class="match-card-header">
-            <span class="${scoreClass}">⚡ ${m.match_score}% Match Score</span>
-            <span style="font-size: 11px; font-weight: 700; color: var(--color-primary);">${m.category_name}</span>
+            <span class="${scoreClass}">
+              <svg viewBox="0 0 24 24" width="12" height="12"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              <span>${Math.round(m.match_score)}% Match</span>
+            </span>
+            <span class="match-category-pill" title="${escapeQuotes(m.category_name)}">${m.category_name}</span>
           </div>
 
           <h4 style="font-size: 16px; font-weight: 700; color: var(--color-text-main); margin-bottom: 4px;">${m.lost_item_name}</h4>
@@ -504,8 +520,9 @@ async function loadMatches() {
           <button class="btn-primary" style="flex: 1;" onclick="openClaimModal(${m.found_id}, ${m.lost_id}, '${escapeQuotes(m.found_item_name)}')">
             Claim Found Item
           </button>
-          <button class="btn-secondary" style="padding: 0 12px;" onclick="openScoreExplainer('${escapeQuotes(m.found_item_name)}', ${m.match_score}, '${escapeQuotes(m.category_name)}')">
-            Why this score? 💡
+          <button class="btn-secondary" style="padding: 0 12px; display: inline-flex; align-items: center; gap: 5px;" onclick="openScoreExplainer('${escapeQuotes(m.found_item_name)}', ${m.match_score}, '${escapeQuotes(m.category_name)}')">
+            <span>Why this score?</span>
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-gold);"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
           </button>
         </div>
       `;
@@ -647,7 +664,10 @@ async function loadSecurityQueue() {
               <button class="btn-danger" onclick="openReviewModal(${c.claim_id}, 'REJECTED', '${escapeQuotes(c.claimant_name)}', '${escapeQuotes(c.found_item_name)}', '${escapeQuotes(c.proof_details)}')">Reject</button>
             ` : ''}
             ${c.claim_status === 'APPROVED' ? `
-              <button class="btn-gold" style="padding: 6px 10px; font-size: 12px;" onclick="openReceiptModal(${c.claim_id}, '${escapeQuotes(c.claimant_name)}', '${escapeQuotes(c.claimant_enrollment)}', '${escapeQuotes(c.claimant_phone)}', '${escapeQuotes(c.found_item_name)}', '${escapeQuotes(c.category_name)}', '${escapeQuotes(c.custody_location)}', '${escapeQuotes(c.proof_details)}')">Voucher 📄</button>
+              <button class="btn-gold" style="padding: 6px 10px; font-size: 12px; display: inline-flex; align-items: center; gap: 4px;" onclick="openReceiptModal(${c.claim_id}, '${escapeQuotes(c.claimant_name)}', '${escapeQuotes(c.claimant_enrollment)}', '${escapeQuotes(c.claimant_phone)}', '${escapeQuotes(c.found_item_name)}', '${escapeQuotes(c.category_name)}', '${escapeQuotes(c.custody_location)}', '${escapeQuotes(c.proof_details)}')">
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                <span>Voucher</span>
+              </button>
             ` : ''}
             <button class="btn-secondary" style="padding: 6px 10px; font-size: 12px;" onclick="viewAuditLog(${c.claim_id})">Audit</button>
           </div>
@@ -921,22 +941,22 @@ async function runConcurrencyRace() {
       // Thread A render
       if (a.result_code === 'SUCCESS') {
         threadACard.className = 'thread-card winner';
-        threadABadge.textContent = '🏆 200 OK - Lock Acquired & Committed';
+        threadABadge.textContent = '200 OK — Lock Acquired & Committed';
         threadAMsg.textContent = `Claim #${a.claim_id} created under pessimistic row lock. Status moved to UNDER_CLAIM.`;
       } else {
         threadACard.className = 'thread-card blocked';
-        threadABadge.textContent = `🚫 409 Conflict - Blocked & Aborted`;
+        threadABadge.textContent = '409 Conflict — Blocked & Aborted';
         threadAMsg.textContent = a.message;
       }
 
       // Thread B render
       if (b.result_code === 'SUCCESS') {
         threadBCard.className = 'thread-card winner';
-        threadBBadge.textContent = '🏆 200 OK - Lock Acquired & Committed';
+        threadBBadge.textContent = '200 OK — Lock Acquired & Committed';
         threadBMsg.textContent = `Claim #${b.claim_id} created under pessimistic row lock. Status moved to UNDER_CLAIM.`;
       } else {
         threadBCard.className = 'thread-card blocked';
-        threadBBadge.textContent = `🚫 409 Conflict - Blocked & Aborted`;
+        threadBBadge.textContent = '409 Conflict — Blocked & Aborted';
         threadBMsg.textContent = b.message;
       }
 
@@ -949,7 +969,10 @@ async function runConcurrencyRace() {
     showToast('Network error running simulation: ' + err.message, 'error');
   } finally {
     btn.disabled = false;
-    btn.textContent = '🚀 Re-Run Concurrent Race';
+    btn.innerHTML = `
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      <span>Re-Run Concurrent Race</span>
+    `;
   }
 }
 
