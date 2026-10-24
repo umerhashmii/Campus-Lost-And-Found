@@ -86,11 +86,15 @@
       
       <!-- Hero Banner Card -->
       <div class="home-hero-card">
+        <!-- Floating 2D Ambient Glow Orbs -->
+        <div class="floating-ambient-shape shape-1" aria-hidden="true"></div>
+        <div class="floating-ambient-shape shape-2" aria-hidden="true"></div>
+
         <div class="home-hero-grid">
           
           <div class="home-hero-content">
             <div class="official-crest-tag">
-              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-gold);"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-primary);"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
               <span>Department of Computer Science · UBIT</span>
             </div>
             <h2 class="home-hero-title">Smart Campus Property Recovery &amp; Verification</h2>
@@ -117,23 +121,40 @@
             </div>
           </div>
 
-          <!-- Hero Real-Time Stats Grid -->
-          <div class="hero-stats-panel">
-            <div class="clay-stat-card">
-              <span class="clay-stat-label">Total Lost Reports</span>
-              <span class="clay-stat-value" id="statTotalLost">0</span>
+          <!-- Hero Media Panel: Real Campus Photo Showcase + Live Stats -->
+          <div class="hero-media-panel">
+            <div class="campus-showcase-card">
+              <img src="images/ubit-1.jpg" alt="Department of Computer Science (UBIT), University of Karachi" class="campus-showcase-img">
+              <div class="campus-showcase-glass">
+                <div class="campus-showcase-tag">
+                  <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  <span>UBIT Department Building · UoK</span>
+                </div>
+                <div class="campus-live-badge">
+                  <span class="live-pulse-dot"></span>
+                  <span>Custody Active</span>
+                </div>
+              </div>
             </div>
-            <div class="clay-stat-card gold">
-              <span class="clay-stat-label">Items In Custody</span>
-              <span class="clay-stat-value" id="statAvailableFound">0</span>
-            </div>
-            <div class="clay-stat-card green">
-              <span class="clay-stat-label">Smart Matches</span>
-              <span class="clay-stat-value" id="statHighMatches">0</span>
-            </div>
-            <div class="clay-stat-card blue">
-              <span class="clay-stat-label">Claims Resolved</span>
-              <span class="clay-stat-value" id="statResolvedClaims">0</span>
+
+            <!-- Hero Real-Time Stats Grid -->
+            <div class="hero-stats-panel">
+              <div class="clay-stat-card">
+                <span class="clay-stat-label">Total Lost Reports</span>
+                <span class="clay-stat-value" id="statTotalLost">0</span>
+              </div>
+              <div class="clay-stat-card gold">
+                <span class="clay-stat-label">Items In Custody</span>
+                <span class="clay-stat-value" id="statAvailableFound">0</span>
+              </div>
+              <div class="clay-stat-card green">
+                <span class="clay-stat-label">Smart Matches</span>
+                <span class="clay-stat-value" id="statHighMatches">0</span>
+              </div>
+              <div class="clay-stat-card blue">
+                <span class="clay-stat-label">Claims Resolved</span>
+                <span class="clay-stat-value" id="statResolvedClaims">0</span>
+              </div>
             </div>
           </div>
 
@@ -538,6 +559,49 @@
           </table>
         </div>
 
+      </div>
+
+      <!-- Campus Architectural Facility Spotlight -->
+      <div class="facility-spotlight-card">
+        <div class="facility-spotlight-grid">
+          <div class="facility-spotlight-img-wrap">
+            <img src="images/ubit-2.jpg" alt="UBIT Department Architecture, University of Karachi" class="facility-spotlight-img">
+            <div class="facility-img-caption">
+              <strong>Department of Computer Science (UBIT)</strong>
+              <span>University of Karachi Main Campus Building</span>
+            </div>
+          </div>
+          <div class="facility-spotlight-content">
+            <div class="section-heading-cluster" style="margin-bottom: 12px;">
+              <span class="official-crest-tag" style="margin-bottom: 6px;">Spatial Facility Map</span>
+              <h3 style="font-size: 20px;">Physical Custody Desks &amp; Lab Zones</h3>
+              <p style="font-size: 13px;">Official recovery desks and storage security protocol across department levels</p>
+            </div>
+            <div class="facility-floor-list">
+              <div class="facility-floor-item">
+                <div class="floor-pill">Ground Floor</div>
+                <div class="floor-details">
+                  <strong>Admin Office &amp; Custody Desk (Room 02)</strong>
+                  <span>Main secure lost &amp; found depository · DCS Central Library · Canteen</span>
+                </div>
+              </div>
+              <div class="facility-floor-item">
+                <div class="floor-pill">1st Floor</div>
+                <div class="floor-details">
+                  <strong>Networks &amp; Security Lab · Software Labs 1 &amp; 2</strong>
+                  <span>Hardware inspection benches · Lab attendant custody stations</span>
+                </div>
+              </div>
+              <div class="facility-floor-item">
+                <div class="floor-pill">2nd Floor</div>
+                <div class="floor-details">
+                  <strong>AI &amp; Database Systems Research Labs</strong>
+                  <span>Faculty offices · High-priority misplaced electronics recovery</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Visual Hotspot Density Grid -->
