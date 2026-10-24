@@ -1368,12 +1368,14 @@ async function loadUnclaimedDepository(days = currentUnclaimedDaysThreshold) {
             `}
           </td>
           <td style="text-align: right;">
-            <div style="display: flex; gap: 6px; justify-content: flex-end;">
-              <button class="btn-success" style="padding: 4px 9px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;" onclick="openSingleDisposalModal(${item.found_id}, 'WELFARE')" title="Donate this specific item to UBIT Student Welfare">
-                <span>💖 Donate</span>
+            <div style="display: flex; gap: 6px; justify-content: flex-end; align-items: center;">
+              <button class="btn-success" style="padding: 5px 12px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 5px; white-space: nowrap;" onclick="openSingleDisposalModal(${item.found_id}, 'WELFARE')" title="Donate this specific item to UBIT Student Welfare">
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                <span>Donate</span>
               </button>
-              <button class="btn-danger" style="padding: 4px 9px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;" onclick="openSingleDisposalModal(${item.found_id}, 'E_WASTE')" title="Send this specific item to E-Waste Recycling">
-                <span>♻️ Dispose</span>
+              <button class="btn-danger" style="padding: 5px 12px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 5px; white-space: nowrap;" onclick="openSingleDisposalModal(${item.found_id}, 'E_WASTE')" title="Send this specific item to E-Waste Recycling">
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                <span>Dispose</span>
               </button>
             </div>
           </td>
@@ -1794,12 +1796,14 @@ function renderHistoryDisposals(list) {
       </td>
       <td>
         ${isWelfare ? `
-          <span class="card-status-badge donated" style="font-weight: 800; display: inline-flex; align-items: center; gap: 4px;">
-            <span>💖 UBIT WELFARE</span>
+          <span class="card-status-badge donated" style="font-weight: 800; display: inline-flex; align-items: center; gap: 5px;">
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            <span>UBIT WELFARE</span>
           </span>
         ` : `
-          <span class="card-status-badge e-waste" style="font-weight: 800; display: inline-flex; align-items: center; gap: 4px;">
-            <span>♻️ E-WASTE SCRAP</span>
+          <span class="card-status-badge e-waste" style="font-weight: 800; display: inline-flex; align-items: center; gap: 5px;">
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            <span>E-WASTE SCRAP</span>
           </span>
         `}
       </td>
@@ -1858,10 +1862,10 @@ function openDisposalCertModal(foundId) {
   document.getElementById('certItemName').textContent = item.item_name;
   const badge = document.getElementById('certDispositionBadge');
   if (isWelfare) {
-    badge.textContent = '💖 DONATED TO UBIT WELFARE';
+    badge.innerHTML = `<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>DONATED TO UBIT WELFARE`;
     badge.className = 'card-status-badge donated';
   } else {
-    badge.textContent = '♻️ E-WASTE RECYCLED';
+    badge.innerHTML = `<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>E-WASTE RECYCLED`;
     badge.className = 'card-status-badge e-waste';
   }
 
@@ -2245,7 +2249,12 @@ function showToast(message, type = 'info') {
   if (!container) return;
   const toast = document.createElement('div');
   toast.className = `toast ${type}`;
-  toast.innerHTML = `<span>${type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ'}</span> <span>${message}</span>`;
+  const iconSvg = type === 'success' 
+    ? '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>'
+    : type === 'error'
+    ? '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
+    : '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>';
+  toast.innerHTML = `<span style="display:inline-flex; align-items:center;">${iconSvg}</span> <span>${message}</span>`;
   container.appendChild(toast);
 
   setTimeout(() => {
