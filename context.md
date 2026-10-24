@@ -112,7 +112,7 @@ c:\University\DBMS Project 4th Semester\
 | **M8: Official Campus App Overhaul** | DONE | Pulled TypeUI claymorphism skill, blended with UBIT official logo/maroon/gold branding in DESIGN.md, launched complete multi-page portal with Home Hub & Browse Catalog. |
 | **M9: Vector Icon Standard & Navbar Layout Fix** | DONE | Replaced emojis with crisp inline SVG vector icons across navbar, quick cards, buttons, and tables. Resolved navbar horizontal clipping. Replaced match score gradient with solid official UBIT Academic Maroon (`#7A1521`) badge and gold accent. |
 | **M10: Authentic Campus Image & Ambient 2D Integration** | DONE | Created Git restore point tag (`restore-point`) and backup branch (`restore-point-backup`). Integrated real UBIT campus building photos into Spatial Analytics facility spotlight, paired with soft floating ambient clay glow animations. |
-| **M11: UBIT Architectural Vector Facade in Hero** | DONE | Based on user feedback, replaced photo in the hero with a custom, scalable 2D architectural vector SVG illustration of the UBIT building facade (classical dome, frieze, 4 columns, arched entryways, tiered plinth, academic wings, green landscaping). Retained Claymorphic design system tokens. |
+| **M11: Hero Showcase Card & Spatial Facility Spotlight** | DONE | Reverted hero section back to the authentic photo showcase card (`images/ubit-1.jpg` with frosted glass label & live custody badge) per user preference. Retained the approved official campus facility spotlight card and spatial floor zone directory on the Analytics tab. |
 
 ---
 
