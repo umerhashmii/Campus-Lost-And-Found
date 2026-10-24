@@ -111,6 +111,7 @@ c:\University\DBMS Project 4th Semester\
 | **M7: GitHub Sync & Viva Defense (Phase 5)** | DONE | Complete VIVA_PREP.md guide, finalize README.md, local Git commits clean on main (user will push remote later). |
 | **M8: Official Campus App Overhaul** | DONE | Pulled TypeUI claymorphism skill, blended with UBIT official logo/maroon/gold branding in DESIGN.md, launched complete multi-page portal with Home Hub & Browse Catalog. |
 | **M9: Vector Icon Standard & Navbar Layout Fix** | DONE | Replaced emojis with crisp inline SVG vector icons across navbar, quick cards, buttons, and tables. Resolved navbar horizontal clipping. Replaced match score gradient with solid official UBIT Academic Maroon (`#7A1521`) badge and gold accent. |
+| **M10: Authentic Campus Image & Ambient 2D Integration** | DONE | Created Git restore point tag (`restore-point`) and backup branch (`restore-point-backup`). Integrated real UBIT campus building photos (`Ubit 1.jpg`, `Ubit 2.jpg`) into Hero showcase and Spatial Analytics facility spotlight, paired with soft floating ambient clay glow animations. |
 
 ---
 
