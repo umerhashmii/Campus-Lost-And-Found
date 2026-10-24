@@ -49,26 +49,55 @@
           <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
           <span>Found</span>
         </button>
-        <button class="nav-tab-btn" data-view="view-security" title="Campus Security Desk">
+        <button class="nav-tab-btn" data-view="view-my-activity" id="navMyActivity" title="My Reports, Claims & Pickup PIN">
+          <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <span>My Activity</span>
+        </button>
+        <button class="nav-tab-btn admin-only" data-view="view-security" id="navSecurity" title="Campus Security Desk (Admin/Staff Only)">
           <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
           <span>Security</span>
         </button>
-        <button class="nav-tab-btn" data-view="view-analytics" title="Campus Analytics & Hotspots">
+        <button class="nav-tab-btn admin-only" data-view="view-unclaimed" id="navUnclaimed" title="90-Day Unclaimed Property Depository">
+          <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          <span>Unclaimed</span>
+        </button>
+        <button class="nav-tab-btn admin-only" data-view="view-analytics" id="navAnalytics" title="Campus Analytics & Hotspots">
           <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
           <span>Analytics</span>
         </button>
       </nav>
 
-      <!-- Active User Profile Switcher -->
+      <!-- Active User Profile & Notification Bell -->
       <div class="user-cluster">
-        <div class="user-pill">
-          <div id="userAvatar" class="user-avatar">UH</div>
-          <div class="user-select-wrap">
-            <select id="userSelector" aria-label="Select active user">
-              <!-- Dynamically populated via app.js -->
-            </select>
+        
+        <!-- In-App Notification Bell -->
+        <div class="notif-bell-wrap">
+          <button class="notif-bell-btn" id="notifBellBtn" onclick="toggleNotifDrawer()" title="Campus Alerts & Notifications">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            <span class="notif-badge" id="notifBadge" style="display: none;">0</span>
+          </button>
+          
+          <div class="notif-dropdown" id="notifDropdown" style="display: none;">
+            <div class="notif-dropdown-header">
+              <span>Campus Alerts</span>
+              <button class="btn-text-xs" onclick="markAllNotifsRead()">Mark read</button>
+            </div>
+            <div class="notif-list" id="notifList">
+              <div style="padding: 12px; font-size: 12px; color: var(--color-text-muted); text-align: center;">No new alerts.</div>
+            </div>
           </div>
         </div>
+
+        <!-- User Profile Pill -->
+        <div class="user-pill" onclick="openAuthModal()" title="Click to Switch User or Sign In">
+          <div id="userAvatar" class="user-avatar">UH</div>
+          <div class="user-meta-summary">
+            <span id="userNameDisplay" class="user-name-label">Syed Umer Hashmi</span>
+            <span id="userRoleBadge" class="user-role-badge">Student</span>
+          </div>
+          <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+
       </div>
 
     </div>
@@ -388,6 +417,18 @@
             <textarea id="lostDescription" rows="3" placeholder="e.g. Has a small sticker on the back cover; left in the third row desk"></textarea>
           </div>
 
+          <div class="form-group">
+            <label>Item Photograph (Optional)</label>
+            <div class="file-upload-dropzone">
+              <input type="file" id="lostImageInput" accept="image/*" onchange="handleFileSelect(event, 'lostImagePreview', 'lostUploadText')">
+              <div class="upload-placeholder" id="lostUploadText">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                <span>Upload camera photo or reference image (Max 5MB)</span>
+              </div>
+              <img id="lostImagePreview" class="image-preview-thumb" style="display: none;" alt="Preview">
+            </div>
+          </div>
+
           <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 10px;">
             <button type="button" class="btn-secondary" onclick="switchView('view-home')">Cancel</button>
             <button type="submit" class="btn-primary">Submit Report &amp; Check Matches</button>
@@ -452,8 +493,20 @@
           </div>
 
           <div class="form-group">
-            <label for="foundStorageBin">Physical Storage Bin / Drawer Note</label>
-            <input type="text" id="foundStorageBin" placeholder="e.g. Held at Security Desk Counter Drawer">
+            <label for="foundStorageBin">Physical Storage Bin / Custody Desk Note</label>
+            <input type="text" id="foundStorageBin" placeholder="e.g. Held at Admin Room 02 Counter Drawer">
+          </div>
+
+          <div class="form-group">
+            <label>Found Item Photograph (Optional)</label>
+            <div class="file-upload-dropzone">
+              <input type="file" id="foundImageInput" accept="image/*" onchange="handleFileSelect(event, 'foundImagePreview', 'foundUploadText')">
+              <div class="upload-placeholder" id="foundUploadText">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                <span>Upload camera photo of the found item for verification (Max 5MB)</span>
+              </div>
+              <img id="foundImagePreview" class="image-preview-thumb" style="display: none;" alt="Preview">
+            </div>
           </div>
 
           <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 10px;">
@@ -465,7 +518,46 @@
     </section>
 
     <!-- ==========================================
-         VIEW 6: SECURITY & CUSTODY DESK
+         VIEW 6: MY ACTIVITY & STATUS TRACKER
+         ========================================== -->
+    <section id="view-my-activity" class="view-section">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <div class="section-heading-cluster" style="margin-bottom: 0;">
+          <span class="official-crest-tag" style="margin-bottom: 6px;">Personal Custody &amp; Recovery Log</span>
+          <h3>My Property Activity &amp; Handover Tracker</h3>
+          <p>Real-time timeline tracking your reported items, automated matches, and physical retrieval PINs</p>
+        </div>
+        <button class="btn-secondary" onclick="loadMyActivity()">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+          <span>Refresh Activity</span>
+        </button>
+      </div>
+
+      <!-- Section A: Active Claims & Verification Stepper -->
+      <div class="my-activity-group">
+        <div class="my-activity-header">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          <h4>My Claims &amp; Physical Pickup PINs</h4>
+        </div>
+        <div id="myClaimsList" class="my-claims-grid">
+          <!-- Populated dynamically via app.js -->
+        </div>
+      </div>
+
+      <!-- Section B: My Reported Lost Items -->
+      <div class="my-activity-group" style="margin-top: 32px;">
+        <div class="my-activity-header">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <h4>My Filed Lost Reports</h4>
+        </div>
+        <div id="myLostReportsList" class="my-lost-grid">
+          <!-- Populated dynamically via app.js -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         VIEW 7: SECURITY & CUSTODY DESK
          ========================================== -->
     <section id="view-security" class="view-section">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
@@ -500,6 +592,68 @@
             </tr>
           </thead>
           <tbody id="securityQueueTableBody">
+            <!-- Dynamically populated via app.js -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         VIEW 8: UNCLAIMED PROPERTY DEPOSITORY (90-DAY LIFECYCLE)
+         ========================================== -->
+    <section id="view-unclaimed" class="view-section">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <div class="section-heading-cluster" style="margin-bottom: 0;">
+          <span class="official-crest-tag" style="margin-bottom: 6px;">Institutional Custody Lifecycle</span>
+          <h3>90-Day Unclaimed Depository &amp; Disposal Management</h3>
+          <p>Automated database lifecycle for expired found items held past statutory period without claimant</p>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <button class="btn-primary" onclick="openDisposalModal('WELFARE')">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            <span>Donate to UBIT Welfare</span>
+          </button>
+          <button class="btn-secondary" onclick="openDisposalModal('E_WASTE')">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            <span>E-Waste Disposal</span>
+          </button>
+          <button class="btn-secondary" onclick="loadUnclaimedDepository()">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+            <span>Refresh</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Depository Stats Banner -->
+      <div class="quick-actions-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-bottom: 20px;">
+        <div class="clay-stat-card">
+          <span class="clay-stat-label">Statutory Holding Period</span>
+          <span class="clay-stat-value">90 Days</span>
+        </div>
+        <div class="clay-stat-card gold">
+          <span class="clay-stat-label">Eligible Overdue Items</span>
+          <span class="clay-stat-value" id="unclaimedEligibleCount">0</span>
+        </div>
+        <div class="clay-stat-card green">
+          <span class="clay-stat-label">Designated Recipient</span>
+          <span class="clay-stat-value" style="font-size: 15px;">UBIT Student Welfare</span>
+        </div>
+      </div>
+
+      <div class="table-clay-wrap">
+        <table class="clay-table">
+          <thead>
+            <tr>
+              <th>Found ID</th>
+              <th>Item Name</th>
+              <th>Category</th>
+              <th>Found Date</th>
+              <th>Days in Custody</th>
+              <th>Current Custody Office</th>
+              <th>Lifecycle Status</th>
+            </tr>
+          </thead>
+          <tbody id="unclaimedTableBody">
             <!-- Dynamically populated via app.js -->
           </tbody>
         </table>
@@ -882,6 +1036,166 @@
         </button>
       </div>
 
+    </div>
+  </div>
+
+  <!-- Modal 7: Dual-Pill Sign-In & Switch User Modal -->
+  <div id="authModal" class="modal-backdrop">
+    <div class="modal-box" style="max-width: 520px;">
+      <div class="modal-header">
+        <h3>Campus Access &amp; Sign-In</h3>
+        <button class="modal-close-btn" onclick="closeModal('authModal')">&times;</button>
+      </div>
+
+      <!-- Dual-Pill Role Switcher -->
+      <div class="auth-pill-toggle">
+        <button id="authTabStudent" class="auth-pill-btn active" onclick="switchAuthTab('student')">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+          <span>Student / Visitor</span>
+        </button>
+        <button id="authTabStaff" class="auth-pill-btn" onclick="switchAuthTab('staff')">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <span>Admin &amp; Security</span>
+        </button>
+      </div>
+
+      <!-- Form 1: Student / Visitor Login & Instant Registration -->
+      <form id="studentAuthForm" onsubmit="handleStudentAuth(event)">
+        <p style="font-size: 13px; color: var(--color-text-muted); margin-bottom: 14px;">
+          Open to all UBIT students, faculty, and campus visitors across University of Karachi.
+        </p>
+
+        <div class="form-group">
+          <label for="authPhone">Mobile Phone Number * <span style="font-size: 11px; color: var(--color-primary);">(Mandatory for custody contact)</span></label>
+          <input type="tel" id="authPhone" placeholder="e.g. 0300-1112233 or 0345-9876543" required>
+        </div>
+
+        <div class="form-group">
+          <label for="authFullName">Full Name *</label>
+          <input type="text" id="authFullName" placeholder="e.g. Syed Umer Hashmi" required>
+        </div>
+
+        <div class="form-group">
+          <label for="authEnrollment">Enrollment / Roll Number <span style="font-size: 11px; color: var(--color-text-muted);">(Optional for visitors / non-CS students)</span></label>
+          <input type="text" id="authEnrollment" placeholder="e.g. EB25210006105">
+        </div>
+
+        <!-- Quick One-Click Switch for Seed Demo Accounts -->
+        <div class="quick-demo-accounts" style="margin-top: 14px; padding: 10px; background: var(--color-surface-soft); border-radius: var(--radius-sm); font-size: 12px;">
+          <div style="font-weight: 700; color: var(--color-text-muted); margin-bottom: 6px;">Quick Fill Team Profiles:</div>
+          <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+            <button type="button" class="chip-btn" onclick="quickFillStudent('Syed Umer Hashmi', '0300-1112233', 'EB25210006105')">Umer</button>
+            <button type="button" class="chip-btn" onclick="quickFillStudent('Maaz Malick', '0311-2223344', 'EB25210006036')">Maaz</button>
+            <button type="button" class="chip-btn" onclick="quickFillStudent('Muzammil Rizwan', '0322-3334455', 'EB25210006079')">Muzammil</button>
+            <button type="button" class="chip-btn" onclick="quickFillStudent('Ayesha Khan', '0355-6667788', 'EB25210006120')">Ayesha</button>
+            <button type="button" class="chip-btn" onclick="quickFillStudent('Zubair Campus Guest', '0345-9988776', '')">Visitor</button>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+          <button type="button" class="btn-secondary" onclick="closeModal('authModal')">Cancel</button>
+          <button type="submit" class="btn-primary">Enter Student Portal</button>
+        </div>
+      </form>
+
+      <!-- Form 2: Security & Admin Staff Passcode Login -->
+      <form id="staffAuthForm" style="display: none;" onsubmit="handleStaffAuth(event)">
+        <p style="font-size: 13px; color: var(--color-text-muted); margin-bottom: 14px;">
+          Restricted access for Campus Security Desk and DCS Administration (Admin Room 02).
+        </p>
+
+        <div class="form-group">
+          <label for="staffUserSelect">Select Officer Account *</label>
+          <select id="staffUserSelect" required>
+            <!-- Populated via app.js -->
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="staffPasscode">Security Desk Passcode *</label>
+          <input type="password" id="staffPasscode" placeholder="Enter officer passcode (admin123)" required>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+          <button type="button" class="btn-secondary" onclick="closeModal('authModal')">Cancel</button>
+          <button type="submit" class="btn-gold">Authorize Security Session</button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- Modal 8: Two-Factor Handover PIN Verification -->
+  <div id="pinVerifyModal" class="modal-backdrop">
+    <div class="modal-box" style="max-width: 520px;">
+      <div class="modal-header">
+        <h3>Verify Student Handover PIN</h3>
+        <button class="modal-close-btn" onclick="closeModal('pinVerifyModal')">&times;</button>
+      </div>
+      <p style="font-size: 13px; color: var(--color-text-muted); margin-bottom: 14px;">
+        Student must present the unique 6-digit PIN displayed on their "My Activity" voucher screen.
+      </p>
+
+      <form id="pinVerifyForm" onsubmit="handlePINVerificationSubmit(event)">
+        <input type="hidden" id="verifyClaimId">
+
+        <div class="form-group">
+          <label>Claimant &amp; Property</label>
+          <input type="text" id="verifyClaimantInfo" readonly style="font-weight: 700; background: var(--color-surface-soft);">
+        </div>
+
+        <div class="form-group">
+          <label for="verifyPINInput">Enter Student 6-Digit Pickup PIN *</label>
+          <input type="text" id="verifyPINInput" placeholder="e.g. 582109 or PIN-582109" maxlength="12" style="font-family: var(--font-mono); font-size: 20px; font-weight: 800; letter-spacing: 3px; text-align: center; color: var(--color-primary);" required>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 22px;">
+          <button type="button" class="btn-secondary" onclick="closeModal('pinVerifyModal')">Cancel</button>
+          <button type="submit" class="btn-primary">Verify &amp; Complete Handover</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 9: 90-Day Unclaimed Property Disposal & Welfare Manifest -->
+  <div id="disposalModal" class="modal-backdrop">
+    <div class="modal-box" style="max-width: 600px;">
+      <div class="modal-header">
+        <h3 id="disposalModalTitle">Process Unclaimed Property</h3>
+        <button class="modal-close-btn" onclick="closeModal('disposalModal')">&times;</button>
+      </div>
+
+      <p id="disposalModalDesc" style="font-size: 13px; color: var(--color-text-muted); margin-bottom: 16px;">
+        Items held in campus custody past statutory period without claimant.
+      </p>
+
+      <form id="disposalForm" onsubmit="handleDisposalSubmit(event)">
+        <input type="hidden" id="disposalActionType">
+
+        <div class="form-group">
+          <label for="disposalDays">Statutory Threshold (Days in Custody)</label>
+          <select id="disposalDays">
+            <option value="30">Over 30 Days (Demo / Fast cycle)</option>
+            <option value="60">Over 60 Days</option>
+            <option value="90" selected>Over 90 Days (Official KU Statutory Policy)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="disposalRecipient">Designated Recipient / Processing Channel</label>
+          <input type="text" id="disposalRecipient" readonly style="font-weight: 700; background: var(--color-surface-soft);">
+        </div>
+
+        <div class="form-group">
+          <label for="disposalNotes">Administrative Authorization Note</label>
+          <textarea id="disposalNotes" rows="2" placeholder="e.g. Approved under Department of Computer Science student welfare protocol."></textarea>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+          <button type="button" class="btn-secondary" onclick="closeModal('disposalModal')">Cancel</button>
+          <button type="submit" class="btn-primary">Execute Database Disposal</button>
+        </div>
+      </form>
     </div>
   </div>
 

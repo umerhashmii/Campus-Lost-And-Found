@@ -1692,3 +1692,454 @@ button {
     grid-template-columns: 1fr;
   }
 }
+
+/* ========================================================
+   PRODUCTION CAMPUS FEATURE STYLES (M12)
+   ======================================================== */
+
+/* Role-Based Navigation Guard */
+.nav-tab-btn.admin-only.hidden-for-student {
+  display: none !important;
+}
+
+/* User Cluster & Profile Pill */
+.user-cluster {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 12px 4px 5px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--clay-btn-shadow);
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.user-pill:hover {
+  transform: translateY(-1.5px);
+  box-shadow: var(--clay-card-hover);
+  border-color: var(--color-primary);
+}
+
+.user-meta-summary {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+
+.user-name-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-text-main);
+  max-width: 130px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-role-badge {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--color-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Notification Bell & Drawer */
+.notif-bell-wrap {
+  position: relative;
+}
+
+.notif-bell-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  border: 1px solid var(--color-hairline);
+  box-shadow: var(--clay-btn-shadow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  position: relative;
+  transition: var(--transition-smooth);
+}
+
+.notif-bell-btn:hover {
+  color: var(--color-primary);
+  transform: translateY(-1.5px);
+  border-color: var(--color-primary);
+}
+
+.notif-badge {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  background: var(--color-danger);
+  color: #FFFFFF;
+  font-size: 10px;
+  font-weight: 800;
+  min-width: 17px;
+  height: 17px;
+  line-height: 17px;
+  border-radius: var(--radius-pill);
+  text-align: center;
+  padding: 0 4px;
+  box-shadow: 0 2px 5px rgba(220, 38, 38, 0.4);
+}
+
+.notif-dropdown {
+  position: absolute;
+  right: 0;
+  top: 44px;
+  width: 330px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-md);
+  box-shadow: 0 14px 35px rgba(27, 42, 74, 0.16);
+  z-index: 1000;
+  animation: slideDown 0.2s ease-out;
+  overflow: hidden;
+}
+
+.notif-dropdown-header {
+  padding: 10px 14px;
+  background: var(--color-surface-soft);
+  border-bottom: 1px solid var(--color-hairline);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.btn-text-xs {
+  background: none;
+  border: none;
+  font-size: 11px;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: 0;
+  font-weight: 600;
+}
+
+.btn-text-xs:hover {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+.notif-list {
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.notif-item {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--color-hairline);
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.notif-item:hover {
+  background: var(--color-surface-soft);
+}
+
+.notif-item.unread {
+  background: #FFFBF0;
+  border-left: 3px solid var(--color-primary);
+}
+
+.notif-item-title {
+  font-weight: 700;
+  color: var(--color-text-main);
+  margin-bottom: 2px;
+}
+
+.notif-item-desc {
+  color: var(--color-text-muted);
+  font-size: 11.5px;
+  line-height: 1.35;
+}
+
+.notif-item-time {
+  font-size: 10px;
+  color: var(--color-text-muted);
+  margin-top: 4px;
+}
+
+/* Dual-Pill Auth Switcher */
+.auth-pill-toggle {
+  display: flex;
+  background: var(--color-surface-sunken);
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-pill);
+  padding: 4px;
+  margin-bottom: 18px;
+  gap: 4px;
+}
+
+.auth-pill-btn {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: var(--radius-pill);
+  border: none;
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.auth-pill-btn.active {
+  background: var(--color-primary);
+  color: #FFFFFF;
+  box-shadow: 0 4px 12px rgba(122, 21, 33, 0.25);
+}
+
+.chip-btn {
+  padding: 4px 10px;
+  background: #FFFFFF;
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-pill);
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--color-text-main);
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.chip-btn:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: var(--color-surface-soft);
+}
+
+/* File Upload Dropzone */
+.file-upload-dropzone {
+  position: relative;
+  border: 2px dashed var(--color-hairline);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  text-align: center;
+  background: var(--color-surface-soft);
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 85px;
+}
+
+.file-upload-dropzone:hover {
+  border-color: var(--color-primary);
+  background: #FFFBF0;
+}
+
+.file-upload-dropzone input[type="file"] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.upload-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-text-muted);
+  font-size: 12.5px;
+  pointer-events: none;
+}
+
+.upload-placeholder svg {
+  stroke: var(--color-primary);
+}
+
+.image-preview-thumb {
+  max-height: 110px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-hairline);
+  box-shadow: var(--clay-btn-shadow);
+  object-fit: cover;
+  margin-top: 8px;
+}
+
+/* Catalog Card Photo Thumbnails */
+.catalog-item-thumb {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  display: block;
+  border-bottom: 1px solid var(--color-hairline);
+}
+
+/* My Activity Dashboard & Stepper */
+.my-activity-group {
+  margin-bottom: 28px;
+}
+
+.my-activity-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  color: var(--color-primary);
+  font-family: var(--font-display);
+}
+
+.my-activity-header h4 {
+  font-size: 17px;
+  font-weight: 800;
+  margin: 0;
+}
+
+.my-claims-grid, .my-lost-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 18px;
+}
+
+.my-claim-card, .my-lost-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: var(--clay-card-shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transition: var(--transition-smooth);
+}
+
+.my-claim-card:hover, .my-lost-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--clay-card-hover);
+}
+
+/* 4-Step Visual Stepper */
+.stepper-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 10px 0;
+  position: relative;
+}
+
+.stepper-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+  position: relative;
+  z-index: 2;
+}
+
+.stepper-bullet {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--color-surface-sunken);
+  border: 2px solid var(--color-hairline);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--color-text-muted);
+}
+
+.stepper-step.completed .stepper-bullet {
+  background: var(--color-success);
+  border-color: var(--color-success);
+  color: #FFFFFF;
+}
+
+.stepper-step.active .stepper-bullet {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #FFFFFF;
+  box-shadow: 0 0 0 4px rgba(122, 21, 33, 0.15);
+}
+
+.stepper-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.stepper-step.active .stepper-label, .stepper-step.completed .stepper-label {
+  color: var(--color-primary);
+}
+
+.stepper-connector {
+  position: absolute;
+  top: 12px;
+  left: 12%;
+  right: 12%;
+  height: 2px;
+  background: var(--color-hairline);
+  z-index: 1;
+}
+
+.stepper-connector-fill {
+  height: 100%;
+  background: var(--color-success);
+  transition: width 0.3s ease;
+}
+
+/* Pickup PIN Voucher Highlight Box */
+.pickup-pin-voucher-box {
+  background: linear-gradient(135deg, rgba(122, 21, 33, 0.08) 0%, rgba(212, 175, 55, 0.12) 100%);
+  border: 2px dashed var(--color-primary);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  text-align: center;
+}
+
+.pickup-pin-label {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--color-primary);
+  margin-bottom: 4px;
+}
+
+.pickup-pin-code {
+  font-family: var(--font-mono);
+  font-size: 26px;
+  font-weight: 900;
+  letter-spacing: 4px;
+  color: var(--color-primary);
+}
+
+.pickup-pin-notice {
+  font-size: 11.5px;
+  color: var(--color-text-main);
+  margin-top: 6px;
+}
+

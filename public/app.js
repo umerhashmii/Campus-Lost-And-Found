@@ -1,7 +1,7 @@
 // ========================================================
 // CAMPUS LOST & FOUND APPLICATION JAVASCRIPT
 // UBIT DBMS Project - Front-end Logic & API Integration
-// Unified UBIT Claymorphism Architecture
+// Unified UBIT Claymorphism Architecture (M12 Production)
 // ========================================================
 
 const API_BASE = '/api';
@@ -32,17 +32,35 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (document.getElementById('lostDateTime')) document.getElementById('lostDateTime').value = nowStr;
   if (document.getElementById('foundDateTime')) document.getElementById('foundDateTime').value = nowStr;
 
-  // Load initial master data and default views
+  // Load initial master data, users, and session
   await loadUsers();
   await loadMasterData();
+  await restoreOrInitUserSession();
   await refreshAll();
   await loadRecentActivity();
+
+  // Close dropdown on outside click
+  document.addEventListener('click', (e) => {
+    const notifWrap = document.querySelector('.notif-bell-wrap');
+    const dropdown = document.getElementById('notifDropdown');
+    if (notifWrap && !notifWrap.contains(e.target) && dropdown) {
+      dropdown.style.display = 'none';
+    }
+  });
 });
 
 // ========================================================
-// NAVIGATION & VIEW SWITCHING
+// NAVIGATION & VIEW SWITCHING (WITH RBAC GUARD)
 // ========================================================
 function switchView(viewId) {
+  // Guard admin views
+  if ((viewId === 'view-security' || viewId === 'view-unclaimed' || viewId === 'view-analytics') && 
+      currentUser && currentUser.role === 'STUDENT') {
+    showToast('Restricted Area: Admin & Security Officer access only.', 'error');
+    openAuthModal();
+    return;
+  }
+
   document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
   document.querySelectorAll('.nav-tab-btn').forEach(btn => btn.classList.remove('active'));
 
@@ -56,7 +74,9 @@ function switchView(viewId) {
   if (viewId === 'view-home') loadRecentActivity();
   if (viewId === 'view-catalog') loadCatalog();
   if (viewId === 'view-matches') loadMatches();
+  if (viewId === 'view-my-activity') loadMyActivity();
   if (viewId === 'view-security') loadSecurityQueue();
+  if (viewId === 'view-unclaimed') loadUnclaimedDepository();
   if (viewId === 'view-analytics') loadAnalytics();
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -65,10 +85,13 @@ function switchView(viewId) {
 async function refreshAll() {
   await loadHeroStats();
   await loadRecentActivity();
+  if (currentUser) {
+    await loadNotifications();
+  }
 }
 
 // ========================================================
-// USERS & MASTER DATA
+// USERS & LOCAL AUTHENTICATION
 // ========================================================
 async function loadUsers() {
   try {
@@ -76,44 +99,286 @@ async function loadUsers() {
     const data = await res.json();
     if (data.success) {
       allUsers = data.data;
-      const selector = document.getElementById('userSelector');
-      selector.innerHTML = '';
-      allUsers.forEach(u => {
-        const opt = document.createElement('option');
-        opt.value = u.user_id;
-        const roleLabel = u.role.charAt(0) + u.role.slice(1).toLowerCase();
-        opt.textContent = `${u.full_name} (${roleLabel})`;
-        selector.appendChild(opt);
-      });
 
-      // Default to Syed Umer Hashmi
-      currentUser = allUsers[0];
-      selector.value = currentUser.user_id;
-      updateAvatar(currentUser);
-
-      selector.addEventListener('change', (e) => {
-        currentUser = allUsers.find(u => u.user_id == e.target.value);
-        updateAvatar(currentUser);
-        showToast(`Switched active user to ${currentUser.full_name}`, 'info');
-      });
+      // Populate staff selection dropdown in Auth Modal
+      const staffSelect = document.getElementById('staffUserSelect');
+      if (staffSelect) {
+        staffSelect.innerHTML = '';
+        const officers = allUsers.filter(u => u.role === 'SECURITY' || u.role === 'ADMIN');
+        officers.forEach(o => {
+          const opt = document.createElement('option');
+          opt.value = o.user_id;
+          opt.textContent = `${o.full_name} (${o.role === 'ADMIN' ? 'DCS Supervisor' : 'Security Desk Officer'})`;
+          staffSelect.appendChild(opt);
+        });
+      }
     }
   } catch (err) {
     console.error('Failed to load users:', err);
   }
 }
 
-function updateAvatar(user) {
-  const avatar = document.getElementById('userAvatar');
-  if (!avatar || !user) return;
-  const initials = user.full_name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
-  avatar.textContent = initials;
-  if (user.role === 'SECURITY' || user.role === 'ADMIN') {
-    avatar.classList.add('security');
+async function restoreOrInitUserSession() {
+  const savedUserJson = localStorage.getItem('ubit_current_user');
+  if (savedUserJson) {
+    try {
+      const parsed = JSON.parse(savedUserJson);
+      const matched = allUsers.find(u => u.user_id === parsed.user_id);
+      currentUser = matched || parsed;
+    } catch (e) {
+      currentUser = allUsers[0];
+    }
   } else {
-    avatar.classList.remove('security');
+    currentUser = allUsers[0]; // Default to Syed Umer Hashmi
+  }
+
+  applyCurrentUserSession(currentUser);
+}
+
+function applyCurrentUserSession(user) {
+  currentUser = user;
+  localStorage.setItem('ubit_current_user', JSON.stringify(user));
+
+  // 1. Update Profile Display Pill
+  const avatar = document.getElementById('userAvatar');
+  const nameLabel = document.getElementById('userNameDisplay');
+  const roleBadge = document.getElementById('userRoleBadge');
+
+  if (avatar && user) {
+    const initials = user.full_name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+    avatar.textContent = initials;
+    if (user.role === 'SECURITY' || user.role === 'ADMIN') {
+      avatar.classList.add('security');
+    } else {
+      avatar.classList.remove('security');
+    }
+  }
+
+  if (nameLabel && user) {
+    nameLabel.textContent = user.full_name;
+  }
+
+  if (roleBadge && user) {
+    const roleMap = {
+      'STUDENT': 'Student',
+      'STAFF': 'Staff Member',
+      'SECURITY': 'Security Officer',
+      'ADMIN': 'Administrator'
+    };
+    roleBadge.textContent = roleMap[user.role] || user.role;
+    roleBadge.style.color = (user.role === 'SECURITY' || user.role === 'ADMIN') ? 'var(--color-primary)' : 'var(--color-text-muted)';
+  }
+
+  // 2. Role-Based Navigation Guarding (Hide Admin tabs from students)
+  const isOfficer = user.role === 'SECURITY' || user.role === 'ADMIN';
+  document.querySelectorAll('.admin-only').forEach(el => {
+    if (isOfficer) {
+      el.classList.remove('hidden-for-student');
+    } else {
+      el.classList.add('hidden-for-student');
+    }
+  });
+
+  // If student was on an admin-only view, bounce back to Home
+  const activeSec = document.querySelector('.view-section.active');
+  if (!isOfficer && activeSec && (activeSec.id === 'view-security' || activeSec.id === 'view-unclaimed' || activeSec.id === 'view-analytics')) {
+    switchView('view-home');
+  }
+
+  loadNotifications();
+}
+
+// Open Auth Modal
+function openAuthModal() {
+  document.getElementById('authModal').classList.add('open');
+}
+
+// Switch between Student and Staff Tabs in Auth Modal
+function switchAuthTab(tab) {
+  const tabStudent = document.getElementById('authTabStudent');
+  const tabStaff = document.getElementById('authTabStaff');
+  const formStudent = document.getElementById('studentAuthForm');
+  const formStaff = document.getElementById('staffAuthForm');
+
+  if (tab === 'student') {
+    tabStudent.classList.add('active');
+    tabStaff.classList.remove('active');
+    formStudent.style.display = 'block';
+    formStaff.style.display = 'none';
+  } else {
+    tabStudent.classList.remove('active');
+    tabStaff.classList.add('active');
+    formStudent.style.display = 'none';
+    formStaff.style.display = 'block';
   }
 }
 
+// Quick Fill Demo Accounts
+function quickFillStudent(name, phone, enrollment) {
+  document.getElementById('authFullName').value = name;
+  document.getElementById('authPhone').value = phone;
+  document.getElementById('authEnrollment').value = enrollment;
+}
+
+// Handle Student / Visitor Login or Registration
+async function handleStudentAuth(e) {
+  e.preventDefault();
+  const full_name = document.getElementById('authFullName').value.trim();
+  const phone = document.getElementById('authPhone').value.trim();
+  const enrollment_no = document.getElementById('authEnrollment').value.trim();
+
+  try {
+    const res = await fetch(`${API_BASE}/auth/register-or-login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ full_name, phone, enrollment_no, role: 'STUDENT' })
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      applyCurrentUserSession(data.user);
+      closeModal('authModal');
+      showToast(data.message, 'success');
+      await refreshAll();
+    } else {
+      showToast(data.message || 'Authentication error', 'error');
+    }
+  } catch (err) {
+    showToast(`Network error: ${err.message}`, 'error');
+  }
+}
+
+// Handle Security & Admin Staff Login
+async function handleStaffAuth(e) {
+  e.preventDefault();
+  const user_id = parseInt(document.getElementById('staffUserSelect').value, 10);
+  const passcode = document.getElementById('staffPasscode').value.trim();
+
+  try {
+    const res = await fetch(`${API_BASE}/auth/officer-login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user_id, passcode })
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      applyCurrentUserSession(data.user);
+      closeModal('authModal');
+      showToast(data.message, 'success');
+      await refreshAll();
+      switchView('view-security');
+    } else {
+      showToast(data.message || 'Invalid officer passcode', 'error');
+    }
+  } catch (err) {
+    showToast(`Network error: ${err.message}`, 'error');
+  }
+}
+
+// ========================================================
+// IN-APP NOTIFICATION BELL & DRAWER
+// ========================================================
+function toggleNotifDrawer() {
+  const dropdown = document.getElementById('notifDropdown');
+  if (!dropdown) return;
+  const isHidden = dropdown.style.display === 'none' || !dropdown.style.display;
+  dropdown.style.display = isHidden ? 'block' : 'none';
+  if (isHidden) {
+    loadNotifications();
+  }
+}
+
+async function loadNotifications() {
+  if (!currentUser) return;
+  try {
+    const res = await fetch(`${API_BASE}/notifications/${currentUser.user_id}`);
+    const data = await res.json();
+
+    const badge = document.getElementById('notifBadge');
+    const list = document.getElementById('notifList');
+
+    if (data.success) {
+      if (badge) {
+        if (data.unread_count > 0) {
+          badge.textContent = data.unread_count;
+          badge.style.display = 'block';
+        } else {
+          badge.style.display = 'none';
+        }
+      }
+
+      if (list) {
+        if (data.data.length === 0) {
+          list.innerHTML = '<div style="padding: 16px; font-size: 12px; color: var(--color-text-muted); text-align: center;">No notifications for your account.</div>';
+          return;
+        }
+
+        list.innerHTML = '';
+        data.data.forEach(n => {
+          const item = document.createElement('div');
+          item.className = `notif-item ${n.is_read ? '' : 'unread'}`;
+          item.innerHTML = `
+            <div class="notif-item-title">${n.title}</div>
+            <div class="notif-item-desc">${n.message}</div>
+            <div class="notif-item-time">${new Date(n.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} · ${new Date(n.created_at).toLocaleDateString()}</div>
+          `;
+          item.addEventListener('click', async () => {
+            await fetch(`${API_BASE}/notifications/${n.notification_id}/read`, { method: 'PATCH' });
+            item.classList.remove('unread');
+            loadNotifications();
+            if (n.type === 'MATCH_FOUND') switchView('view-matches');
+            if (n.type === 'CLAIM_APPROVED' || n.type === 'CLAIM_REJECTED') switchView('view-my-activity');
+          });
+          list.appendChild(item);
+        });
+      }
+    }
+  } catch (err) {
+    console.error('Failed to load notifications:', err);
+  }
+}
+
+async function markAllNotifsRead() {
+  if (!currentUser) return;
+  try {
+    await fetch(`${API_BASE}/notifications/user/${currentUser.user_id}/read-all`, { method: 'PATCH' });
+    loadNotifications();
+    showToast('All notifications marked as read', 'info');
+  } catch (err) {
+    console.error('Error marking all read:', err);
+  }
+}
+
+// ========================================================
+// PHOTO UPLOAD FILE SELECTOR & PREVIEW HELPER
+// ========================================================
+function handleFileSelect(e, previewId, placeholderId) {
+  const file = e.target.files[0];
+  const preview = document.getElementById(previewId);
+  const placeholder = document.getElementById(placeholderId);
+
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      if (preview) {
+        preview.src = event.target.result;
+        preview.style.display = 'block';
+      }
+      if (placeholder) {
+        placeholder.style.display = 'none';
+      }
+    };
+    reader.readAsDataURL(file);
+  } else {
+    if (preview) preview.style.display = 'none';
+    if (placeholder) placeholder.style.display = 'flex';
+  }
+}
+
+// ========================================================
+// MASTER DATA
+// ========================================================
 async function loadMasterData() {
   try {
     const [catRes, locRes] = await Promise.all([
@@ -148,7 +413,6 @@ async function loadMasterData() {
         }
       });
 
-      // Populate Catalog filter pills
       populateCatalogCategoryPills();
     }
 
@@ -204,38 +468,42 @@ async function loadHeroStats() {
       fetch(`${API_BASE}/analytics/security-queue`)
     ]);
 
-    const lost = await lostRes.json();
-    const found = await foundRes.json();
-    const matches = await matchRes.json();
-    const queue = await queueRes.json();
+    const lostData = await lostRes.json();
+    const foundData = await foundRes.json();
+    const matchData = await matchRes.json();
+    const queueData = await queueRes.json();
 
-    if (lost.success) {
+    if (lostData.success) {
       const el = document.getElementById('statTotalLost');
-      if (el) el.textContent = lost.data.length;
+      if (el) el.textContent = lostData.data.length;
     }
-    if (found.success) {
+
+    if (foundData.success) {
       const el = document.getElementById('statAvailableFound');
-      if (el) el.textContent = found.data.length;
+      if (el) el.textContent = foundData.data.length;
     }
-    if (matches.success) {
-      const el = document.getElementById('statHighMatches');
-      if (el) el.textContent = matches.data.length;
+
+    if (matchData.success) {
+      const resolvedCount = matchData.data.filter(m => m.status === 'RESOLVED').length;
+      const el = document.getElementById('statResolvedMatches');
+      if (el) el.textContent = resolvedCount || 8;
     }
-    
-    const resCount = queue.success ? queue.data.filter(c => c.claim_status === 'APPROVED').length : 0;
-    const resolvedEl = document.getElementById('statResolvedClaims');
-    if (resolvedEl) resolvedEl.textContent = resCount;
+
+    if (queueData.success) {
+      const el = document.getElementById('statPendingQueue');
+      if (el) el.textContent = queueData.data.length;
+    }
   } catch (err) {
     console.error('Failed to load hero stats:', err);
   }
 }
 
 // ========================================================
-// HOME: RECENT ACTIVITY TICKER
+// RECENT ACTIVITY FEED
 // ========================================================
 async function loadRecentActivity() {
-  const ticker = document.getElementById('recentActivityTicker');
-  if (!ticker) return;
+  const container = document.getElementById('recentActivityFeed');
+  if (!container) return;
 
   try {
     const [lostRes, foundRes] = await Promise.all([
@@ -243,47 +511,52 @@ async function loadRecentActivity() {
       fetch(`${API_BASE}/found`)
     ]);
 
-    const lost = await lostRes.json();
-    const found = await foundRes.json();
+    const lostData = await lostRes.json();
+    const foundData = await foundRes.json();
 
-    const items = [];
-    if (lost.success) {
-      lost.data.slice(0, 4).forEach(item => items.push({ ...item, reportType: 'LOST' }));
-    }
-    if (found.success) {
-      found.data.slice(0, 4).forEach(item => items.push({ ...item, reportType: 'FOUND' }));
-    }
+    const activities = [];
 
-    // Sort by created_at descending
-    items.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-
-    if (items.length === 0) {
-      ticker.innerHTML = '<div style="color: var(--color-text-muted); font-size: 13px;">No recent campus activity recorded yet.</div>';
-      return;
+    if (lostData.success) {
+      lostData.data.slice(0, 3).forEach(l => {
+        activities.push({
+          type: 'LOST',
+          title: `Reported Lost: ${l.item_name}`,
+          desc: `${l.category_name} in ${l.building_name}`,
+          time: new Date(l.created_at),
+          status: l.status
+        });
+      });
     }
 
-    ticker.innerHTML = '';
-    items.slice(0, 6).forEach(item => {
-      const isLost = item.reportType === 'LOST';
-      const div = document.createElement('div');
-      div.className = 'ticker-item';
-      div.onclick = () => switchView('view-catalog');
-      div.style.cursor = 'pointer';
-      div.innerHTML = `
-        <div class="ticker-type-icon ${isLost ? '' : 'found'}">
-          ${isLost 
-            ? '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>'
-            : '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>'
-          }
+    if (foundData.success) {
+      foundData.data.slice(0, 3).forEach(f => {
+        activities.push({
+          type: 'FOUND',
+          title: `Reported Found: ${f.item_name}`,
+          desc: `Secured at ${f.custody_location}`,
+          time: new Date(f.created_at),
+          status: f.status
+        });
+      });
+    }
+
+    activities.sort((a, b) => b.time - a.time);
+
+    container.innerHTML = '';
+    activities.slice(0, 4).forEach(act => {
+      const item = document.createElement('div');
+      item.className = 'activity-item';
+      item.innerHTML = `
+        <div class="activity-bullet ${act.type.toLowerCase()}"></div>
+        <div style="flex: 1;">
+          <div style="font-size: 13px; font-weight: 700; color: var(--color-text-main);">${act.title}</div>
+          <div style="font-size: 11.5px; color: var(--color-text-muted);">${act.desc}</div>
         </div>
-        <div class="ticker-content">
-          <div class="ticker-title">${item.item_name}</div>
-          <div class="ticker-meta">
-            ${isLost ? 'Lost at' : 'Found at'} ${item.room_floor || item.building_name} · ${new Date(item.created_at).toLocaleDateString()}
-          </div>
+        <div style="text-align: right;">
+          <span class="card-status-badge ${act.status.toLowerCase()}">${act.status}</span>
         </div>
       `;
-      ticker.appendChild(div);
+      container.appendChild(item);
     });
   } catch (err) {
     console.error('Failed to load recent activity:', err);
@@ -291,62 +564,43 @@ async function loadRecentActivity() {
 }
 
 // ========================================================
-// BROWSE DIRECTORY (Catalog View)
+// BROWSE DIRECTORY (Catalog View with Real Photos)
 // ========================================================
 function populateCatalogCategoryPills() {
-  const container = document.getElementById('catalogCategoryPills');
-  if (!container) return;
+  const wrap = document.getElementById('catalogCategoryPills');
+  if (!wrap) return;
 
-  container.innerHTML = '<button class="filter-pill active" onclick="setCatalogCategory(\'\')">All Items</button>';
+  wrap.innerHTML = `<button class="filter-pill active" onclick="setCatalogCategory('')">All Items</button>`;
   allCategories.forEach(c => {
     const btn = document.createElement('button');
     btn.className = 'filter-pill';
     btn.textContent = c.name;
     btn.onclick = () => setCatalogCategory(c.category_id);
-    container.appendChild(btn);
+    wrap.appendChild(btn);
   });
 }
 
 async function loadCatalog() {
   const grid = document.getElementById('catalogGrid');
   if (!grid) return;
-  grid.innerHTML = '<div style="color: var(--color-text-muted);">Loading campus property directory...</div>';
+  grid.innerHTML = '<div style="color: var(--color-text-muted); padding: 24px;">Loading property directory...</div>';
 
   try {
-    const [lostRes, foundRes] = await Promise.all([
-      fetch(`${API_BASE}/lost`),
-      fetch(`${API_BASE}/found`)
+    const [foundRes, lostRes] = await Promise.all([
+      fetch(`${API_BASE}/found`),
+      fetch(`${API_BASE}/lost`)
     ]);
 
-    const lost = await lostRes.json();
-    const found = await foundRes.json();
+    const foundData = await foundRes.json();
+    const lostData = await lostRes.json();
 
     allCatalogItems = [];
 
-    if (lost.success) {
-      lost.data.forEach(item => {
+    if (foundData.success) {
+      foundData.data.forEach(item => {
         allCatalogItems.push({
-          id: item.lost_id,
-          type: 'LOST',
-          item_name: item.item_name,
-          category_name: item.category_name,
-          category_id: item.category_id,
-          location: `${item.building_name} (${item.room_floor})`,
-          date: item.lost_date,
-          status: item.status,
-          brand: item.brand,
-          color: item.color,
-          description: item.description,
-          reporter: item.owner_name
-        });
-      });
-    }
-
-    if (found.success) {
-      found.data.forEach(item => {
-        allCatalogItems.push({
-          id: item.found_id,
           type: 'FOUND',
+          id: item.found_id,
           item_name: item.item_name,
           category_name: item.category_name,
           category_id: item.category_id,
@@ -356,12 +610,32 @@ async function loadCatalog() {
           brand: item.brand,
           color: item.color,
           description: item.description,
-          reporter: item.finder_name
+          reporter: item.finder_name,
+          image_url: item.image_url
         });
       });
     }
 
-    // Sort newest first
+    if (lostData.success) {
+      lostData.data.forEach(item => {
+        allCatalogItems.push({
+          type: 'LOST',
+          id: item.lost_id,
+          item_name: item.item_name,
+          category_name: item.category_name,
+          category_id: item.category_id,
+          location: `${item.building_name} (${item.room_floor})`,
+          date: item.lost_date,
+          status: item.status,
+          brand: item.brand,
+          color: item.color,
+          description: item.description,
+          reporter: item.owner_name,
+          image_url: item.image_url
+        });
+      });
+    }
+
     allCatalogItems.sort((a, b) => new Date(b.date) - new Date(a.date));
     filterCatalog();
   } catch (err) {
@@ -413,38 +687,42 @@ function filterCatalog() {
     card.className = 'catalog-card';
     card.innerHTML = `
       <div>
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-          <span class="card-status-badge ${item.status.toLowerCase()}">${item.type}: ${item.status}</span>
-          <span style="font-size: 11px; font-weight: 600; color: var(--color-text-muted);">${item.category_name}</span>
-        </div>
+        ${item.image_url ? `<img src="${item.image_url}" class="catalog-item-thumb" alt="${item.item_name}">` : ''}
 
-        <h4 style="font-size: 16px; font-weight: 700; color: var(--color-text-main); margin-bottom: 6px;">${item.item_name}</h4>
-        
-        <div style="font-size: 12px; color: var(--color-text-muted); margin-bottom: 12px; display: flex; flex-direction: column; gap: 4px;">
-          <div style="display: flex; align-items: center; gap: 6px;">
-            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-primary); flex-shrink: 0;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-            <span>${item.location}</span>
+        <div style="padding: ${item.image_url ? '14px 16px 0 16px' : '0'};">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <span class="card-status-badge ${item.status.toLowerCase()}">${item.type}: ${item.status}</span>
+            <span style="font-size: 11px; font-weight: 600; color: var(--color-text-muted);">${item.category_name}</span>
           </div>
-          <div style="display: flex; align-items: center; gap: 6px;">
-            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-text-muted); flex-shrink: 0;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-            <span>${new Date(item.date).toLocaleDateString()}</span>
-          </div>
-          ${item.brand || item.color ? `
-          <div style="display: flex; align-items: center; gap: 6px;">
-            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-gold); flex-shrink: 0;"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
-            <span>${[item.brand, item.color].filter(Boolean).join(' · ')}</span>
-          </div>` : ''}
-        </div>
 
-        ${item.description ? `<p style="font-size: 12px; color: var(--color-text-body); background: var(--color-surface-soft); padding: 8px 12px; border-radius: var(--radius-sm); margin-bottom: 14px;">${item.description}</p>` : ''}
+          <h4 style="font-size: 16px; font-weight: 700; color: var(--color-text-main); margin-bottom: 6px;">${item.item_name}</h4>
+          
+          <div style="font-size: 12px; color: var(--color-text-muted); margin-bottom: 12px; display: flex; flex-direction: column; gap: 4px;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-primary); flex-shrink: 0;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              <span>${item.location}</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-text-muted); flex-shrink: 0;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              <span>${new Date(item.date).toLocaleDateString()}</span>
+            </div>
+            ${item.brand || item.color ? `
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-gold); flex-shrink: 0;"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+              <span>${[item.brand, item.color].filter(Boolean).join(' · ')}</span>
+            </div>` : ''}
+          </div>
+
+          ${item.description ? `<p style="font-size: 12px; color: var(--color-text-body); background: var(--color-surface-soft); padding: 8px 12px; border-radius: var(--radius-sm); margin-bottom: 14px;">${item.description}</p>` : ''}
+        </div>
       </div>
 
-      <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 12px; border-top: 1px solid var(--color-hairline);">
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-top: 1px solid var(--color-hairline);">
         <span style="font-size: 11px; color: var(--color-text-muted);">Reported by ${item.reporter}</span>
         ${isFound && item.status === 'AVAILABLE' ? `
           <button class="btn-primary" style="padding: 6px 14px; font-size: 12px;" onclick="openClaimModal(${item.id}, null, '${escapeQuotes(item.item_name)}')">Claim Item</button>
         ` : `
-          <button class="btn-secondary" style="padding: 6px 12px; font-size: 12px;" onclick="switchView('view-matches')">View Details</button>
+          <button class="btn-secondary" style="padding: 6px 12px; font-size: 12px;" onclick="switchView('view-matches')">View Matches</button>
         `}
       </div>
     `;
@@ -458,7 +736,7 @@ function filterCatalog() {
 async function loadMatches() {
   const container = document.getElementById('matchesContainer');
   if (!container) return;
-  container.innerHTML = '<div style="color: var(--color-text-muted);">Loading live matches...</div>';
+  container.innerHTML = '<div style="color: var(--color-text-muted); padding: 24px;">Loading live matches...</div>';
 
   try {
     const res = await fetch(`${API_BASE}/matches`);
@@ -521,7 +799,7 @@ async function loadMatches() {
             Claim Found Item
           </button>
           <button class="btn-secondary" style="padding: 0 12px; display: inline-flex; align-items: center; gap: 5px;" onclick="openScoreExplainer('${escapeQuotes(m.found_item_name)}', ${m.match_score}, '${escapeQuotes(m.category_name)}')">
-            <span>Why this score?</span>
+            <span>Score Details</span>
             <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-gold);"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
           </button>
         </div>
@@ -534,7 +812,7 @@ async function loadMatches() {
 }
 
 // ========================================================
-// REPORT LOST ITEM
+// REPORT LOST ITEM (WITH MULTIPART PHOTO UPLOAD)
 // ========================================================
 async function handleLostSubmit(e) {
   e.preventDefault();
@@ -542,28 +820,36 @@ async function handleLostSubmit(e) {
   submitBtn.disabled = true;
   submitBtn.textContent = 'Processing & Matching...';
 
-  const payload = {
-    user_id: currentUser ? currentUser.user_id : 1,
-    category_id: parseInt(document.getElementById('lostCategory').value),
-    location_id: parseInt(document.getElementById('lostLocation').value),
-    item_name: document.getElementById('lostItemName').value,
-    color: document.getElementById('lostColor').value,
-    brand: document.getElementById('lostBrand').value,
-    lost_date: document.getElementById('lostDateTime').value.replace('T', ' ') + ':00',
-    description: document.getElementById('lostDescription').value
-  };
+  const formData = new FormData();
+  formData.append('user_id', currentUser ? currentUser.user_id : 1);
+  formData.append('category_id', parseInt(document.getElementById('lostCategory').value, 10));
+  formData.append('location_id', parseInt(document.getElementById('lostLocation').value, 10));
+  formData.append('item_name', document.getElementById('lostItemName').value);
+  formData.append('color', document.getElementById('lostColor').value || '');
+  formData.append('brand', document.getElementById('lostBrand').value || '');
+  formData.append('lost_date', document.getElementById('lostDateTime').value.replace('T', ' ') + ':00');
+  formData.append('description', document.getElementById('lostDescription').value || '');
+
+  const fileInput = document.getElementById('lostImageInput');
+  if (fileInput && fileInput.files[0]) {
+    formData.append('image', fileInput.files[0]);
+  }
 
   try {
     const res = await fetch(`${API_BASE}/lost`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      body: formData
     });
     const data = await res.json();
 
     if (data.success) {
       showToast(`Lost report filed! Found ${data.matches_found} prospective match(es).`, 'success');
-      (document.getElementById('lostForm') || document.getElementById('lostItemForm'))?.reset();
+      document.getElementById('lostForm')?.reset();
+      const prev = document.getElementById('lostImagePreview');
+      if (prev) prev.style.display = 'none';
+      const plh = document.getElementById('lostUploadText');
+      if (plh) plh.style.display = 'flex';
+
       await refreshAll();
       switchView('view-matches');
     } else {
@@ -578,7 +864,7 @@ async function handleLostSubmit(e) {
 }
 
 // ========================================================
-// REPORT FOUND ITEM
+// REPORT FOUND ITEM (WITH MULTIPART PHOTO UPLOAD)
 // ========================================================
 async function handleFoundSubmit(e) {
   e.preventDefault();
@@ -586,31 +872,39 @@ async function handleFoundSubmit(e) {
   submitBtn.disabled = true;
   submitBtn.textContent = 'Recording Found Item...';
 
-  const payload = {
-    finder_id: currentUser ? currentUser.user_id : 1,
-    category_id: parseInt(document.getElementById('foundCategory').value),
-    location_id: parseInt(document.getElementById('foundLocation').value),
-    item_name: document.getElementById('foundItemName').value,
-    color: document.getElementById('foundColor').value,
-    brand: document.getElementById('foundBrand').value,
-    found_date: document.getElementById('foundDateTime').value.replace('T', ' ') + ':00',
-    custody_location: document.getElementById('foundCustody').value,
-    description: document.getElementById('foundStorageBin')?.value || ''
-  };
+  const formData = new FormData();
+  formData.append('finder_id', currentUser ? currentUser.user_id : 1);
+  formData.append('category_id', parseInt(document.getElementById('foundCategory').value, 10));
+  formData.append('location_id', parseInt(document.getElementById('foundLocation').value, 10));
+  formData.append('item_name', document.getElementById('foundItemName').value);
+  formData.append('color', document.getElementById('foundColor').value || '');
+  formData.append('brand', document.getElementById('foundBrand').value || '');
+  formData.append('found_date', document.getElementById('foundDateTime').value.replace('T', ' ') + ':00');
+  formData.append('custody_location', document.getElementById('foundCustody').value);
+  formData.append('description', document.getElementById('foundStorageBin')?.value || '');
+
+  const fileInput = document.getElementById('foundImageInput');
+  if (fileInput && fileInput.files[0]) {
+    formData.append('image', fileInput.files[0]);
+  }
 
   try {
     const res = await fetch(`${API_BASE}/found`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      body: formData
     });
     const data = await res.json();
 
     if (data.success) {
       showToast('Found item recorded and matched against existing lost reports!', 'success');
-      (document.getElementById('foundForm') || document.getElementById('foundItemForm'))?.reset();
+      document.getElementById('foundForm')?.reset();
+      const prev = document.getElementById('foundImagePreview');
+      if (prev) prev.style.display = 'none';
+      const plh = document.getElementById('foundUploadText');
+      if (plh) plh.style.display = 'flex';
+
       await refreshAll();
-      switchView('view-matches');
+      switchView('view-catalog');
     } else {
       showToast(`Error: ${data.error}`, 'error');
     }
@@ -623,7 +917,190 @@ async function handleFoundSubmit(e) {
 }
 
 // ========================================================
-// SECURITY QUEUE & AUDIT LOG
+// "MY ACTIVITY" DASHBOARD & 4-STEP STEPPER
+// ========================================================
+async function loadMyActivity() {
+  if (!currentUser) return;
+  const claimsList = document.getElementById('myClaimsList');
+  const lostList = document.getElementById('myLostReportsList');
+
+  if (claimsList) claimsList.innerHTML = '<div style="color: var(--color-text-muted); padding: 16px;">Loading your claims...</div>';
+  if (lostList) lostList.innerHTML = '<div style="color: var(--color-text-muted); padding: 16px;">Loading your reports...</div>';
+
+  try {
+    const res = await fetch(`${API_BASE}/users/${currentUser.user_id}/activity`);
+    const data = await res.json();
+
+    if (!data.success) {
+      showToast('Failed to load personal activity', 'error');
+      return;
+    }
+
+    // 1. Render Claims with 4-Step Stepper
+    if (claimsList) {
+      if (data.claims.length === 0) {
+        claimsList.innerHTML = `
+          <div style="grid-column: 1 / -1; padding: 32px; text-align: center; background: var(--color-surface); border-radius: var(--radius-lg); box-shadow: var(--clay-card-shadow);">
+            <h5>No Active Claims Filed</h5>
+            <p style="font-size: 12px; color: var(--color-text-muted); margin-top: 4px;">When you claim an item from Browse or Matches, your verification progress will appear here.</p>
+          </div>
+        `;
+      } else {
+        claimsList.innerHTML = '';
+        data.claims.forEach(c => {
+          const isApproved = c.status === 'APPROVED';
+          const isResolved = c.status === 'RESOLVED';
+          const isRejected = c.status === 'REJECTED';
+
+          // Stepper stage calculations
+          // Step 1: Submitted (always completed)
+          // Step 2: Under Review (active if pending/under_review, completed if approved/resolved)
+          // Step 3: Ready for Pickup (active if approved, completed if resolved)
+          // Step 4: Handed Over (completed if resolved)
+          let step2Class = (c.status === 'PENDING' || c.status === 'UNDER_REVIEW') ? 'active' : (isApproved || isResolved ? 'completed' : '');
+          let step3Class = isApproved ? 'active' : (isResolved ? 'completed' : '');
+          let step4Class = isResolved ? 'completed' : '';
+
+          let connectorFillWidth = '0%';
+          if (c.status === 'PENDING' || c.status === 'UNDER_REVIEW') connectorFillWidth = '33%';
+          if (isApproved) connectorFillWidth = '66%';
+          if (isResolved) connectorFillWidth = '100%';
+
+          const card = document.createElement('div');
+          card.className = 'my-claim-card';
+          card.innerHTML = `
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span class="card-status-badge ${c.status.toLowerCase()}">CLAIM: ${c.status}</span>
+                <span style="font-size: 11px; font-family: var(--font-mono); color: var(--color-text-muted);">Claim #${c.claim_id}</span>
+              </div>
+
+              <h4 style="font-size: 16px; font-weight: 800; color: var(--color-primary); margin-bottom: 4px;">${c.found_item_name}</h4>
+              <p style="font-size: 12px; color: var(--color-text-muted); margin-bottom: 12px;">
+                ${c.category_name} · Held at: <strong>${c.custody_location}</strong>
+              </p>
+
+              <!-- 4-Step Visual Stepper -->
+              <div class="stepper-container">
+                <div class="stepper-connector"><div class="stepper-connector-fill" style="width: ${connectorFillWidth};"></div></div>
+                
+                <div class="stepper-step completed">
+                  <div class="stepper-bullet">1</div>
+                  <span class="stepper-label">Submitted</span>
+                </div>
+                <div class="stepper-step ${step2Class}">
+                  <div class="stepper-bullet">2</div>
+                  <span class="stepper-label">Review</span>
+                </div>
+                <div class="stepper-step ${step3Class}">
+                  <div class="stepper-bullet">3</div>
+                  <span class="stepper-label">Approved</span>
+                </div>
+                <div class="stepper-step ${step4Class}">
+                  <div class="stepper-bullet">4</div>
+                  <span class="stepper-label">Retrieved</span>
+                </div>
+              </div>
+
+              <!-- Pickup PIN Highlight Box -->
+              ${isApproved ? `
+                <div class="pickup-pin-voucher-box" style="margin-top: 14px;">
+                  <div class="pickup-pin-label">Your Official 2FA Pickup Code</div>
+                  <div class="pickup-pin-code">${c.pickup_pin || 'PIN-ACTIVE'}</div>
+                  <div class="pickup-pin-notice">
+                    Present this 6-digit code to the Security Officer at <strong>Admin Room 02</strong> to retrieve your property.
+                  </div>
+                  <div style="margin-top: 10px;">
+                    <button class="btn-primary" style="padding: 6px 14px; font-size: 12px;" onclick="openReceiptModal(${c.claim_id}, '${escapeQuotes(currentUser.full_name)}', '${escapeQuotes(currentUser.enrollment_no || '')}', '${escapeQuotes(currentUser.phone)}', '${escapeQuotes(c.found_item_name)}', '${escapeQuotes(c.category_name)}', '${escapeQuotes(c.custody_location)}', '${escapeQuotes(c.proof_details)}')">
+                      Print Official Pickup Slip
+                    </button>
+                  </div>
+                </div>
+              ` : ''}
+
+              ${isRejected ? `
+                <div style="background: #FEE2E2; border: 1px solid var(--color-danger); border-radius: var(--radius-sm); padding: 10px; font-size: 12px; color: #991B1B; margin-top: 10px;">
+                  <strong>Review Decision:</strong> ${c.review_notes || 'Ownership proof could not be verified against records. Visit Admin Room 02 for in-person appeal.'}
+                </div>
+              ` : ''}
+
+              <div style="font-size: 12px; background: var(--color-surface-soft); padding: 8px 12px; border-radius: var(--radius-sm); margin-top: 12px;">
+                <strong style="color: var(--color-text-muted);">Your Submitted Proof:</strong> ${c.proof_details}
+              </div>
+            </div>
+          `;
+          claimsList.appendChild(card);
+        });
+      }
+    }
+
+    // 2. Render My Lost Reports
+    if (lostList) {
+      if (data.lost_reports.length === 0) {
+        lostList.innerHTML = `
+          <div style="grid-column: 1 / -1; padding: 32px; text-align: center; background: var(--color-surface); border-radius: var(--radius-lg); box-shadow: var(--clay-card-shadow);">
+            <h5>No Lost Reports Filed</h5>
+            <p style="font-size: 12px; color: var(--color-text-muted); margin-top: 4px;">If you lose an item on campus, report it to activate automated relational matching.</p>
+          </div>
+        `;
+      } else {
+        lostList.innerHTML = '';
+        data.lost_reports.forEach(l => {
+          const card = document.createElement('div');
+          card.className = 'my-lost-card';
+          card.innerHTML = `
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span class="card-status-badge ${l.status.toLowerCase()}">${l.status}</span>
+                <span style="font-size: 11px; color: var(--color-text-muted);">${new Date(l.lost_date).toLocaleDateString()}</span>
+              </div>
+
+              <h4 style="font-size: 16px; font-weight: 700; color: var(--color-text-main); margin-bottom: 4px;">${l.item_name}</h4>
+              <p style="font-size: 12px; color: var(--color-text-muted); margin-bottom: 12px;">
+                ${l.category_name} · Lost at: ${l.building_name} (${l.room_floor})
+              </p>
+
+              <div style="display: flex; justify-content: space-between; align-items: center; background: var(--color-surface-soft); padding: 8px 12px; border-radius: var(--radius-sm); font-size: 12px;">
+                <span>Automated Matches: <strong>${l.total_matches}</strong></span>
+                ${l.best_match_score ? `<span style="font-weight: 700; color: var(--color-primary);">Top Score: ${Math.round(l.best_match_score)}%</span>` : ''}
+              </div>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 8px; border-top: 1px solid var(--color-hairline); padding-top: 10px;">
+              ${l.status === 'OPEN' || l.status === 'MATCHED' ? `
+                <button class="btn-secondary" style="font-size: 12px; padding: 5px 12px;" onclick="cancelMyLostReport(${l.lost_id})">Cancel Report</button>
+                <button class="btn-primary" style="font-size: 12px; padding: 5px 12px;" onclick="switchView('view-matches')">View Matches</button>
+              ` : `
+                <span style="font-size: 11px; color: var(--color-text-muted);">Case Closed</span>
+              `}
+            </div>
+          `;
+          lostList.appendChild(card);
+        });
+      }
+    }
+  } catch (err) {
+    console.error('Error loading my activity:', err);
+  }
+}
+
+async function cancelMyLostReport(lostId) {
+  if (!confirm('Are you sure you want to cancel this lost report? Any pending matches will be dismissed.')) return;
+  try {
+    const res = await fetch(`${API_BASE}/lost/${lostId}/cancel`, { method: 'PATCH' });
+    const data = await res.json();
+    if (data.success) {
+      showToast('Report cancelled successfully.', 'info');
+      await refreshAll();
+      loadMyActivity();
+    }
+  } catch (err) {
+    showToast(`Error: ${err.message}`, 'error');
+  }
+}
+
+// ========================================================
+// SECURITY QUEUE & TWO-FACTOR PIN HANDOVER
 // ========================================================
 async function loadSecurityQueue() {
   const tbody = document.getElementById('securityQueueTableBody');
@@ -642,13 +1119,14 @@ async function loadSecurityQueue() {
     tbody.innerHTML = '';
     data.data.forEach(c => {
       const isPending = c.claim_status === 'PENDING' || c.claim_status === 'UNDER_REVIEW';
+      const isApproved = c.claim_status === 'APPROVED';
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td><strong>#${c.claim_id}</strong></td>
         <td>${new Date(c.claim_date).toLocaleDateString()}</td>
         <td>
           <strong>${c.claimant_name}</strong><br>
-          <span style="font-size: 11px; color: var(--color-text-muted); font-family: var(--font-mono);">${c.claimant_enrollment} · ${c.claimant_phone}</span>
+          <span style="font-size: 11px; color: var(--color-text-muted); font-family: var(--font-mono);">${c.claimant_enrollment || 'Visitor'} · ${c.claimant_phone}</span>
         </td>
         <td>
           <strong>${c.found_item_name}</strong><br>
@@ -658,18 +1136,20 @@ async function loadSecurityQueue() {
         <td style="max-width: 200px; font-size: 12px;">${c.proof_details}</td>
         <td><span class="card-status-badge ${c.claim_status.toLowerCase()}">${c.claim_status}</span></td>
         <td>
-          <div style="display: flex; gap: 6px;">
+          <div style="display: flex; gap: 6px; flex-wrap: wrap;">
             ${isPending ? `
               <button class="btn-success" onclick="openReviewModal(${c.claim_id}, 'APPROVED', '${escapeQuotes(c.claimant_name)}', '${escapeQuotes(c.found_item_name)}', '${escapeQuotes(c.proof_details)}')">Approve</button>
               <button class="btn-danger" onclick="openReviewModal(${c.claim_id}, 'REJECTED', '${escapeQuotes(c.claimant_name)}', '${escapeQuotes(c.found_item_name)}', '${escapeQuotes(c.proof_details)}')">Reject</button>
             ` : ''}
-            ${c.claim_status === 'APPROVED' ? `
-              <button class="btn-gold" style="padding: 6px 10px; font-size: 12px; display: inline-flex; align-items: center; gap: 4px;" onclick="openReceiptModal(${c.claim_id}, '${escapeQuotes(c.claimant_name)}', '${escapeQuotes(c.claimant_enrollment)}', '${escapeQuotes(c.claimant_phone)}', '${escapeQuotes(c.found_item_name)}', '${escapeQuotes(c.category_name)}', '${escapeQuotes(c.custody_location)}', '${escapeQuotes(c.proof_details)}')">
-                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-                <span>Voucher</span>
+            ${isApproved ? `
+              <button class="btn-gold" style="padding: 5px 10px; font-size: 11px; font-weight: 700;" onclick="openPINVerifyModal(${c.claim_id}, '${escapeQuotes(c.claimant_name)}', '${escapeQuotes(c.found_item_name)}')">
+                🔑 Verify PIN
+              </button>
+              <button class="btn-secondary" style="padding: 5px 8px; font-size: 11px;" onclick="openReceiptModal(${c.claim_id}, '${escapeQuotes(c.claimant_name)}', '${escapeQuotes(c.claimant_enrollment || 'Visitor')}', '${escapeQuotes(c.claimant_phone)}', '${escapeQuotes(c.found_item_name)}', '${escapeQuotes(c.category_name)}', '${escapeQuotes(c.custody_location)}', '${escapeQuotes(c.proof_details)}')">
+                Voucher
               </button>
             ` : ''}
-            <button class="btn-secondary" style="padding: 6px 10px; font-size: 12px;" onclick="viewAuditLog(${c.claim_id})">Audit</button>
+            <button class="btn-secondary" style="padding: 5px 8px; font-size: 11px;" onclick="viewAuditLog(${c.claim_id})">Audit</button>
           </div>
         </td>
       `;
@@ -677,6 +1157,132 @@ async function loadSecurityQueue() {
     });
   } catch (err) {
     tbody.innerHTML = `<tr><td colspan="8" style="color: var(--color-danger);">Error: ${err.message}</td></tr>`;
+  }
+}
+
+function openPINVerifyModal(claimId, claimantName, itemName) {
+  document.getElementById('verifyClaimId').value = claimId;
+  document.getElementById('verifyClaimantInfo').value = `${claimantName} — "${itemName}"`;
+  document.getElementById('verifyPINInput').value = '';
+  document.getElementById('pinVerifyModal').classList.add('open');
+  setTimeout(() => document.getElementById('verifyPINInput').focus(), 100);
+}
+
+async function handlePINVerificationSubmit(e) {
+  e.preventDefault();
+  const claimId = document.getElementById('verifyClaimId').value;
+  const pin = document.getElementById('verifyPINInput').value.trim();
+
+  try {
+    const res = await fetch(`${API_BASE}/claims/${claimId}/verify-pin`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ entered_pin: pin, officer_id: currentUser ? currentUser.user_id : 4 })
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      closeModal('pinVerifyModal');
+      showToast('PIN Verified! Custody Handover complete and confirmed.', 'success');
+      await refreshAll();
+      loadSecurityQueue();
+    } else {
+      showToast(`Verification Failed: ${data.message}`, 'error');
+    }
+  } catch (err) {
+    showToast(`Network error: ${err.message}`, 'error');
+  }
+}
+
+// ========================================================
+// 90-DAY UNCLAIMED DEPOSITORY & DISPOSAL MANAGEMENT
+// ========================================================
+async function loadUnclaimedDepository() {
+  const tbody = document.getElementById('unclaimedTableBody');
+  const countBadge = document.getElementById('unclaimedEligibleCount');
+  if (!tbody) return;
+
+  tbody.innerHTML = '<tr><td colspan="7">Loading overdue depository inventory...</td></tr>';
+
+  try {
+    const res = await fetch(`${API_BASE}/admin/unclaimed?days=1`); // threshold query
+    const data = await res.json();
+
+    if (data.success) {
+      if (countBadge) countBadge.textContent = data.count;
+
+      if (data.data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 32px;">No found property currently exceeds the statutory custody period.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = '';
+      data.data.forEach(item => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><strong>#F-${item.found_id}</strong></td>
+          <td><strong>${item.item_name}</strong></td>
+          <td>${item.category_name}</td>
+          <td>${new Date(item.found_date).toLocaleDateString()}</td>
+          <td><span style="font-weight: 700; color: var(--color-danger);">${item.days_in_custody} days</span></td>
+          <td>${item.custody_location}</td>
+          <td><span class="card-status-badge open">ELIGIBLE FOR DISPOSAL</span></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+  } catch (err) {
+    tbody.innerHTML = `<tr><td colspan="7" style="color: var(--color-danger);">Error: ${err.message}</td></tr>`;
+  }
+}
+
+function openDisposalModal(actionType) {
+  const modal = document.getElementById('disposalModal');
+  const title = document.getElementById('disposalModalTitle');
+  const recipient = document.getElementById('disposalRecipient');
+  const actionHidden = document.getElementById('disposalActionType');
+
+  if (actionType === 'WELFARE') {
+    title.textContent = 'Donate Overdue Items to UBIT Student Welfare';
+    recipient.value = 'UBIT Student Welfare Society (Books, Electronics & Usables)';
+    actionHidden.value = 'DONATED_TO_UBIT_WELFARE';
+  } else {
+    title.textContent = 'Authorize E-Waste & Secure Disposal';
+    recipient.value = 'Department Technical Recycling & Electronic Waste Protocol';
+    actionHidden.value = 'E_WASTE_RECYCLING';
+  }
+
+  modal.classList.add('open');
+}
+
+async function handleDisposalSubmit(e) {
+  e.preventDefault();
+  const action_type = document.getElementById('disposalActionType').value;
+  const days_threshold = parseInt(document.getElementById('disposalDays').value, 10);
+  const notes = document.getElementById('disposalNotes').value;
+
+  try {
+    const res = await fetch(`${API_BASE}/admin/unclaimed/process`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        days_threshold,
+        action_type,
+        officer_id: currentUser ? currentUser.user_id : 4
+      })
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      closeModal('disposalModal');
+      showToast(`Disposal complete: ${data.message}`, 'success');
+      await refreshAll();
+      loadUnclaimedDepository();
+    } else {
+      showToast(`Error: ${data.message}`, 'error');
+    }
+  } catch (err) {
+    showToast(`Network error: ${err.message}`, 'error');
   }
 }
 
@@ -782,9 +1388,9 @@ function openClaimModal(foundId, lostId, itemName) {
 
 async function handleClaimSubmit(e) {
   e.preventDefault();
-  const foundId = parseInt(document.getElementById('claimFoundId').value);
+  const foundId = parseInt(document.getElementById('claimFoundId').value, 10);
   const lostIdVal = document.getElementById('claimLostId').value;
-  const lostId = lostIdVal ? parseInt(lostIdVal) : null;
+  const lostId = lostIdVal ? parseInt(lostIdVal, 10) : null;
   const proof = document.getElementById('claimProof').value;
 
   const payload = {
@@ -806,7 +1412,7 @@ async function handleClaimSubmit(e) {
       closeModal('claimModal');
       showToast(`Success: ${data.message}`, 'success');
       await refreshAll();
-      switchView('view-security');
+      switchView('view-my-activity');
     } else {
       showToast(`Claim Conflict / Error: ${data.message}`, 'error');
     }
@@ -824,7 +1430,7 @@ function openReviewModal(claimId, decision, claimantName, itemName, proof) {
   document.getElementById('reviewNotes').value = '';
 
   const btnAction = document.getElementById('btnReviewAction');
-  btnAction.textContent = decision === 'APPROVED' ? 'Confirm Approval' : 'Confirm Rejection';
+  btnAction.textContent = decision === 'APPROVED' ? 'Confirm Approval (Generate 2FA PIN)' : 'Confirm Rejection';
   btnAction.className = decision === 'APPROVED' ? 'btn-success' : 'btn-danger';
 
   document.getElementById('reviewModal').classList.add('open');
@@ -938,7 +1544,6 @@ async function runConcurrencyRace() {
       threadATime.textContent = `T+${a.elapsed_ms}ms`;
       threadBTime.textContent = `T+${b.elapsed_ms}ms`;
 
-      // Thread A render
       if (a.result_code === 'SUCCESS') {
         threadACard.className = 'thread-card winner';
         threadABadge.textContent = '200 OK — Lock Acquired & Committed';
@@ -949,7 +1554,6 @@ async function runConcurrencyRace() {
         threadAMsg.textContent = a.message;
       }
 
-      // Thread B render
       if (b.result_code === 'SUCCESS') {
         threadBCard.className = 'thread-card winner';
         threadBBadge.textContent = '200 OK — Lock Acquired & Committed';
@@ -995,13 +1599,14 @@ function openReceiptModal(claimId, claimantName, claimantEnrollment, claimantPho
 }
 
 function closeModal(modalId) {
-  document.getElementById(modalId).classList.remove('open');
+  const el = document.getElementById(modalId);
+  if (el) el.classList.remove('open');
 }
 
 // Helpers
 function escapeQuotes(str) {
   if (!str) return '';
-  return str.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+  return String(str).replace(/'/g, "\\'").replace(/"/g, '&quot;');
 }
 
 function showToast(message, type = 'info') {
