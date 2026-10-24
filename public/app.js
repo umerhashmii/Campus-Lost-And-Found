@@ -1268,36 +1268,81 @@ async function handlePINVerificationSubmit(e) {
 // ========================================================
 // 90-DAY UNCLAIMED DEPOSITORY & DISPOSAL MANAGEMENT
 // ========================================================
-async function loadUnclaimedDepository() {
+let currentUnclaimedDaysThreshold = 90;
+
+function setUnclaimedThreshold(days) {
+  currentUnclaimedDaysThreshold = days;
+  [90, 60, 30, 0].forEach(d => {
+    const pill = document.getElementById(`unclaimedPill${d}`);
+    if (pill) {
+      if (d === days) pill.classList.add('active');
+      else pill.classList.remove('active');
+    }
+  });
+  loadUnclaimedDepository(days);
+}
+
+async function loadUnclaimedDepository(days = currentUnclaimedDaysThreshold) {
+  currentUnclaimedDaysThreshold = days;
   const tbody = document.getElementById('unclaimedTableBody');
   const countBadge = document.getElementById('unclaimedEligibleCount');
+  const periodBadge = document.getElementById('unclaimedPeriodLabel');
   if (!tbody) return;
 
+  if (periodBadge) periodBadge.textContent = days === 0 ? 'All Active (0+ Days)' : `${days} Days`;
   tbody.innerHTML = '<tr><td colspan="7">Loading overdue depository inventory...</td></tr>';
 
   try {
-    const res = await fetch(`${API_BASE}/admin/unclaimed?days=1`); // threshold query
+    const res = await fetch(`${API_BASE}/admin/unclaimed?days=${days}`);
     const data = await res.json();
 
     if (data.success) {
-      if (countBadge) countBadge.textContent = data.count;
+      const eligibleCount = data.data.filter(i => i.days_in_custody >= 90).length;
+      if (countBadge) countBadge.textContent = eligibleCount;
 
       if (data.data.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 32px;">No found property currently exceeds the statutory custody period.</td></tr>';
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 32px; color: var(--color-text-muted);">No found property currently exceeds the ${days}-day holding threshold.</td></tr>`;
         return;
       }
 
       tbody.innerHTML = '';
       data.data.forEach(item => {
+        const isOverdue = item.days_in_custody >= 90;
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td><strong>#F-${item.found_id}</strong></td>
-          <td><strong>${item.item_name}</strong></td>
+          <td>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              ${item.image_url ? `
+                <img src="${item.image_url}" alt="${item.item_name}" style="width: 44px; height: 44px; object-fit: cover; border-radius: 8px; border: 1px solid var(--color-hairline); flex-shrink: 0; box-shadow: var(--clay-button-shadow);">
+              ` : `
+                <div style="width: 44px; height: 44px; border-radius: 8px; background: var(--color-surface-soft); display: flex; align-items: center; justify-content: center; color: var(--color-text-muted); flex-shrink: 0; border: 1px solid var(--color-hairline);">
+                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                </div>
+              `}
+              <div>
+                <strong>${item.item_name}</strong><br>
+                <span style="font-size: 11px; color: var(--color-text-muted);">${item.brand || 'Campus Property'}</span>
+              </div>
+            </div>
+          </td>
           <td>${item.category_name}</td>
           <td>${new Date(item.found_date).toLocaleDateString()}</td>
-          <td><span style="font-weight: 700; color: var(--color-danger);">${item.days_in_custody} days</span></td>
-          <td>${item.custody_location}</td>
-          <td><span class="card-status-badge open">ELIGIBLE FOR DISPOSAL</span></td>
+          <td>
+            ${isOverdue ? `
+              <span style="font-weight: 800; color: var(--color-danger);">${item.days_in_custody} days (Overdue)</span>
+            ` : `
+              <span style="font-weight: 600; color: var(--color-text-main);">${item.days_in_custody} days <small style="color:var(--color-text-muted);">(${90 - item.days_in_custody}d left)</small></span>
+            `}
+          </td>
+          <td><span style="font-size: 12px;">${item.custody_location}</span></td>
+          <td>
+            ${isOverdue ? `
+              <span class="card-status-badge expired" style="background: #FEE2E2; color: #991B1B; border: 1px solid #FCA5A5; font-weight: 700;">OVERDUE (ELIGIBLE FOR DISPOSAL)</span>
+            ` : `
+              <span class="card-status-badge available" style="background: #DCFCE7; color: #166534; border: 1px solid #86EFAC; font-weight: 700;">SAFEGUARDED (IN HOLDING)</span>
+            `}
+          </td>
         `;
         tbody.appendChild(tr);
       });

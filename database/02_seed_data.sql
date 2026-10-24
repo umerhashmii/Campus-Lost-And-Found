@@ -54,7 +54,9 @@ INSERT INTO found_reports (finder_id, category_id, item_name, description, image
 (7, 4, 'Brown Men Leather Wallet', 'Found on quiet study table at Central Library 2nd floor. Has CNIC inside', 'uploads/seed-leather-wallet.jpg', 'Brown', 'Leather', 4, '2026-10-22 13:30:00', 'UBIT Security Desk (Admin Room 02)', 'UNDER_CLAIM'),
 (5, 7, 'Silver Motorcycle Key with Honda Tag', 'Found near parking gate 2 fence pole with red woven Honda tag', 'uploads/seed-bike-keys.jpg', 'Silver/Black', 'Honda', 8, '2026-10-23 09:15:00', 'Security Main Gate Booth', 'UNDER_CLAIM'),
 (2, 2, 'Casio Scientific Calculator FX-991ES', 'Found left on podium chair in CS Seminar Hall', 'uploads/seed-casio-calc.jpg', 'Silver', 'Casio', 3, '2026-10-23 16:15:00', 'UBIT Security Desk (Admin Room 02)', 'AVAILABLE'),
-(3, 5, 'Kingston 64GB DataTraveler USB Drive', 'Metal flash drive with red strap found on computer lab desk', 'uploads/seed-usb-drive.jpg', 'Silver/Red', 'Kingston', 1, '2026-10-24 10:00:00', 'UBIT Security Desk (Admin Room 02)', 'AVAILABLE');
+(3, 5, 'Kingston 64GB DataTraveler USB Drive', 'Metal flash drive with red strap found on computer lab desk', 'uploads/seed-usb-drive.jpg', 'Silver/Red', 'Kingston', 1, '2026-10-24 10:00:00', 'UBIT Security Desk (Admin Room 02)', 'AVAILABLE'),
+(5, 4, 'HP Stream 14 Padded Laptop Sleeve & Notebook', 'Found in CS Seminar Hall back row, contains spiral lecture notebook. Held past statutory custody period.', 'uploads/seed-hp-sleeve.jpg', 'Black/Blue', 'HP', 3, '2026-06-12 11:00:00', 'Admin Room 02 Depository Shelf B3', 'AVAILABLE'),
+(5, 7, 'Stainless Steel Campus Water Bottle', 'Blue insulated sports flask with university stickers left on gym bleachers. Held past 90 days.', 'uploads/seed-water-bottle.jpg', 'Blue', 'HydroFlask', 7, '2026-07-05 17:30:00', 'Security Main Gate Depot (Locker 04)', 'AVAILABLE');
 
 -- 6. SEED CLAIMS (Realistic verification queue records)
 INSERT INTO claims (claim_id, found_id, claimant_id, lost_id, proof_details, claim_date, status, pickup_pin, reviewer_id, review_notes, reviewed_at) VALUES

@@ -628,7 +628,7 @@
       <div class="quick-actions-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-bottom: 20px;">
         <div class="clay-stat-card">
           <span class="clay-stat-label">Statutory Holding Period</span>
-          <span class="clay-stat-value">90 Days</span>
+          <span class="clay-stat-value" id="unclaimedPeriodLabel">90 Days</span>
         </div>
         <div class="clay-stat-card gold">
           <span class="clay-stat-label">Eligible Overdue Items</span>
@@ -638,6 +638,15 @@
           <span class="clay-stat-label">Designated Recipient</span>
           <span class="clay-stat-value" style="font-size: 15px;">UBIT Student Welfare</span>
         </div>
+      </div>
+
+      <!-- Threshold Filter Bar -->
+      <div style="display: flex; gap: 8px; margin-bottom: 14px; align-items: center; flex-wrap: wrap;">
+        <span style="font-size: 12px; font-weight: 700; color: var(--color-text-muted); margin-right: 4px;">Holding Threshold:</span>
+        <button class="filter-pill active" id="unclaimedPill90" onclick="setUnclaimedThreshold(90)">90+ Days (Statutory Overdue)</button>
+        <button class="filter-pill" id="unclaimedPill60" onclick="setUnclaimedThreshold(60)">60+ Days (Approaching)</button>
+        <button class="filter-pill" id="unclaimedPill30" onclick="setUnclaimedThreshold(30)">30+ Days</button>
+        <button class="filter-pill" id="unclaimedPill0" onclick="setUnclaimedThreshold(0)">All Custody Inventory</button>
       </div>
 
       <div class="table-clay-wrap">
