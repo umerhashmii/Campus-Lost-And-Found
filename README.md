@@ -20,6 +20,7 @@
 | **Syed Umer Hashmi** | `EB25210006105` | Full-Stack Architect, Clay UI System & Lead Developer |
 | **Maaz Malick** | `EB25210006036` | 3NF Schema Normalization & Concurrency Locking Specialist |
 | **Muzammil Rizwan** | `EB25210006079` | Stored Procedures, Matching Algorithms & Analytics Specialist |
+| **Adan Kamran** | `EB25210006085` | Frontend UI Integration, Verification & Quality Assurance |
 
 ---
 

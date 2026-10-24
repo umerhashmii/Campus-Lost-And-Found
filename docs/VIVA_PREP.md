@@ -7,6 +7,7 @@
   1. **Syed Umer Hashmi** (`EB25210006105`) — Lead Full-Stack & Database Architect
   2. **Maaz Malick** (`EB25210006036`) — Database Schema & Concurrency Specialist
   3. **Muzammil Rizwan** (`EB25210006079`) — Backend API & Analytics Specialist
+  4. **Adan Kamran** (`EB25210006085`) — Quality Assurance & Integration Specialist
 
 ---
 
@@ -193,3 +194,4 @@ Follow this 5-step script during your presentation to guarantee top marks:
 | **Syed Umer Hashmi** (`EB25210006105`) | Introduction, Problem Statement, Clay Design Architecture, Live User Journey & Official Voucher demo. |
 | **Maaz Malick** (`EB25210006036`) | 3NF Relational Schema Normalization, Functional Dependencies, Pessimistic Row Locking (`SELECT ... FOR UPDATE`), and the Live Concurrency Race Demo. |
 | **Muzammil Rizwan** (`EB25210006079`) | 4-Factor Stored Procedure Matching Engine, Database Triggers & Audit Logging, and Analytics Views (`vw_recovery_rate`, `vw_hotspots`). |
+| **Adan Kamran** (`EB25210006085`) | Two-Factor (2FA) Custody Handover PIN Protocol, 90-Day Unclaimed Property Depository & Student Welfare Donation lifecycle. |

@@ -14,7 +14,7 @@
     "ubit",
     "clay-design"
   ],
-  "author": "Syed Umer Hashmi, Maaz Malick, Muzammil Rizwan",
+  "author": "Syed Umer Hashmi, Maaz Malick, Muzammil Rizwan, Adan Kamran",
   "license": "MIT",
   "dependencies": {
     "cors": "^2.8.5",

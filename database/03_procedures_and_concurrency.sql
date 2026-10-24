@@ -1,7 +1,7 @@
 -- ========================================================
 -- DBMS PROJECT: Campus Lost & Found Recovery System
 -- Institution: Umaer Basha Institute of Information Technology (UBIT)
--- Authors: Syed Umer Hashmi, Maaz Malick, Muzammil Rizwan
+-- Authors: Syed Umer Hashmi, Maaz Malick, Muzammil Rizwan, Adan Kamran
 -- File: 03_procedures_and_concurrency.sql (Stored Procedures & Concurrency Control)
 -- ========================================================
 

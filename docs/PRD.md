@@ -5,7 +5,7 @@
 
 * **Academic Institution:** Umaer Basha Institute of Information Technology (UBIT), University of Karachi  
 * **Course:** Database Management Systems (DBMS) — 4th Semester  
-* **Authors:** Syed Umer Hashmi (`EB25210006105`), Maaz Malick (`EB25210006036`), Muzammil Rizwan (`EB25210006079`)  
+* **Authors:** Syed Umer Hashmi (`EB25210006105`), Maaz Malick (`EB25210006036`), Muzammil Rizwan (`EB25210006079`), Adan Kamran (`EB25210006085`)  
 * **Version:** 1.0.0  
 * **Date:** October 2026  
 

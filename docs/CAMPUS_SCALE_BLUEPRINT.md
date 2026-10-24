@@ -2,7 +2,7 @@
 ## UBIT Lost & Found Recovery System — Realistic Campus Roadmap
 
 * **Institution:** Umaer Basha Institute of Information Technology (UBIT), University of Karachi
-* **Team:** Syed Umer Hashmi (`EB25210006105`), Maaz Malick (`EB25210006036`), Muzammil Rizwan (`EB25210006079`)
+* **Team:** Syed Umer Hashmi (`EB25210006105`), Maaz Malick (`EB25210006036`), Muzammil Rizwan (`EB25210006079`), Adan Kamran (`EB25210006085`)
 * **Status:** Aligned with real-world UBIT operational constraints.
 
 ---
