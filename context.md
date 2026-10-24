@@ -109,8 +109,8 @@ c:\University\DBMS Project 4th Semester\
 | **M5: Frontend Prototype UI (Phase 1)** | DONE | Precision rebuilt navbar with Clay pill tabs, brand cluster, and avatar profile pill. |
 | **M6: Advanced Academic Features (Phase 2-4)** | DONE | Live concurrency race simulator, match score explainer, campus hotspot map, custody handover voucher. |
 | **M7: GitHub Sync & Viva Defense (Phase 5)** | DONE | Complete VIVA_PREP.md guide, finalize README.md, local Git commits clean on main (user will push remote later). |
-| **M7: GitHub Sync & Viva Defense (Phase 5)** | DONE | Complete VIVA_PREP.md guide, finalize README.md, local Git commits clean on main (user will push remote later). |
 | **M8: Official Campus App Overhaul** | DONE | Pulled TypeUI claymorphism skill, blended with UBIT official logo/maroon/gold branding in DESIGN.md, launched complete multi-page portal with Home Hub & Browse Catalog. |
+| **M9: Vector Icon Standard & Navbar Layout Fix** | DONE | Replaced emojis with crisp inline SVG vector icons across navbar, quick cards, buttons, and tables. Resolved navbar horizontal clipping. Replaced match score gradient with solid official UBIT Academic Maroon (`#7A1521`) badge and gold accent. |
 
 ---
 
