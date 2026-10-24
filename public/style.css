@@ -12,10 +12,17 @@
   --color-primary-dark: #4A0D14;    /* Deep Maroon Shadow */
   --color-primary-soft: #FDF2F4;    /* Soft Maroon Pill Surface */
   
-  --color-gold: #D4AF37;            /* UBIT Prestige Gold from Star */
-  --color-gold-hover: #C59B27;
-  --color-gold-soft: #FEF9EE;
-  --color-gold-border: #E8D08B;
+  /* Secondary Accent: Academic Deep Navy (Replaces murky mustard yellow) */
+  --color-accent: #1B2A4A;          /* University Deep Navy */
+  --color-accent-hover: #131E35;    /* Interactive Navy Hover */
+  --color-accent-soft: #EDF3FB;     /* Soft Cool Slate-Blue Surface */
+  --color-accent-border: #CBD8EB;   /* Crisp Slate-Blue Border */
+  
+  /* Legacy mapping aliases */
+  --color-gold: var(--color-accent);
+  --color-gold-hover: var(--color-accent-hover);
+  --color-gold-soft: var(--color-accent-soft);
+  --color-gold-border: var(--color-accent-border);
 
   /* Clay Canvas & Surfaces */
   --color-canvas: #F4F6FB;          /* Soft cool clay backdrop */
@@ -59,9 +66,9 @@
     inset 0 -2px 4px rgba(74, 13, 20, 0.4);
 
   --clay-btn-gold:
-    0 8px 18px -4px rgba(212, 175, 55, 0.35),
-    inset 0 2px 3px rgba(255, 255, 255, 0.5),
-    inset 0 -2px 4px rgba(160, 120, 20, 0.4);
+    0 8px 18px -4px rgba(27, 42, 74, 0.35),
+    inset 0 2px 3px rgba(255, 255, 255, 0.35),
+    inset 0 -2px 4px rgba(10, 18, 35, 0.4);
 
   --clay-btn-secondary:
     0 6px 14px -2px rgba(26, 29, 46, 0.06),
@@ -427,13 +434,13 @@ button {
 }
 
 .btn-gold {
-  background: var(--color-gold);
-  color: #1A1D2E;
-  border: 1px solid rgba(255, 255, 255, 0.4);
+  background: var(--color-accent);
+  color: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: var(--radius-md);
   padding: 10px 18px;
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 600;
   cursor: pointer;
   box-shadow: var(--clay-btn-gold);
   display: inline-flex;
@@ -443,8 +450,9 @@ button {
 }
 
 .btn-gold:hover {
-  background: var(--color-gold-hover);
+  background: var(--color-accent-hover);
   transform: translateY(-2px);
+  box-shadow: 0 12px 22px -4px rgba(27, 42, 74, 0.45), inset 0 2px 3px rgba(255, 255, 255, 0.35);
 }
 
 .btn-primary svg,
@@ -980,19 +988,64 @@ button {
 .card-status-badge {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
   padding: 3px 10px;
   border-radius: var(--radius-pill);
   font-family: var(--font-mono);
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
+  background: var(--color-surface-soft);
+  color: var(--color-text-main);
+  border: 1px solid var(--color-hairline);
+  white-space: nowrap;
 }
 
-.card-status-badge.available { background: var(--color-success-soft); color: var(--color-success); border: 1px solid rgba(22, 163, 74, 0.2); }
-.card-status-badge.open { background: var(--color-info-soft); color: var(--color-info); border: 1px solid rgba(37, 99, 235, 0.2); }
-.card-status-badge.under_claim { background: var(--color-warning-soft); color: var(--color-warning); border: 1px solid rgba(217, 119, 6, 0.2); }
-.card-status-badge.claimed, .card-status-badge.resolved { background: var(--color-primary-soft); color: var(--color-primary); border: 1px solid rgba(122, 21, 33, 0.2); }
+.card-status-badge.matched {
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  border: 1px solid rgba(122, 21, 33, 0.22);
+}
+
+.card-status-badge.available {
+  background: var(--color-success-soft);
+  color: var(--color-success);
+  border: 1px solid rgba(22, 163, 74, 0.25);
+}
+
+.card-status-badge.open {
+  background: #EFF6FF;
+  color: #1D4ED8;
+  border: 1px solid rgba(29, 78, 216, 0.25);
+}
+
+.card-status-badge.under_claim {
+  background: var(--color-warning-soft);
+  color: var(--color-warning);
+  border: 1px solid rgba(217, 119, 6, 0.25);
+}
+
+.card-status-badge.claimed,
+.card-status-badge.resolved,
+.card-status-badge.approved {
+  background: var(--color-success-soft);
+  color: var(--color-success);
+  border: 1px solid rgba(22, 163, 74, 0.25);
+}
+
+.card-status-badge.rejected,
+.card-status-badge.expired,
+.card-status-badge.cancelled {
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+  border: 1px solid rgba(220, 38, 38, 0.25);
+}
+
+.card-status-badge.pending {
+  background: #FEF3C7;
+  color: #B45309;
+  border: 1px solid rgba(180, 83, 9, 0.25);
+}
 
 /* ========================================================
    MATCH FEED & SCORE EXPLAINER
@@ -1056,7 +1109,7 @@ button {
 }
 
 .score-badge.perfect svg {
-  fill: var(--color-gold);
+  fill: #FBBF24;
 }
 
 .match-category-pill {
