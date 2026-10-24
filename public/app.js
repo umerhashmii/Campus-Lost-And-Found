@@ -687,15 +687,26 @@ function filterCatalog() {
     card.className = 'catalog-card';
     card.innerHTML = `
       <div>
-        ${item.image_url ? `<img src="${item.image_url}" class="catalog-item-thumb" alt="${item.item_name}">` : ''}
+        <div class="catalog-img-wrap">
+          ${item.image_url ? `
+            <img src="${item.image_url}" class="catalog-item-thumb" alt="${item.item_name}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <div class="catalog-img-fallback" style="display: none;">
+              <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            </div>
+          ` : `
+            <div class="catalog-img-fallback">
+              <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            </div>
+          `}
+        </div>
 
-        <div style="padding: ${item.image_url ? '14px 16px 0 16px' : '0'};">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <div style="padding: 16px 18px 0 18px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
             <span class="card-status-badge ${item.status.toLowerCase()}">${item.type}: ${item.status}</span>
-            <span style="font-size: 11px; font-weight: 600; color: var(--color-text-muted);">${item.category_name}</span>
+            <span style="font-size: 11px; font-weight: 700; color: var(--color-text-muted);">${item.category_name}</span>
           </div>
 
-          <h4 style="font-size: 16px; font-weight: 700; color: var(--color-text-main); margin-bottom: 6px;">${item.item_name}</h4>
+          <h4 style="font-size: 16px; font-weight: 700; color: var(--color-text-main); margin-bottom: 6px; line-height: 1.3;">${item.item_name}</h4>
           
           <div style="font-size: 12px; color: var(--color-text-muted); margin-bottom: 12px; display: flex; flex-direction: column; gap: 4px;">
             <div style="display: flex; align-items: center; gap: 6px;">
@@ -713,14 +724,14 @@ function filterCatalog() {
             </div>` : ''}
           </div>
 
-          ${item.description ? `<p style="font-size: 12px; color: var(--color-text-body); background: var(--color-surface-soft); padding: 8px 12px; border-radius: var(--radius-sm); margin-bottom: 14px;">${item.description}</p>` : ''}
+          ${item.description ? `<p style="font-size: 12px; color: var(--color-text-body); background: var(--color-surface-soft); padding: 8px 10px; border-radius: var(--radius-sm); margin-bottom: 12px; line-height: 1.4;">${item.description}</p>` : ''}
         </div>
       </div>
 
-      <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-top: 1px solid var(--color-hairline);">
-        <span style="font-size: 11px; color: var(--color-text-muted);">Reported by ${item.reporter}</span>
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 18px; border-top: 1px solid var(--color-hairline); background: var(--color-surface);">
+        <span style="font-size: 11px; color: var(--color-text-muted);">By ${item.reporter}</span>
         ${isFound && item.status === 'AVAILABLE' ? `
-          <button class="btn-primary" style="padding: 6px 14px; font-size: 12px;" onclick="openClaimModal(${item.id}, null, '${escapeQuotes(item.item_name)}')">Claim Item</button>
+          <button class="btn-primary" style="padding: 6px 14px; font-size: 12px;" onclick="openClaimModal(${item.id}, null, '${escapeQuotes(item.item_name)}', '${escapeQuotes(item.image_url || '')}')">Claim Item</button>
         ` : `
           <button class="btn-secondary" style="padding: 6px 12px; font-size: 12px;" onclick="switchView('view-matches')">View Matches</button>
         `}
@@ -770,9 +781,31 @@ async function loadMatches() {
           </div>
 
           <h4 style="font-size: 16px; font-weight: 700; color: var(--color-text-main); margin-bottom: 4px;">${m.lost_item_name}</h4>
-          <p style="font-size: 12px; color: var(--color-text-muted); margin-bottom: 8px;">
+          <p style="font-size: 12px; color: var(--color-text-muted); margin-bottom: 10px;">
             Reported lost by <strong>${m.owner_name}</strong>
           </p>
+
+          ${(m.lost_image_url || m.found_image_url) ? `
+            <div style="display: flex; gap: 8px; margin-bottom: 12px; align-items: center; justify-content: space-between; background: var(--color-surface-soft); padding: 8px; border-radius: var(--radius-md); border: 1px solid var(--color-hairline);">
+              <div style="flex: 1; text-align: center;">
+                <span style="font-size: 10px; font-weight: 800; color: var(--color-text-muted); text-transform: uppercase; display: block; margin-bottom: 4px; letter-spacing: 0.5px;">Reported Lost</span>
+                ${m.lost_image_url ? `
+                  <img src="${m.lost_image_url}" alt="Lost photo" style="width: 100%; height: 74px; object-fit: cover; border-radius: 6px; border: 1px solid var(--color-hairline);">
+                ` : `
+                  <div style="width: 100%; height: 74px; border-radius: 6px; background: var(--color-surface-sunken); display: flex; align-items: center; justify-content: center; font-size: 10.5px; color: var(--color-text-muted);">No Photo</div>
+                `}
+              </div>
+              <div style="padding: 0 4px; color: var(--color-primary); font-weight: 900; font-size: 14px;">⇄</div>
+              <div style="flex: 1; text-align: center;">
+                <span style="font-size: 10px; font-weight: 800; color: var(--color-text-muted); text-transform: uppercase; display: block; margin-bottom: 4px; letter-spacing: 0.5px;">Found in Custody</span>
+                ${m.found_image_url ? `
+                  <img src="${m.found_image_url}" alt="Found photo" style="width: 100%; height: 74px; object-fit: cover; border-radius: 6px; border: 1px solid var(--color-hairline);">
+                ` : `
+                  <div style="width: 100%; height: 74px; border-radius: 6px; background: var(--color-surface-sunken); display: flex; align-items: center; justify-content: center; font-size: 10.5px; color: var(--color-text-muted);">No Photo</div>
+                `}
+              </div>
+            </div>
+          ` : ''}
 
           <div class="item-vs-container">
             <div class="vs-row">
@@ -795,7 +828,7 @@ async function loadMatches() {
         </div>
 
         <div style="display: flex; gap: 8px; margin-top: 14px;">
-          <button class="btn-primary" style="flex: 1;" onclick="openClaimModal(${m.found_id}, ${m.lost_id}, '${escapeQuotes(m.found_item_name)}')">
+          <button class="btn-primary" style="flex: 1;" onclick="openClaimModal(${m.found_id}, ${m.lost_id}, '${escapeQuotes(m.found_item_name)}', '${escapeQuotes(m.found_image_url || '')}')">
             Claim Found Item
           </button>
           <button class="btn-secondary" style="padding: 0 12px; display: inline-flex; align-items: center; gap: 5px;" onclick="openScoreExplainer('${escapeQuotes(m.found_item_name)}', ${m.match_score}, '${escapeQuotes(m.category_name)}')">
@@ -831,9 +864,13 @@ async function handleLostSubmit(e) {
   formData.append('description', document.getElementById('lostDescription').value || '');
 
   const fileInput = document.getElementById('lostImageInput');
-  if (fileInput && fileInput.files[0]) {
-    formData.append('image', fileInput.files[0]);
+  if (!fileInput || !fileInput.files[0]) {
+    showToast('Item photograph is mandatory for campus recovery records. Please upload a photo.', 'error');
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Submit Report & Check Matches';
+    return;
   }
+  formData.append('image', fileInput.files[0]);
 
   try {
     const res = await fetch(`${API_BASE}/lost`, {
@@ -884,9 +921,13 @@ async function handleFoundSubmit(e) {
   formData.append('description', document.getElementById('foundStorageBin')?.value || '');
 
   const fileInput = document.getElementById('foundImageInput');
-  if (fileInput && fileInput.files[0]) {
-    formData.append('image', fileInput.files[0]);
+  if (!fileInput || !fileInput.files[0]) {
+    showToast('Found item photograph is mandatory for custody verification. Please upload a photo.', 'error');
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Record Found Item & Check Matches';
+    return;
   }
+  formData.append('image', fileInput.files[0]);
 
   try {
     const res = await fetch(`${API_BASE}/found`, {
@@ -975,10 +1016,21 @@ async function loadMyActivity() {
                 <span style="font-size: 11px; font-family: var(--font-mono); color: var(--color-text-muted);">Claim #${c.claim_id}</span>
               </div>
 
-              <h4 style="font-size: 16px; font-weight: 800; color: var(--color-primary); margin-bottom: 4px;">${c.found_item_name}</h4>
-              <p style="font-size: 12px; color: var(--color-text-muted); margin-bottom: 12px;">
-                ${c.category_name} · Held at: <strong>${c.custody_location}</strong>
-              </p>
+              <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 12px;">
+                ${c.found_image_url ? `
+                  <img src="${c.found_image_url}" alt="${c.found_item_name}" style="width: 52px; height: 52px; object-fit: cover; border-radius: 8px; border: 1px solid var(--color-hairline); flex-shrink: 0; box-shadow: var(--clay-button-shadow);">
+                ` : `
+                  <div style="width: 52px; height: 52px; border-radius: 8px; background: var(--color-surface-soft); display: flex; align-items: center; justify-content: center; color: var(--color-text-muted); flex-shrink: 0; border: 1px solid var(--color-hairline);">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                  </div>
+                `}
+                <div>
+                  <h4 style="font-size: 16px; font-weight: 800; color: var(--color-primary); margin-bottom: 2px;">${c.found_item_name}</h4>
+                  <p style="font-size: 12px; color: var(--color-text-muted); margin: 0;">
+                    ${c.category_name} · Held at: <strong>${c.custody_location}</strong>
+                  </p>
+                </div>
+              </div>
 
               <!-- 4-Step Visual Stepper -->
               <div class="stepper-container">
@@ -1011,7 +1063,7 @@ async function loadMyActivity() {
                     Present this 6-digit code to the Security Officer at <strong>Admin Room 02</strong> to retrieve your property.
                   </div>
                   <div style="margin-top: 10px;">
-                    <button class="btn-primary" style="padding: 6px 14px; font-size: 12px;" onclick="openReceiptModal(${c.claim_id}, '${escapeQuotes(currentUser.full_name)}', '${escapeQuotes(currentUser.enrollment_no || '')}', '${escapeQuotes(currentUser.phone)}', '${escapeQuotes(c.found_item_name)}', '${escapeQuotes(c.category_name)}', '${escapeQuotes(c.custody_location)}', '${escapeQuotes(c.proof_details)}')">
+                    <button class="btn-primary" style="padding: 6px 14px; font-size: 12px;" onclick="openReceiptModal(${c.claim_id}, '${escapeQuotes(currentUser.full_name)}', '${escapeQuotes(currentUser.enrollment_no || '')}', '${escapeQuotes(currentUser.phone)}', '${escapeQuotes(c.found_item_name)}', '${escapeQuotes(c.category_name)}', '${escapeQuotes(c.custody_location)}', '${escapeQuotes(c.proof_details)}', '${escapeQuotes(c.found_image_url || '')}')">
                       Print Official Pickup Slip
                     </button>
                   </div>
@@ -1055,10 +1107,17 @@ async function loadMyActivity() {
                 <span style="font-size: 11px; color: var(--color-text-muted);">${new Date(l.lost_date).toLocaleDateString()}</span>
               </div>
 
-              <h4 style="font-size: 16px; font-weight: 700; color: var(--color-text-main); margin-bottom: 4px;">${l.item_name}</h4>
-              <p style="font-size: 12px; color: var(--color-text-muted); margin-bottom: 12px;">
-                ${l.category_name} · Lost at: ${l.building_name} (${l.room_floor})
-              </p>
+              <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 12px;">
+                ${l.image_url ? `
+                  <img src="${l.image_url}" alt="${l.item_name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid var(--color-hairline); flex-shrink: 0; box-shadow: var(--clay-button-shadow);">
+                ` : ''}
+                <div>
+                  <h4 style="font-size: 16px; font-weight: 700; color: var(--color-text-main); margin-bottom: 2px;">${l.item_name}</h4>
+                  <p style="font-size: 12px; color: var(--color-text-muted); margin: 0;">
+                    ${l.category_name} · Lost at: ${l.building_name} (${l.room_floor})
+                  </p>
+                </div>
+              </div>
 
               <div style="display: flex; justify-content: space-between; align-items: center; background: var(--color-surface-soft); padding: 8px 12px; border-radius: var(--radius-sm); font-size: 12px;">
                 <span>Automated Matches: <strong>${l.total_matches}</strong></span>
@@ -1129,8 +1188,19 @@ async function loadSecurityQueue() {
           <span style="font-size: 11px; color: var(--color-text-muted); font-family: var(--font-mono);">${c.claimant_enrollment || 'Visitor'} · ${c.claimant_phone}</span>
         </td>
         <td>
-          <strong>${c.found_item_name}</strong><br>
-          <span style="font-size: 11px; color: var(--color-text-muted);">${c.category_name} (${c.found_building})</span>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            ${c.found_image_url ? `
+              <img src="${c.found_image_url}" alt="${c.found_item_name}" style="width: 44px; height: 44px; object-fit: cover; border-radius: 8px; border: 1px solid var(--color-hairline); flex-shrink: 0; box-shadow: var(--clay-button-shadow);">
+            ` : `
+              <div style="width: 44px; height: 44px; border-radius: 8px; background: var(--color-surface-soft); display: flex; align-items: center; justify-content: center; color: var(--color-text-muted); flex-shrink: 0; border: 1px solid var(--color-hairline);">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              </div>
+            `}
+            <div>
+              <strong>${c.found_item_name}</strong><br>
+              <span style="font-size: 11px; color: var(--color-text-muted);">${c.category_name} (${c.found_building})</span>
+            </div>
+          </div>
         </td>
         <td><span style="font-size: 12px;">${c.custody_location}</span></td>
         <td style="max-width: 200px; font-size: 12px;">${c.proof_details}</td>
@@ -1138,14 +1208,15 @@ async function loadSecurityQueue() {
         <td>
           <div style="display: flex; gap: 6px; flex-wrap: wrap;">
             ${isPending ? `
-              <button class="btn-success" onclick="openReviewModal(${c.claim_id}, 'APPROVED', '${escapeQuotes(c.claimant_name)}', '${escapeQuotes(c.found_item_name)}', '${escapeQuotes(c.proof_details)}')">Approve</button>
-              <button class="btn-danger" onclick="openReviewModal(${c.claim_id}, 'REJECTED', '${escapeQuotes(c.claimant_name)}', '${escapeQuotes(c.found_item_name)}', '${escapeQuotes(c.proof_details)}')">Reject</button>
+              <button class="btn-success" onclick="openReviewModal(${c.claim_id}, 'APPROVED', '${escapeQuotes(c.claimant_name)}', '${escapeQuotes(c.found_item_name)}', '${escapeQuotes(c.proof_details)}', '${escapeQuotes(c.found_image_url || '')}')">Approve</button>
+              <button class="btn-danger" onclick="openReviewModal(${c.claim_id}, 'REJECTED', '${escapeQuotes(c.claimant_name)}', '${escapeQuotes(c.found_item_name)}', '${escapeQuotes(c.proof_details)}', '${escapeQuotes(c.found_image_url || '')}')">Reject</button>
             ` : ''}
             ${isApproved ? `
-              <button class="btn-gold" style="padding: 5px 10px; font-size: 11px; font-weight: 700;" onclick="openPINVerifyModal(${c.claim_id}, '${escapeQuotes(c.claimant_name)}', '${escapeQuotes(c.found_item_name)}')">
-                🔑 Verify PIN
+              <button class="btn-gold" style="padding: 5px 10px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 5px;" onclick="openPINVerifyModal(${c.claim_id}, '${escapeQuotes(c.claimant_name)}', '${escapeQuotes(c.found_item_name)}')">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="4.5"/><path d="M21 2l-9.6 9.6"/><path d="M15.5 7.5l3 3"/><path d="M18.5 4.5l2 2"/></svg>
+                <span>Verify PIN</span>
               </button>
-              <button class="btn-secondary" style="padding: 5px 8px; font-size: 11px;" onclick="openReceiptModal(${c.claim_id}, '${escapeQuotes(c.claimant_name)}', '${escapeQuotes(c.claimant_enrollment || 'Visitor')}', '${escapeQuotes(c.claimant_phone)}', '${escapeQuotes(c.found_item_name)}', '${escapeQuotes(c.category_name)}', '${escapeQuotes(c.custody_location)}', '${escapeQuotes(c.proof_details)}')">
+              <button class="btn-secondary" style="padding: 5px 8px; font-size: 11px;" onclick="openReceiptModal(${c.claim_id}, '${escapeQuotes(c.claimant_name)}', '${escapeQuotes(c.claimant_enrollment || 'Visitor')}', '${escapeQuotes(c.claimant_phone)}', '${escapeQuotes(c.found_item_name)}', '${escapeQuotes(c.category_name)}', '${escapeQuotes(c.custody_location)}', '${escapeQuotes(c.proof_details)}', '${escapeQuotes(c.found_image_url || '')}')">
                 Voucher
               </button>
             ` : ''}
@@ -1378,11 +1449,23 @@ async function loadAnalytics() {
 // ========================================================
 // MODALS: CLAIM & CONCURRENCY
 // ========================================================
-function openClaimModal(foundId, lostId, itemName) {
+function openClaimModal(foundId, lostId, itemName, imageUrl) {
   document.getElementById('claimFoundId').value = foundId;
   document.getElementById('claimLostId').value = lostId || '';
   document.getElementById('claimItemName').value = itemName;
   document.getElementById('claimProof').value = '';
+
+  const imgContainer = document.getElementById('claimImageContainer');
+  const imgEl = document.getElementById('claimItemImage');
+  if (imgContainer && imgEl) {
+    if (imageUrl) {
+      imgEl.src = imageUrl;
+      imgContainer.style.display = 'block';
+    } else {
+      imgContainer.style.display = 'none';
+    }
+  }
+
   document.getElementById('claimModal').classList.add('open');
 }
 
@@ -1421,13 +1504,24 @@ async function handleClaimSubmit(e) {
   }
 }
 
-function openReviewModal(claimId, decision, claimantName, itemName, proof) {
+function openReviewModal(claimId, decision, claimantName, itemName, proof, imageUrl) {
   document.getElementById('reviewClaimId').value = claimId;
   document.getElementById('reviewDecision').value = decision;
   document.getElementById('reviewModalTitle').textContent = `${decision === 'APPROVED' ? 'Approve' : 'Reject'} Claim #${claimId}`;
   document.getElementById('reviewSummary').value = `${claimantName} claiming "${itemName}"`;
   document.getElementById('reviewProofDetails').value = proof;
   document.getElementById('reviewNotes').value = '';
+
+  const imgContainer = document.getElementById('reviewImageContainer');
+  const imgEl = document.getElementById('reviewItemImage');
+  if (imgContainer && imgEl) {
+    if (imageUrl) {
+      imgEl.src = imageUrl;
+      imgContainer.style.display = 'block';
+    } else {
+      imgContainer.style.display = 'none';
+    }
+  }
 
   const btnAction = document.getElementById('btnReviewAction');
   btnAction.textContent = decision === 'APPROVED' ? 'Confirm Approval (Generate 2FA PIN)' : 'Confirm Rejection';
@@ -1586,7 +1680,7 @@ function openScoreExplainer(itemName, score, category) {
   document.getElementById('scoreExplainerModal').classList.add('open');
 }
 
-function openReceiptModal(claimId, claimantName, claimantEnrollment, claimantPhone, itemName, categoryName, custodyLocation, proofDetails) {
+function openReceiptModal(claimId, claimantName, claimantEnrollment, claimantPhone, itemName, categoryName, custodyLocation, proofDetails, itemImageUrl) {
   document.getElementById('rcptVoucherId').textContent = `UBIT-REC-${String(claimId).padStart(4, '0')}`;
   document.getElementById('rcptDateTime').textContent = new Date().toLocaleString();
   document.getElementById('rcptClaimantName').textContent = claimantName || 'N/A';
@@ -1595,6 +1689,17 @@ function openReceiptModal(claimId, claimantName, claimantEnrollment, claimantPho
   document.getElementById('rcptItemName').textContent = itemName || 'N/A';
   document.getElementById('rcptCategoryCustody').textContent = `${categoryName || 'General'} · Custody at: ${custodyLocation || 'Campus Security Desk'}`;
   document.getElementById('rcptProof').textContent = proofDetails || 'Verification documents inspected and confirmed.';
+
+  const imgEl = document.getElementById('rcptItemImage');
+  if (imgEl) {
+    if (itemImageUrl) {
+      imgEl.src = itemImageUrl;
+      imgEl.style.display = 'block';
+    } else {
+      imgEl.style.display = 'none';
+    }
+  }
+
   document.getElementById('receiptModal').classList.add('open');
 }
 

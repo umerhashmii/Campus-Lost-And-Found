@@ -15,7 +15,7 @@ USE campus_lost_and_found;
 -- 1. USERS TABLE
 CREATE TABLE users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
-    enrollment_no VARCHAR(20) UNIQUE NOT NULL,
+    enrollment_no VARCHAR(20) UNIQUE NULL,
     full_name VARCHAR(100) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     phone VARCHAR(20) NOT NULL,
@@ -47,6 +47,7 @@ CREATE TABLE lost_reports (
     category_id INT NOT NULL,
     item_name VARCHAR(100) NOT NULL,
     description TEXT NOT NULL,
+    image_url VARCHAR(255) NULL,
     color VARCHAR(40),
     brand VARCHAR(60),
     location_id INT NOT NULL,
@@ -67,6 +68,7 @@ CREATE TABLE found_reports (
     category_id INT NOT NULL,
     item_name VARCHAR(100) NOT NULL,
     description TEXT NOT NULL,
+    image_url VARCHAR(255) NULL,
     color VARCHAR(40),
     brand VARCHAR(60),
     location_id INT NOT NULL,
@@ -104,6 +106,7 @@ CREATE TABLE claims (
     proof_details TEXT NOT NULL,
     claim_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     status ENUM('PENDING', 'UNDER_REVIEW', 'APPROVED', 'REJECTED') NOT NULL DEFAULT 'PENDING',
+    pickup_pin VARCHAR(12) NULL,
     reviewer_id INT NULL,
     review_notes TEXT,
     reviewed_at DATETIME NULL,

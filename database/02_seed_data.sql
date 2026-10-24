@@ -2,7 +2,7 @@
 -- DBMS PROJECT: Campus Lost & Found Recovery System
 -- Institution: Umaer Basha Institute of Information Technology (UBIT)
 -- Authors: Syed Umer Hashmi, Maaz Malick, Muzammil Rizwan, Adan Kamran
--- File: 02_seed_data.sql (Realistic Campus Seed Data)
+-- File: 02_seed_data.sql (Renewed Realistic Campus Seed Data with Authentic Photos)
 -- ========================================================
 
 USE campus_lost_and_found;
@@ -39,17 +39,29 @@ INSERT INTO categories (name, description) VALUES
 ('Books & Course Folders', 'Textbooks, handwritten lecture notebooks, and project reports'),
 ('Keys & Personal Belongings', 'Bike keys, car keys, locker keys, water bottles, and glasses');
 
--- 4. SEED LOST REPORTS
-INSERT INTO lost_reports (user_id, category_id, item_name, description, color, brand, location_id, lost_date, status) VALUES
-(1, 1, 'UBIT Student Smart Card', 'ID Card with enrollment EB25210006105 in a blue lanyard', 'Blue', 'UBIT RFID', 1, '2026-10-18 11:30:00', 'OPEN'),
-(2, 2, 'Dell 65W Type-C Laptop Charger', 'Black Dell laptop charger left on lab desk 14', 'Black', 'Dell', 2, '2026-10-19 14:15:00', 'OPEN'),
-(3, 4, 'Brown Leather Wallet', 'Contains CNIC, cash, and green metro bus card', 'Brown', 'J. Junaid Jamshed', 5, '2026-10-19 13:00:00', 'OPEN'),
-(6, 5, 'SanDisk 64GB Red USB Flash Drive', 'Contains DBMS semester project slides and SQL dumps', 'Red/Black', 'SanDisk Ultra', 1, '2026-10-20 09:45:00', 'OPEN'),
-(1, 7, 'Honda CD70 Bike Key with UBIT Keychain', 'Single motorcycle ignition key with a metal eagle keychain', 'Silver', 'Honda', 8, '2026-10-17 17:00:00', 'OPEN');
+-- 4. SEED LOST REPORTS (With verified high-resolution item photos)
+INSERT INTO lost_reports (user_id, category_id, item_name, description, image_url, color, brand, location_id, lost_date, status) VALUES
+(1, 1, 'UBIT Student Smart Card', 'ID Card with enrollment EB25210006105 in a blue lanyard', 'uploads/seed-id-card.jpg', 'Blue', 'UBIT RFID', 1, '2026-10-20 10:15:00', 'CLAIMED'),
+(2, 2, 'Dell 65W Type-C Laptop Charger', 'Black Dell laptop charger left on lab desk 14', 'uploads/seed-dell-charger.jpg', 'Black', 'Dell', 2, '2026-10-21 14:15:00', 'MATCHED'),
+(3, 4, 'Brown Leather Wallet', 'Contains CNIC, cash, and green metro bus card', 'uploads/seed-leather-wallet.jpg', 'Brown', 'J. Junaid Jamshed', 4, '2026-10-22 13:00:00', 'MATCHED'),
+(4, 7, 'Honda CD70 Bike Key with Ribbon', 'Single motorcycle ignition key with red woven Honda keychain tag', 'uploads/seed-bike-keys.jpg', 'Silver/Black', 'Honda', 8, '2026-10-23 08:30:00', 'MATCHED'),
+(7, 2, 'Casio FX-991ES Plus Calculator', 'Scientific calculator with slide cover left in seminar hall', 'uploads/seed-casio-calc.jpg', 'Silver', 'Casio', 3, '2026-10-23 15:00:00', 'OPEN');
 
--- 5. SEED FOUND REPORTS
-INSERT INTO found_reports (finder_id, category_id, item_name, description, color, brand, location_id, found_date, custody_location, status) VALUES
-(4, 1, 'Blue Lanyard with UBIT Student ID', 'Found on desktop keyboard table in Lab 1. Shows BSCS 4th sem', 'Blue', 'UBIT RFID', 1, '2026-10-18 13:00:00', 'UBIT Security Desk (Admin Room 02)', 'AVAILABLE'),
-(3, 2, 'Dell USB-C 65W Power Adapter', 'Found plugged into wall socket behind row 2 in Network Lab', 'Black', 'Dell', 2, '2026-10-19 16:30:00', 'Handed to Lab Attendant Brother Asif', 'AVAILABLE'),
-(6, 4, 'Brown Men Wallet', 'Found under bench at UBIT Canteen table 4. Has CNIC inside', 'Brown', 'Leather', 5, '2026-10-19 13:30:00', 'UBIT Security Desk (Admin Room 02)', 'AVAILABLE'),
-(4, 7, 'Silver Motorcycle Key', 'Found near parking gate 2 fence pole', 'Silver', 'Honda', 8, '2026-10-18 08:30:00', 'Security Main Gate Booth', 'AVAILABLE');
+-- 5. SEED FOUND REPORTS (With custody details and authentic photos)
+INSERT INTO found_reports (finder_id, category_id, item_name, description, image_url, color, brand, location_id, found_date, custody_location, status) VALUES
+(5, 1, 'Blue Lanyard with UBIT Student ID', 'Recovered from desktop keyboard table in Lab 1. Shows EB25210006105', 'uploads/seed-id-card.jpg', 'Blue', 'UBIT RFID', 1, '2026-10-20 11:30:00', 'UBIT Security Desk (Admin Room 02)', 'RESOLVED'),
+(6, 2, 'Dell USB-C 65W Power Adapter', 'Found plugged into wall socket behind row 2 in Network Lab', 'uploads/seed-dell-charger.jpg', 'Black', 'Dell', 2, '2026-10-21 16:30:00', 'Handed to Lab Attendant Brother Asif', 'AVAILABLE'),
+(7, 4, 'Brown Men Leather Wallet', 'Found on quiet study table at Central Library 2nd floor. Has CNIC inside', 'uploads/seed-leather-wallet.jpg', 'Brown', 'Leather', 4, '2026-10-22 13:30:00', 'UBIT Security Desk (Admin Room 02)', 'UNDER_CLAIM'),
+(5, 7, 'Silver Motorcycle Key with Honda Tag', 'Found near parking gate 2 fence pole with red woven Honda tag', 'uploads/seed-bike-keys.jpg', 'Silver/Black', 'Honda', 8, '2026-10-23 09:15:00', 'Security Main Gate Booth', 'UNDER_CLAIM'),
+(2, 2, 'Casio Scientific Calculator FX-991ES', 'Found left on podium chair in CS Seminar Hall', 'uploads/seed-casio-calc.jpg', 'Silver', 'Casio', 3, '2026-10-23 16:15:00', 'UBIT Security Desk (Admin Room 02)', 'AVAILABLE'),
+(3, 5, 'Kingston 64GB DataTraveler USB Drive', 'Metal flash drive with red strap found on computer lab desk', 'uploads/seed-usb-drive.jpg', 'Silver/Red', 'Kingston', 1, '2026-10-24 10:00:00', 'UBIT Security Desk (Admin Room 02)', 'AVAILABLE');
+
+-- 6. SEED CLAIMS (Realistic verification queue records)
+INSERT INTO claims (claim_id, found_id, claimant_id, lost_id, proof_details, claim_date, status, pickup_pin, reviewer_id, review_notes, reviewed_at) VALUES
+(1, 1, 1, 1, 'My university enrollment number EB25210006105 is embossed on the smart card with BSCS seal.', '2026-10-20 12:00:00', 'APPROVED', '482910', 5, 'Card enrollment verified against DCS student register. 2FA PIN generated.', '2026-10-20 14:00:00'),
+(2, 3, 3, 3, 'Brown leather wallet contains my CNIC ending in 4455, green Metro card, and ATM card under name Muzammil Rizwan.', '2026-10-22 14:30:00', 'PENDING', NULL, NULL, NULL, NULL),
+(3, 4, 4, 4, 'Original CD70 ignition key with red woven Honda flight tag. Small scratch near top ring.', '2026-10-23 10:00:00', 'PENDING', NULL, NULL, NULL, NULL);
+
+-- 7. SEED INITIAL AUDIT LOG FOR CLAIM #1
+INSERT INTO claim_audit_log (claim_id, previous_status, new_status, action_by, action_timestamp, comments) VALUES
+(1, 'PENDING', 'APPROVED', 5, '2026-10-20 14:00:00', 'Identity verified against DCS database. 2FA Pickup PIN issued.');

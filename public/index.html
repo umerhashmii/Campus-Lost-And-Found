@@ -418,12 +418,12 @@
           </div>
 
           <div class="form-group">
-            <label>Item Photograph (Optional)</label>
+            <label>Item Photograph <span style="color: var(--color-danger); font-weight: 700;">* Mandatory</span></label>
             <div class="file-upload-dropzone">
-              <input type="file" id="lostImageInput" accept="image/*" onchange="handleFileSelect(event, 'lostImagePreview', 'lostUploadText')">
+              <input type="file" id="lostImageInput" accept="image/*" required onchange="handleFileSelect(event, 'lostImagePreview', 'lostUploadText')">
               <div class="upload-placeholder" id="lostUploadText">
                 <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                <span>Upload camera photo or reference image (Max 5MB)</span>
+                <span>Upload camera photo or reference image (Required, Max 5MB)</span>
               </div>
               <img id="lostImagePreview" class="image-preview-thumb" style="display: none;" alt="Preview">
             </div>
@@ -498,12 +498,12 @@
           </div>
 
           <div class="form-group">
-            <label>Found Item Photograph (Optional)</label>
+            <label>Found Item Photograph <span style="color: var(--color-danger); font-weight: 700;">* Mandatory</span></label>
             <div class="file-upload-dropzone">
-              <input type="file" id="foundImageInput" accept="image/*" onchange="handleFileSelect(event, 'foundImagePreview', 'foundUploadText')">
+              <input type="file" id="foundImageInput" accept="image/*" required onchange="handleFileSelect(event, 'foundImagePreview', 'foundUploadText')">
               <div class="upload-placeholder" id="foundUploadText">
                 <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                <span>Upload camera photo of the found item for verification (Max 5MB)</span>
+                <span>Upload camera photo of the found item for verification (Required, Max 5MB)</span>
               </div>
               <img id="foundImagePreview" class="image-preview-thumb" style="display: none;" alt="Preview">
             </div>
@@ -790,6 +790,10 @@
           <input type="text" id="claimItemName" readonly style="font-weight: 700;">
         </div>
 
+        <div id="claimImageContainer" style="display: none; margin-bottom: 14px; text-align: center;">
+          <img id="claimItemImage" src="" alt="Found Item Photo" style="max-height: 150px; max-width: 100%; border-radius: var(--radius-md); object-fit: cover; border: 1px solid var(--color-hairline); box-shadow: var(--clay-card-shadow);">
+        </div>
+
         <div class="form-group">
           <label for="claimProof">Verification Proof Details *</label>
           <textarea id="claimProof" rows="4" placeholder="Describe unique identifying marks, serial numbers, password patterns, or stickers to verify your ownership..." required></textarea>
@@ -817,6 +821,11 @@
         <div class="form-group">
           <label>Claimant &amp; Item</label>
           <input type="text" id="reviewSummary" readonly style="font-weight: 700;">
+        </div>
+
+        <div id="reviewImageContainer" style="display: none; margin-bottom: 14px; text-align: center;">
+          <label style="display: block; text-align: left; font-size: 12px; font-weight: 700; margin-bottom: 4px; color: var(--color-text-muted);">Found Item Custody Photo</label>
+          <img id="reviewItemImage" src="" alt="Found Item" style="max-height: 160px; max-width: 100%; border-radius: var(--radius-md); object-fit: cover; border: 1px solid var(--color-hairline); box-shadow: var(--clay-card-shadow);">
         </div>
 
         <div class="form-group">
@@ -1012,10 +1021,13 @@
         </div>
       </div>
 
-      <div style="border: 1px solid var(--color-hairline); border-radius: var(--radius-md); padding: 14px; margin-bottom: 18px; font-size: 13px;">
-        <div style="margin-bottom: 6px;"><strong style="color: var(--color-text-muted);">Item Handed Over:</strong> <span id="rcptItemName" style="font-weight: 700; color: var(--color-primary);"></span></div>
-        <div style="margin-bottom: 6px;"><strong style="color: var(--color-text-muted);">Category &amp; Custody:</strong> <span id="rcptCategoryCustody"></span></div>
-        <div><strong style="color: var(--color-text-muted);">Verification Proof Details:</strong> <span id="rcptProof"></span></div>
+      <div style="border: 1px solid var(--color-hairline); border-radius: var(--radius-md); padding: 14px; margin-bottom: 18px; font-size: 13px; display: flex; gap: 14px; align-items: center;">
+        <img id="rcptItemImage" src="" alt="Verified Item Photo" style="width: 72px; height: 72px; object-fit: cover; border-radius: var(--radius-sm); border: 1px solid var(--color-hairline); box-shadow: var(--clay-button-shadow); flex-shrink: 0; display: none;">
+        <div style="flex: 1;">
+          <div style="margin-bottom: 6px;"><strong style="color: var(--color-text-muted);">Item Handed Over:</strong> <span id="rcptItemName" style="font-weight: 700; color: var(--color-primary);"></span></div>
+          <div style="margin-bottom: 6px;"><strong style="color: var(--color-text-muted);">Category &amp; Custody:</strong> <span id="rcptCategoryCustody"></span></div>
+          <div><strong style="color: var(--color-text-muted);">Verification Proof Details:</strong> <span id="rcptProof"></span></div>
+        </div>
       </div>
 
       <div style="display: flex; justify-content: space-between; align-items: flex-end; padding-top: 14px; border-top: 1px dashed var(--color-hairline);">

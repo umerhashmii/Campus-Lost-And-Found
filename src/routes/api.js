@@ -175,10 +175,14 @@ router.get('/lost', async (req, res) => {
 });
 
 router.post('/lost', upload.single('image'), async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ success: false, error: 'Item photograph is mandatory for campus recovery records. Please attach a photo.' });
+  }
+
   const connection = await db.getConnection();
   try {
     const { user_id, category_id, item_name, description, color, brand, location_id, lost_date } = req.body;
-    const imageUrl = req.file ? `uploads/${req.file.filename}` : null;
+    const imageUrl = `uploads/${req.file.filename}`;
     
     // 1. Insert Lost Report
     const [result] = await connection.query(
@@ -274,10 +278,14 @@ router.get('/found', async (req, res) => {
 });
 
 router.post('/found', upload.single('image'), async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ success: false, error: 'Item photograph is mandatory for custody verification. Please attach a photo.' });
+  }
+
   const connection = await db.getConnection();
   try {
     const { finder_id, category_id, item_name, description, color, brand, location_id, found_date, custody_location } = req.body;
-    const imageUrl = req.file ? `uploads/${req.file.filename}` : null;
+    const imageUrl = `uploads/${req.file.filename}`;
 
     const [result] = await connection.query(
       `INSERT INTO found_reports (finder_id, category_id, item_name, description, image_url, color, brand, location_id, found_date, custody_location)
