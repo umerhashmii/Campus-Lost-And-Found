@@ -121,14 +121,186 @@
             </div>
           </div>
 
-          <!-- Hero Media Panel: Real Campus Photo Showcase + Live Stats -->
+          <!-- Hero Media Panel: Architectural Vector Illustration + Live Stats -->
           <div class="hero-media-panel">
-            <div class="campus-showcase-card">
-              <img src="images/ubit-1.jpg" alt="Department of Computer Science (UBIT), University of Karachi" class="campus-showcase-img">
-              <div class="campus-showcase-glass">
+            <div class="campus-vector-card">
+              <div class="campus-vector-art-wrap">
+                <svg viewBox="0 0 540 200" class="ubit-facade-svg" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="UBIT Department of Computer Science Architectural Illustration">
+                  <defs>
+                    <linearGradient id="skyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stop-color="#F4F8FC"/>
+                      <stop offset="60%" stop-color="#EAF2F9"/>
+                      <stop offset="100%" stop-color="#E1ECF6"/>
+                    </linearGradient>
+                    <linearGradient id="wallGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stop-color="#FAF8F5"/>
+                      <stop offset="100%" stop-color="#EFEAE1"/>
+                    </linearGradient>
+                    <linearGradient id="centerWallGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stop-color="#FFFFFF"/>
+                      <stop offset="100%" stop-color="#F5F0E6"/>
+                    </linearGradient>
+                    <linearGradient id="domeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stop-color="#F7F3EB"/>
+                      <stop offset="100%" stop-color="#D9D2C3"/>
+                    </linearGradient>
+                    <linearGradient id="lawnGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stop-color="#ECFDF5"/>
+                      <stop offset="100%" stop-color="#D1FAE5"/>
+                    </linearGradient>
+                    <linearGradient id="windowGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stop-color="#CBD5E1"/>
+                      <stop offset="100%" stop-color="#94A3B8"/>
+                    </linearGradient>
+                  </defs>
+
+                  <!-- Sky Canvas Background -->
+                  <rect width="540" height="200" fill="url(#skyGrad)"/>
+
+                  <!-- Subtle Sun Aura -->
+                  <circle cx="270" cy="55" r="50" fill="#FDE68A" opacity="0.3"/>
+                  <circle cx="270" cy="55" r="75" fill="#FEF3C7" opacity="0.18"/>
+
+                  <!-- Distant campus clouds -->
+                  <path d="M 60 40 Q 75 30 90 40 Q 105 32 120 40 Q 130 50 115 52 L 65 52 Z" fill="#FFFFFF" opacity="0.6"/>
+                  <path d="M 420 45 Q 435 35 450 45 Q 465 37 480 45 Q 490 55 475 57 L 425 57 Z" fill="#FFFFFF" opacity="0.6"/>
+
+                  <!-- Base Ground & Green Lawn -->
+                  <rect x="0" y="172" width="540" height="28" fill="url(#lawnGrad)"/>
+                  <line x1="0" y1="172" x2="540" y2="172" stroke="#10B981" stroke-width="1.5" opacity="0.4"/>
+
+                  <!-- Main Department Front Pathway -->
+                  <polygon points="210,200 330,200 300,172 240,172" fill="#E2E8F0" opacity="0.65"/>
+
+                  <!-- Trees / Landscaping flanking the wings -->
+                  <circle cx="35" cy="162" r="14" fill="#10B981" opacity="0.8"/>
+                  <circle cx="48" cy="160" r="11" fill="#059669" opacity="0.9"/>
+                  <circle cx="24" cy="164" r="9" fill="#047857" opacity="0.75"/>
+                  <circle cx="505" cy="162" r="14" fill="#10B981" opacity="0.8"/>
+                  <circle cx="492" cy="160" r="11" fill="#059669" opacity="0.9"/>
+                  <circle cx="516" cy="164" r="9" fill="#047857" opacity="0.75"/>
+
+                  <!-- Left Academic Wing (3 Floors) -->
+                  <g id="leftWing">
+                    <rect x="50" y="78" width="160" height="94" fill="url(#wallGrad)" stroke="#1B2A4A" stroke-width="1.2"/>
+                    <rect x="46" y="75" width="168" height="5" fill="#7A1521" stroke="#1B2A4A" stroke-width="1"/>
+                    <line x1="50" y1="110" x2="210" y2="110" stroke="#CBD5E1" stroke-width="1"/>
+                    <line x1="50" y1="142" x2="210" y2="142" stroke="#CBD5E1" stroke-width="1"/>
+                    <!-- 2nd Floor Windows -->
+                    <rect x="62" y="86" width="16" height="15" rx="1.5" fill="url(#windowGrad)" stroke="#1B2A4A" stroke-width="0.8"/>
+                    <rect x="92" y="86" width="16" height="15" rx="1.5" fill="url(#windowGrad)" stroke="#1B2A4A" stroke-width="0.8"/>
+                    <rect x="122" y="86" width="16" height="15" rx="1.5" fill="url(#windowGrad)" stroke="#1B2A4A" stroke-width="0.8"/>
+                    <rect x="152" y="86" width="16" height="15" rx="1.5" fill="url(#windowGrad)" stroke="#1B2A4A" stroke-width="0.8"/>
+                    <rect x="182" y="86" width="16" height="15" rx="1.5" fill="url(#windowGrad)" stroke="#1B2A4A" stroke-width="0.8"/>
+                    <!-- 1st Floor Windows -->
+                    <rect x="62" y="118" width="16" height="15" rx="1.5" fill="url(#windowGrad)" stroke="#1B2A4A" stroke-width="0.8"/>
+                    <rect x="92" y="118" width="16" height="15" rx="1.5" fill="url(#windowGrad)" stroke="#1B2A4A" stroke-width="0.8"/>
+                    <rect x="122" y="118" width="16" height="15" rx="1.5" fill="url(#windowGrad)" stroke="#1B2A4A" stroke-width="0.8"/>
+                    <rect x="152" y="118" width="16" height="15" rx="1.5" fill="url(#windowGrad)" stroke="#1B2A4A" stroke-width="0.8"/>
+                    <rect x="182" y="118" width="16" height="15" rx="1.5" fill="url(#windowGrad)" stroke="#1B2A4A" stroke-width="0.8"/>
+                    <!-- Ground Floor Windows -->
+                    <rect x="62" y="150" width="16" height="15" rx="1.5" fill="url(#windowGrad)" stroke="#1B2A4A" stroke-width="0.8"/>
+                    <rect x="92" y="150" width="16" height="15" rx="1.5" fill="url(#windowGrad)" stroke="#1B2A4A" stroke-width="0.8"/>
+                    <rect x="122" y="150" width="16" height="15" rx="1.5" fill="url(#windowGrad)" stroke="#1B2A4A" stroke-width="0.8"/>
+                    <rect x="152" y="150" width="16" height="15" rx="1.5" fill="url(#windowGrad)" stroke="#1B2A4A" stroke-width="0.8"/>
+                    <rect x="182" y="150" width="16" height="15" rx="1.5" fill="url(#windowGrad)" stroke="#1B2A4A" stroke-width="0.8"/>
+                  </g>
+
+                  <!-- Right Academic Wing (3 Floors) -->
+                  <g id="rightWing">
+                    <rect x="330" y="78" width="160" height="94" fill="url(#wallGrad)" stroke="#1B2A4A" stroke-width="1.2"/>
+                    <rect x="326" y="75" width="168" height="5" fill="#7A1521" stroke="#1B2A4A" stroke-width="1"/>
+                    <line x1="330" y1="110" x2="490" y2="110" stroke="#CBD5E1" stroke-width="1"/>
+                    <line x1="330" y1="142" x2="490" y2="142" stroke="#CBD5E1" stroke-width="1"/>
+                    <!-- 2nd Floor Windows -->
+                    <rect x="342" y="86" width="16" height="15" rx="1.5" fill="url(#windowGrad)" stroke="#1B2A4A" stroke-width="0.8"/>
+                    <rect x="372" y="86" width="16" height="15" rx="1.5" fill="url(#windowGrad)" stroke="#1B2A4A" stroke-width="0.8"/>
+                    <rect x="402" y="86" width="16" height="15" rx="1.5" fill="url(#windowGrad)" stroke="#1B2A4A" stroke-width="0.8"/>
+                    <rect x="432" y="86" width="16" height="15" rx="1.5" fill="url(#windowGrad)" stroke="#1B2A4A" stroke-width="0.8"/>
+                    <rect x="462" y="86" width="16" height="15" rx="1.5" fill="url(#windowGrad)" stroke="#1B2A4A" stroke-width="0.8"/>
+                    <!-- 1st Floor Windows -->
+                    <rect x="342" y="118" width="16" height="15" rx="1.5" fill="url(#windowGrad)" stroke="#1B2A4A" stroke-width="0.8"/>
+                    <rect x="372" y="118" width="16" height="15" rx="1.5" fill="url(#windowGrad)" stroke="#1B2A4A" stroke-width="0.8"/>
+                    <rect x="402" y="118" width="16" height="15" rx="1.5" fill="url(#windowGrad)" stroke="#1B2A4A" stroke-width="0.8"/>
+                    <rect x="432" y="118" width="16" height="15" rx="1.5" fill="url(#windowGrad)" stroke="#1B2A4A" stroke-width="0.8"/>
+                    <rect x="462" y="118" width="16" height="15" rx="1.5" fill="url(#windowGrad)" stroke="#1B2A4A" stroke-width="0.8"/>
+                    <!-- Ground Floor Windows -->
+                    <rect x="342" y="150" width="16" height="15" rx="1.5" fill="url(#windowGrad)" stroke="#1B2A4A" stroke-width="0.8"/>
+                    <rect x="372" y="150" width="16" height="15" rx="1.5" fill="url(#windowGrad)" stroke="#1B2A4A" stroke-width="0.8"/>
+                    <rect x="402" y="150" width="16" height="15" rx="1.5" fill="url(#windowGrad)" stroke="#1B2A4A" stroke-width="0.8"/>
+                    <rect x="432" y="150" width="16" height="15" rx="1.5" fill="url(#windowGrad)" stroke="#1B2A4A" stroke-width="0.8"/>
+                    <rect x="462" y="150" width="16" height="15" rx="1.5" fill="url(#windowGrad)" stroke="#1B2A4A" stroke-width="0.8"/>
+                  </g>
+
+                  <!-- Central Grand Dome & Portico -->
+                  <g id="centerPortico">
+                    <!-- The Grand Dome -->
+                    <rect x="238" y="44" width="64" height="16" fill="#E2DAC9" stroke="#1B2A4A" stroke-width="1.2"/>
+                    <rect x="246" y="48" width="6" height="8" rx="1" fill="#1B2A4A" opacity="0.3"/>
+                    <rect x="258" y="48" width="6" height="8" rx="1" fill="#1B2A4A" opacity="0.3"/>
+                    <rect x="270" y="48" width="6" height="8" rx="1" fill="#1B2A4A" opacity="0.3"/>
+                    <rect x="282" y="48" width="6" height="8" rx="1" fill="#1B2A4A" opacity="0.3"/>
+                    <!-- Dome curve -->
+                    <path d="M 238 44 Q 270 16 302 44 Z" fill="url(#domeGrad)" stroke="#1B2A4A" stroke-width="1.3"/>
+                    <!-- Spire & Finial -->
+                    <line x1="270" y1="8" x2="270" y2="16" stroke="#1B2A4A" stroke-width="1.5"/>
+                    <circle cx="270" cy="8" r="2.5" fill="#F59E0B" stroke="#1B2A4A" stroke-width="0.8"/>
+
+                    <!-- Central Portico Main Block -->
+                    <rect x="206" y="60" width="128" height="112" fill="url(#centerWallGrad)" stroke="#1B2A4A" stroke-width="1.4"/>
+                    <!-- Classical Frieze Banner -->
+                    <rect x="202" y="58" width="136" height="14" fill="#7A1521" stroke="#1B2A4A" stroke-width="1.2"/>
+                    <text x="270" y="67.5" font-family="'Montserrat', sans-serif" font-size="6" font-weight="800" fill="#FFFFFF" text-anchor="middle" letter-spacing="0.8">DEPARTMENT OF COMPUTER SCIENCE</text>
+
+                    <!-- Recessed Entrance Bay -->
+                    <rect x="226" y="76" width="88" height="96" fill="#1E293B" opacity="0.12"/>
+
+                    <!-- Three Grand Entry Arches (Ground Floor) -->
+                    <rect x="238" y="136" width="16" height="34" rx="3" fill="#0F172A" stroke="#1B2A4A" stroke-width="1"/>
+                    <rect x="262" y="132" width="16" height="38" rx="3" fill="#0F172A" stroke="#1B2A4A" stroke-width="1"/>
+                    <rect x="286" y="136" width="16" height="34" rx="3" fill="#0F172A" stroke="#1B2A4A" stroke-width="1"/>
+                    <!-- Warm Door Illumination -->
+                    <rect x="241" y="146" width="10" height="20" fill="#FEF3C7" opacity="0.85"/>
+                    <rect x="265" y="142" width="10" height="24" fill="#FEF3C7" opacity="0.85"/>
+                    <rect x="289" y="146" width="10" height="20" fill="#FEF3C7" opacity="0.85"/>
+
+                    <!-- Portico Upper Windows (2nd & 1st Floor) -->
+                    <rect x="238" y="80" width="16" height="42" fill="url(#windowGrad)" stroke="#1B2A4A" stroke-width="0.8"/>
+                    <rect x="262" y="80" width="16" height="42" fill="url(#windowGrad)" stroke="#1B2A4A" stroke-width="0.8"/>
+                    <rect x="286" y="80" width="16" height="42" fill="url(#windowGrad)" stroke="#1B2A4A" stroke-width="0.8"/>
+
+                    <!-- 4 Grand Neoclassical Columns -->
+                    <rect x="214" y="72" width="10" height="100" fill="#F8FAFC" stroke="#1B2A4A" stroke-width="1"/>
+                    <rect x="212" y="70" width="14" height="4" fill="#7A1521" stroke="#1B2A4A" stroke-width="0.8"/>
+                    <rect x="212" y="170" width="14" height="4" fill="#E2E8F0" stroke="#1B2A4A" stroke-width="0.8"/>
+
+                    <rect x="250" y="72" width="10" height="100" fill="#F8FAFC" stroke="#1B2A4A" stroke-width="1"/>
+                    <rect x="248" y="70" width="14" height="4" fill="#7A1521" stroke="#1B2A4A" stroke-width="0.8"/>
+                    <rect x="248" y="170" width="14" height="4" fill="#E2E8F0" stroke="#1B2A4A" stroke-width="0.8"/>
+
+                    <rect x="280" y="72" width="10" height="100" fill="#F8FAFC" stroke="#1B2A4A" stroke-width="1"/>
+                    <rect x="278" y="70" width="14" height="4" fill="#7A1521" stroke="#1B2A4A" stroke-width="0.8"/>
+                    <rect x="278" y="170" width="14" height="4" fill="#E2E8F0" stroke="#1B2A4A" stroke-width="0.8"/>
+
+                    <rect x="316" y="72" width="10" height="100" fill="#F8FAFC" stroke="#1B2A4A" stroke-width="1"/>
+                    <rect x="314" y="70" width="14" height="4" fill="#7A1521" stroke="#1B2A4A" stroke-width="0.8"/>
+                    <rect x="314" y="170" width="14" height="4" fill="#E2E8F0" stroke="#1B2A4A" stroke-width="0.8"/>
+
+                    <!-- Entrance Steps Plinth -->
+                    <rect x="200" y="172" width="140" height="3" fill="#E2E8F0" stroke="#1B2A4A" stroke-width="0.8"/>
+                    <rect x="194" y="175" width="152" height="3" fill="#CBD5E1" stroke="#1B2A4A" stroke-width="0.8"/>
+                    <rect x="188" y="178" width="164" height="3" fill="#94A3B8" stroke="#1B2A4A" stroke-width="0.8"/>
+
+                    <!-- Department Crest Seal -->
+                    <circle cx="270" cy="126" r="4.5" fill="#7A1521" stroke="#1B2A4A" stroke-width="0.8"/>
+                    <text x="270" y="127.8" font-family="'Montserrat', sans-serif" font-size="3.8" font-weight="900" fill="#FFFFFF" text-anchor="middle">UBIT</text>
+                  </g>
+                </svg>
+              </div>
+              <div class="campus-vector-glass">
                 <div class="campus-showcase-tag">
-                  <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                  <span>UBIT Department Building · UoK</span>
+                  <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                  <span>Umaer Basha Institute of Information Technology · UBIT</span>
                 </div>
                 <div class="campus-live-badge">
                   <span class="live-pulse-dot"></span>
@@ -565,7 +737,7 @@
       <div class="facility-spotlight-card">
         <div class="facility-spotlight-grid">
           <div class="facility-spotlight-img-wrap">
-            <img src="images/ubit-2.jpg" alt="UBIT Department Architecture, University of Karachi" class="facility-spotlight-img">
+            <img src="images/ubit-official.jpg" alt="UBIT Department Architecture, University of Karachi" class="facility-spotlight-img">
             <div class="facility-img-caption">
               <strong>Department of Computer Science (UBIT)</strong>
               <span>University of Karachi Main Campus Building</span>

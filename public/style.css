@@ -554,8 +554,8 @@ button {
   position: relative;
 }
 
-/* Campus Architectural Showcase in Hero */
-.campus-showcase-card {
+/* Campus Architectural Vector Showcase in Hero */
+.campus-vector-card {
   position: relative;
   border-radius: var(--radius-lg);
   overflow: hidden;
@@ -565,32 +565,42 @@ button {
   transition: var(--transition-smooth);
 }
 
-.campus-showcase-card:hover {
+.campus-vector-card:hover {
   transform: translateY(-2px);
   box-shadow: var(--clay-card-hover);
 }
 
-.campus-showcase-img {
+.campus-vector-art-wrap {
   width: 100%;
-  height: 165px;
-  object-fit: cover;
+  background: #F8FAFD;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.ubit-facade-svg {
+  width: 100%;
+  height: auto;
+  max-height: 180px;
   display: block;
-  transition: transform 0.5s ease;
+  transition: transform 0.4s ease;
 }
 
-.campus-showcase-card:hover .campus-showcase-img {
-  transform: scale(1.03);
+.campus-vector-card:hover .ubit-facade-svg {
+  transform: scale(1.02);
 }
 
-.campus-showcase-glass {
+.campus-vector-glass {
   position: absolute;
   bottom: 8px;
   left: 8px;
   right: 8px;
-  background: rgba(27, 42, 74, 0.88);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(27, 42, 74, 0.90);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   border-radius: var(--radius-sm);
   padding: 6px 10px;
   display: flex;
@@ -603,7 +613,7 @@ button {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 11.5px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.2px;
 }
