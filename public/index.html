@@ -3,53 +3,62 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Campus Lost & Found Recovery System | UBIT DBMS Project</title>
-  <meta name="description" content="A relational DBMS-driven lost and found recovery and verification platform built with MySQL 8.0 for UBIT, University of Karachi.">
+  <title>UBIT Lost &amp; Found Portal | Department of Computer Science, University of Karachi</title>
+  <meta name="description" content="Official Lost and Found Recovery and Verification System for Umaer Basha Institute of Information Technology (UBIT), University of Karachi.">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
   <!-- ========================================================
-       TOP NAVIGATION (Precision Rebuilt Clay Layout)
+       TOP NAVIGATION BAR (Official DCS UBIT Header)
        ======================================================== -->
   <header class="top-nav">
     <div class="nav-container">
       
-      <!-- Brand Cluster -->
-      <a href="#" class="brand-cluster" onclick="switchView('view-matches'); return false;">
-        <span class="logo-badge">UBIT DBMS</span>
+      <!-- Official Brand Cluster -->
+      <a href="#" class="brand-cluster" onclick="switchView('view-home'); return false;">
+        <div class="brand-logo-wrap">
+          <img src="ubit-logo.jpg" alt="UBIT Department Logo" class="brand-logo-img">
+        </div>
         <div class="brand-text">
-          <h1>Campus Lost &amp; Found</h1>
-          <span>Relational Recovery &amp; Claim System</span>
+          <span class="brand-uni-tag">University of Karachi</span>
+          <div class="brand-title">DCS <span class="brand-accent">·</span> UBIT</div>
+          <span class="brand-sub">Campus Lost &amp; Found Portal</span>
         </div>
       </a>
 
-      <!-- Center Pill Navigation -->
+      <!-- Center Pill Navigation Tabs -->
       <nav class="nav-tabs" role="tablist">
-        <button class="nav-tab-btn active" data-view="view-matches">
+        <button class="nav-tab-btn active" data-view="view-home">
+          <span>🏛️ Home</span>
+        </button>
+        <button class="nav-tab-btn" data-view="view-catalog">
+          <span>🔍 Browse</span>
+        </button>
+        <button class="nav-tab-btn" data-view="view-matches">
           <span>⚡ Matches</span>
         </button>
         <button class="nav-tab-btn" data-view="view-file-lost">
-          <span>🔍 Lost</span>
+          <span>📝 Report Lost</span>
         </button>
         <button class="nav-tab-btn" data-view="view-file-found">
-          <span>📦 Found</span>
+          <span>📦 Report Found</span>
         </button>
         <button class="nav-tab-btn" data-view="view-security">
-          <span>🛡️ Security</span>
+          <span>🛡️ Security Desk</span>
         </button>
         <button class="nav-tab-btn" data-view="view-analytics">
           <span>📊 Analytics</span>
         </button>
       </nav>
 
-      <!-- Active User Profile Pill -->
+      <!-- Active User Profile Switcher -->
       <div class="user-cluster">
         <div class="user-pill">
           <div id="userAvatar" class="user-avatar">UH</div>
           <div class="user-select-wrap">
             <select id="userSelector" aria-label="Select active user">
-              <!-- Injected dynamically via app.js -->
+              <!-- Dynamically populated via app.js -->
             </select>
           </div>
         </div>
@@ -59,353 +68,504 @@
   </header>
 
   <!-- ========================================================
-       HERO BANNER
-       ======================================================== -->
-  <section class="hero-band">
-    <div class="hero-grid">
-      <div class="hero-content">
-        <h2>Smart Campus Recovery, Automated by Relational DBMS.</h2>
-        <p>
-          Replacing unstructured notice boards with two-way cross matching, ACID-locked claim verification, and real-time security tracking across UBIT &amp; University of Karachi.
-        </p>
-        <div class="hero-actions">
-          <button class="btn-primary" onclick="switchView('view-file-lost')">File a Lost Item</button>
-          <button class="btn-secondary" onclick="switchView('view-file-found')">I Found Something</button>
-          <button class="btn-primary" style="background-color: var(--brand-pink);" onclick="openConcurrencyModal()">⚡ Concurrency Race Demo</button>
-          <div class="engine-status-pill">
-            <span class="dot"></span>
-            <span>MySQL 8.0 Concurrency Active</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="hero-stat-cards">
-        <div class="stat-card mint">
-          <span class="label">Total Lost Reports</span>
-          <span class="value" id="statTotalLost">0</span>
-        </div>
-        <div class="stat-card peach">
-          <span class="label">Items In Custody</span>
-          <span class="value" id="statAvailableFound">0</span>
-        </div>
-        <div class="stat-card lavender">
-          <span class="label">Active Matches</span>
-          <span class="value" id="statHighMatches">0</span>
-        </div>
-        <div class="stat-card teal">
-          <span class="label">Claims Resolved</span>
-          <span class="value" id="statResolvedClaims">0</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ========================================================
-       MAIN VIEWS CONTAINER
+       MAIN APPLICATION VIEWS
        ======================================================== -->
   <main class="main-container">
 
-    <!-- VIEW 1: LIVE MATCH FEED -->
-    <section id="view-matches" class="view-section active">
-      <div class="section-header">
-        <div class="section-title-wrap">
+    <!-- ==========================================
+         VIEW 1: FLAGSHIP HOME HUB (Landing Page)
+         ========================================== -->
+    <section id="view-home" class="view-section active">
+      
+      <!-- Hero Banner Card -->
+      <div class="home-hero-card">
+        <div class="home-hero-grid">
+          
+          <div class="home-hero-content">
+            <div class="official-crest-tag">
+              <span>🏛️ Department of Computer Science</span>
+            </div>
+            <h2 class="home-hero-title">Smart Campus Property Recovery &amp; Verification</h2>
+            <p class="home-hero-desc">
+              The official recovery portal for UBIT students, faculty, and campus staff. Connecting misplaced property with rightful owners through automated relational matching and ACID-locked claim custody.
+            </p>
+            <div class="home-hero-actions">
+              <button class="btn-primary" onclick="switchView('view-file-lost')">🔍 Report Lost Item</button>
+              <button class="btn-secondary" onclick="switchView('view-file-found')">📦 I Found Something</button>
+              <button class="btn-gold" onclick="switchView('view-catalog')">Browse Directory</button>
+              <button class="btn-secondary" style="border-color: var(--color-primary); color: var(--color-primary);" onclick="openConcurrencyModal()">⚡ Concurrency Lock Demo</button>
+            </div>
+          </div>
+
+          <!-- Hero Real-Time Stats Grid -->
+          <div class="hero-stats-panel">
+            <div class="clay-stat-card">
+              <span class="clay-stat-label">Total Lost Reports</span>
+              <span class="clay-stat-value" id="statTotalLost">0</span>
+            </div>
+            <div class="clay-stat-card gold">
+              <span class="clay-stat-label">Items In Custody</span>
+              <span class="clay-stat-value" id="statAvailableFound">0</span>
+            </div>
+            <div class="clay-stat-card green">
+              <span class="clay-stat-label">Smart Matches</span>
+              <span class="clay-stat-value" id="statHighMatches">0</span>
+            </div>
+            <div class="clay-stat-card blue">
+              <span class="clay-stat-label">Claims Resolved</span>
+              <span class="clay-stat-value" id="statResolvedClaims">0</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- 4 Quick-Action Clay Cards -->
+      <div class="section-heading-cluster">
+        <h3>Quick Campus Services</h3>
+        <p>Choose an action to start your recovery or verification workflow</p>
+      </div>
+
+      <div class="quick-actions-grid">
+        
+        <div class="action-card" onclick="switchView('view-file-lost')">
+          <div>
+            <div class="action-card-top">
+              <div class="action-icon-circle">🔍</div>
+              <span class="action-arrow">&rarr;</span>
+            </div>
+            <h4>Lost Something on Campus?</h4>
+            <p>Misplaced your Student ID, USB, calculator, laptop charger, or keys? File a report with campus location tags.</p>
+          </div>
+          <span class="action-link">File Lost Report &rarr;</span>
+        </div>
+
+        <div class="action-card gold" onclick="switchView('view-file-found')">
+          <div>
+            <div class="action-card-top">
+              <div class="action-icon-circle">📦</div>
+              <span class="action-arrow">&rarr;</span>
+            </div>
+            <h4>Found Property in a Lab?</h4>
+            <p>Help a fellow UBIT student. Submit details so our two-way matching engine can notify the rightful owner.</p>
+          </div>
+          <span class="action-link">Report Found Item &rarr;</span>
+        </div>
+
+        <div class="action-card" onclick="switchView('view-matches')">
+          <div>
+            <div class="action-card-top">
+              <div class="action-icon-circle">⚡</div>
+              <span class="action-arrow">&rarr;</span>
+            </div>
+            <h4>Smart Match Suggestions</h4>
+            <p>Our 4-factor stored procedure scores similarities across category, campus room proximity, and time window.</p>
+          </div>
+          <span class="action-link">View Match Feed &rarr;</span>
+        </div>
+
+        <div class="action-card gold" onclick="switchView('view-security')">
+          <div>
+            <div class="action-card-top">
+              <div class="action-icon-circle">🛡️</div>
+              <span class="action-arrow">&rarr;</span>
+            </div>
+            <h4>Security &amp; Custody Desk</h4>
+            <p>Campus security review queue with pessimistic row locking and printable official handover vouchers.</p>
+          </div>
+          <span class="action-link">Security Portal &rarr;</span>
+        </div>
+
+      </div>
+
+      <!-- 3-Step Guided Journey -->
+      <div class="journey-panel">
+        <div class="section-heading-cluster" style="margin-bottom: 0;">
+          <h3>How Campus Recovery Works</h3>
+          <p>A simple, transparent 3-step process designed for the University of Karachi community</p>
+        </div>
+
+        <div class="journey-steps">
+          
+          <div class="journey-step">
+            <div class="step-num-pill">1</div>
+            <h4>Report Details</h4>
+            <p>File details about the lost or found item, including category, color, brand, and the campus facility (e.g. Software Lab 1, Library, Canteen).</p>
+          </div>
+
+          <div class="journey-step">
+            <div class="step-num-pill">2</div>
+            <h4>Automated Matching</h4>
+            <p>Stored procedure <code>sp_GenerateMatchesForLostReport</code> calculates confidence scores (0-100%) and proposes high-confidence pairings automatically.</p>
+          </div>
+
+          <div class="journey-step">
+            <div class="step-num-pill">3</div>
+            <h4>Verify &amp; Handover</h4>
+            <p>Claimant submits ownership proof. Security officer reviews the evidence, acquires row locks to prevent duplicate claims, and issues an official handover voucher.</p>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Live Campus Activity Ticker -->
+      <div class="recent-activity-panel">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div class="section-heading-cluster" style="margin-bottom: 0;">
+            <h3>Live Campus Incident Activity</h3>
+            <p>Recent reports registered across UBIT labs, lecture halls, and department grounds</p>
+          </div>
+          <button class="btn-secondary" onclick="loadRecentActivity()">↻ Refresh</button>
+        </div>
+        <div id="recentActivityTicker" class="ticker-grid">
+          <!-- Dynamically populated via app.js -->
+        </div>
+      </div>
+
+      <!-- Official Institutional Notice -->
+      <div class="official-notice-banner">
+        <div class="notice-icon">📋</div>
+        <div class="notice-text">
+          <strong>Official UBIT Notice:</strong> All found items handed over to Department Security or Lab Attendants are logged under strict chain-of-custody. Unclaimed property is retained for 90 days in accordance with University of Karachi regulations before administrative review.
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ==========================================
+         VIEW 2: BROWSE DIRECTORY (Catalog View)
+         ========================================== -->
+    <section id="view-catalog" class="view-section">
+      <div class="section-heading-cluster">
+        <h3>Campus Property Directory</h3>
+        <p>Search and filter all active lost and found reports across the department</p>
+      </div>
+
+      <!-- Toolbar with Search & Category Pills -->
+      <div class="catalog-toolbar">
+        <div class="search-box-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="catalogSearchInput" placeholder="Search by item name, brand, color (e.g. Dell, Calculator, Wallet)..." oninput="filterCatalog()">
+        </div>
+        
+        <div class="filter-pills-wrap" id="catalogCategoryPills">
+          <button class="filter-pill active" onclick="setCatalogCategory('')">All Items</button>
+          <!-- Category pills injected dynamically -->
+        </div>
+      </div>
+
+      <!-- Catalog Cards Grid -->
+      <div id="catalogGrid" class="catalog-grid">
+        <!-- Injected via JavaScript -->
+      </div>
+    </section>
+
+    <!-- ==========================================
+         VIEW 3: SMART MATCHES FEED
+         ========================================== -->
+    <section id="view-matches" class="view-section">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <div class="section-heading-cluster" style="margin-bottom: 0;">
           <h3>Automated Match Suggestions</h3>
           <p>Calculated by Stored Procedure <code>sp_GenerateMatchesForLostReport</code> based on Category (40%), Location (25%), Proximity (25%), and Brand/Color (10%).</p>
         </div>
         <button class="btn-secondary" onclick="loadMatches()">↻ Refresh Feed</button>
       </div>
 
-      <div id="matchesContainer" class="card-grid-3">
+      <div id="matchesContainer" class="catalog-grid">
         <!-- Injected via JavaScript -->
       </div>
     </section>
 
-    <!-- VIEW 2: FILE LOST REPORT -->
+    <!-- ==========================================
+         VIEW 4: REPORT LOST ITEM
+         ========================================== -->
     <section id="view-file-lost" class="view-section">
-      <div class="section-header">
-        <div class="section-title-wrap">
-          <h3>File a Lost Item Report</h3>
-          <p>Your report will immediately trigger the automated matching engine to check existing found items in campus custody.</p>
+      <div class="form-clay-card">
+        <div class="section-heading-cluster">
+          <h3>Report a Lost Item</h3>
+          <p>Provide details to trigger automatic matching against items in campus custody</p>
         </div>
-      </div>
 
-      <div class="form-card">
-        <form id="lostItemForm" onsubmit="handleLostSubmit(event)">
-          <div class="form-grid-2">
-            <div class="form-group">
-              <label for="lostCategory">Item Category *</label>
-              <select id="lostCategory" class="clay-select-field" required>
-                <option value="">Select Category...</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="lostLocation">Last Known Campus Location *</label>
-              <select id="lostLocation" class="clay-select-field" required>
-                <option value="">Select Location...</option>
-              </select>
-            </div>
-          </div>
-
+        <form id="lostForm" onsubmit="handleLostSubmit(event)">
           <div class="form-group">
-            <label for="lostItemName">Item Name &amp; Model *</label>
-            <input type="text" id="lostItemName" class="clay-input" placeholder="e.g. UBIT Student Smart Card, Dell 65W Charger, Wallet" required>
+            <label for="lostItemName">Item Name / Description *</label>
+            <input type="text" id="lostItemName" placeholder="e.g. Casio fx-991EX Scientific Calculator" required>
           </div>
 
-          <div class="form-grid-2">
+          <div class="form-row-2">
             <div class="form-group">
-              <label for="lostColor">Primary Color</label>
-              <input type="text" id="lostColor" class="clay-input" placeholder="e.g. Blue, Black, Silver">
+              <label for="lostCategory">Category *</label>
+              <select id="lostCategory" required>
+                <!-- Injected via app.js -->
+              </select>
             </div>
+            <div class="form-group">
+              <label for="lostLocation">Campus Location Where Lost *</label>
+              <select id="lostLocation" required>
+                <!-- Injected via app.js -->
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row-2">
             <div class="form-group">
               <label for="lostBrand">Brand / Manufacturer</label>
-              <input type="text" id="lostBrand" class="clay-input" placeholder="e.g. Dell, SanDisk, Honda, Nike">
+              <input type="text" id="lostBrand" placeholder="e.g. Casio, Dell, SanDisk">
+            </div>
+            <div class="form-group">
+              <label for="lostColor">Primary Color</label>
+              <input type="text" id="lostColor" placeholder="e.g. Black, Silver, Blue">
             </div>
           </div>
 
           <div class="form-group">
-            <label for="lostDateTime">Approximate Date &amp; Time Lost *</label>
-            <input type="datetime-local" id="lostDateTime" class="clay-input" required>
+            <label for="lostDateTime">Estimated Date &amp; Time Lost *</label>
+            <input type="datetime-local" id="lostDateTime" required>
           </div>
 
           <div class="form-group">
-            <label for="lostDescription">Detailed Description *</label>
-            <textarea id="lostDescription" class="clay-textarea" placeholder="Include serial numbers, stickers, keychains, CNIC or roll numbers that help verify ownership..." required></textarea>
+            <label for="lostDescription">Distinguishing Features / Notes</label>
+            <textarea id="lostDescription" rows="3" placeholder="e.g. Has a small sticker on the back cover; left in the third row desk"></textarea>
           </div>
 
-          <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
-            <button type="button" class="btn-secondary" onclick="switchView('view-matches')">Cancel</button>
-            <button type="submit" class="btn-primary">Submit Report &amp; Run Matcher ⚡</button>
+          <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 10px;">
+            <button type="button" class="btn-secondary" onclick="switchView('view-home')">Cancel</button>
+            <button type="submit" class="btn-primary">Submit Report &amp; Check Matches</button>
           </div>
         </form>
       </div>
     </section>
 
-    <!-- VIEW 3: FILE FOUND REPORT -->
+    <!-- ==========================================
+         VIEW 5: REPORT FOUND ITEM
+         ========================================== -->
     <section id="view-file-found" class="view-section">
-      <div class="section-header">
-        <div class="section-title-wrap">
-          <h3>Record a Found Item</h3>
-          <p>Deposit found belongings to campus security and log them into the custody pool.</p>
+      <div class="form-clay-card">
+        <div class="section-heading-cluster">
+          <h3>Report a Found Item</h3>
+          <p>Submit found property so our database can notify the owner</p>
         </div>
-      </div>
 
-      <div class="form-card">
-        <form id="foundItemForm" onsubmit="handleFoundSubmit(event)">
-          <div class="form-grid-2">
-            <div class="form-group">
-              <label for="foundCategory">Item Category *</label>
-              <select id="foundCategory" class="clay-select-field" required>
-                <option value="">Select Category...</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="foundLocation">Location Where Found *</label>
-              <select id="foundLocation" class="clay-select-field" required>
-                <option value="">Select Location...</option>
-              </select>
-            </div>
-          </div>
-
+        <form id="foundForm" onsubmit="handleFoundSubmit(event)">
           <div class="form-group">
-            <label for="foundItemName">Item Name / Summary *</label>
-            <input type="text" id="foundItemName" class="clay-input" placeholder="e.g. Blue Lanyard with ID Card, Men Leather Wallet" required>
+            <label for="foundItemName">Item Name / Description *</label>
+            <input type="text" id="foundItemName" placeholder="e.g. Dell USB-C 65W Power Adapter" required>
           </div>
 
-          <div class="form-grid-2">
+          <div class="form-row-2">
             <div class="form-group">
-              <label for="foundColor">Color</label>
-              <input type="text" id="foundColor" class="clay-input" placeholder="e.g. Black, Brown, Red">
+              <label for="foundCategory">Category *</label>
+              <select id="foundCategory" required>
+                <!-- Injected via app.js -->
+              </select>
             </div>
             <div class="form-group">
-              <label for="foundBrand">Brand (if visible)</label>
-              <input type="text" id="foundBrand" class="clay-input" placeholder="e.g. Dell, HP, Leather">
+              <label for="foundLocation">Found Location *</label>
+              <select id="foundLocation" required>
+                <!-- Injected via app.js -->
+              </select>
             </div>
           </div>
 
-          <div class="form-grid-2">
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="foundCustody">Current Custody Location *</label>
+              <select id="foundCustody" required>
+                <!-- Injected via app.js -->
+              </select>
+            </div>
             <div class="form-group">
               <label for="foundDateTime">Date &amp; Time Found *</label>
-              <input type="datetime-local" id="foundDateTime" class="clay-input" required>
+              <input type="datetime-local" id="foundDateTime" required>
+            </div>
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="foundBrand">Brand</label>
+              <input type="text" id="foundBrand" placeholder="e.g. Dell, HP, Casio">
             </div>
             <div class="form-group">
-              <label for="foundCustody">Current Physical Custody *</label>
-              <input type="text" id="foundCustody" class="clay-input" value="UBIT Security Desk (Admin Room 02)" required>
+              <label for="foundColor">Color</label>
+              <input type="text" id="foundColor" placeholder="e.g. Black">
             </div>
           </div>
 
           <div class="form-group">
-            <label for="foundDescription">Description of Condition &amp; Where Left *</label>
-            <textarea id="foundDescription" class="clay-textarea" placeholder="Describe where it was picked up and any obvious identifying marks..." required></textarea>
+            <label for="foundStorageBin">Physical Storage Bin / Drawer Note</label>
+            <input type="text" id="foundStorageBin" placeholder="e.g. Held at Security Desk Counter Drawer">
           </div>
 
-          <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
-            <button type="button" class="btn-secondary" onclick="switchView('view-matches')">Cancel</button>
-            <button type="submit" class="btn-primary">Record Found Item 📦</button>
+          <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 10px;">
+            <button type="button" class="btn-secondary" onclick="switchView('view-home')">Cancel</button>
+            <button type="submit" class="btn-gold">Record Found Item &amp; Check Matches</button>
           </div>
         </form>
       </div>
     </section>
 
-    <!-- VIEW 4: CAMPUS SECURITY PORTAL -->
+    <!-- ==========================================
+         VIEW 6: SECURITY & CUSTODY DESK
+         ========================================== -->
     <section id="view-security" class="view-section">
-      <div class="section-header">
-        <div class="section-title-wrap">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <div class="section-heading-cluster" style="margin-bottom: 0;">
           <h3>Campus Security Verification Queue</h3>
-          <p>Direct view from <code>vw_security_claims_queue</code>. Enforces pessimistic locking during review to prevent duplicate handovers.</p>
+          <p>Real-time review queue populated by SQL View <code>vw_security_claims_queue</code> with ACID row-lock protections</p>
         </div>
-        <button class="btn-secondary" onclick="loadSecurityQueue()">↻ Refresh Queue</button>
+        <div style="display: flex; gap: 10px;">
+          <button class="btn-gold" onclick="openConcurrencyModal()">⚡ Concurrency Simulator</button>
+          <button class="btn-secondary" onclick="loadSecurityQueue()">↻ Refresh Queue</button>
+        </div>
       </div>
 
-      <div class="table-card">
+      <div class="table-clay-wrap">
         <table class="clay-table">
           <thead>
             <tr>
               <th>Claim ID</th>
               <th>Date</th>
-              <th>Claimant Details</th>
+              <th>Claimant</th>
               <th>Item Claimed</th>
-              <th>Custody Location</th>
-              <th>Proof Provided</th>
+              <th>Custody Desk</th>
+              <th>Proof Details</th>
               <th>Status</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody id="securityQueueTableBody">
-            <!-- Injected via JavaScript -->
+            <!-- Dynamically populated via app.js -->
           </tbody>
         </table>
       </div>
     </section>
 
-    <!-- VIEW 5: ANALYTICS & RECOVERY REPORTS -->
+    <!-- ==========================================
+         VIEW 7: ANALYTICS & INSIGHTS
+         ========================================== -->
     <section id="view-analytics" class="view-section">
-      <div class="section-header">
-        <div class="section-title-wrap">
-          <h3>Campus Recovery Metrics &amp; Incident Hotspots</h3>
-          <p>Powered by database views <code>vw_campus_recovery_rate</code> and <code>vw_location_hotspots</code>.</p>
-        </div>
-        <button class="btn-secondary" onclick="loadAnalytics()">↻ Refresh Analytics</button>
+      <div class="section-heading-cluster">
+        <h3>Campus Recovery &amp; Spatial Intelligence</h3>
+        <p>Aggregated statistics computed directly from database views <code>vw_campus_recovery_rate</code> and <code>vw_location_hotspots</code></p>
       </div>
 
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-xl); margin-top: 16px;">
-        <!-- Recovery Rates by Category -->
-        <div class="table-card">
-          <div style="padding: 16px 20px; border-bottom: 1px solid var(--color-hairline); background-color: var(--color-surface-soft);">
-            <h4 style="font-size: 15px; font-weight: 700; color: var(--color-ink);">Recovery Rate by Category (vw_campus_recovery_rate)</h4>
+      <div class="home-hero-grid" style="margin-bottom: 28px;">
+        
+        <!-- Category Recovery Rates Table -->
+        <div class="table-clay-wrap" style="margin-top: 0;">
+          <div style="padding: 16px 20px; border-bottom: 1px solid var(--color-hairline); font-family: var(--font-display); font-weight: 700; color: var(--color-primary);">
+            📊 Recovery Rate by Item Category
           </div>
           <table class="clay-table">
             <thead>
               <tr>
                 <th>Category</th>
                 <th>Total Lost</th>
-                <th>Recovered</th>
-                <th>Success Rate</th>
+                <th>Total Claimed</th>
+                <th>Recovery %</th>
               </tr>
             </thead>
             <tbody id="recoveryRateTableBody">
-              <!-- Injected via JavaScript -->
+              <!-- Dynamically populated via app.js -->
             </tbody>
           </table>
         </div>
 
-        <!-- Location Hotspots -->
-        <div class="table-card">
-          <div style="padding: 16px 20px; border-bottom: 1px solid var(--color-hairline); background-color: var(--color-surface-soft);">
-            <h4 style="font-size: 15px; font-weight: 700; color: var(--color-ink);">Campus Loss Hotspots (vw_location_hotspots)</h4>
+        <!-- Campus Hotspots Summary -->
+        <div class="table-clay-wrap" style="margin-top: 0;">
+          <div style="padding: 16px 20px; border-bottom: 1px solid var(--color-hairline); font-family: var(--font-display); font-weight: 700; color: var(--color-gold-hover);">
+            📍 Top Campus Incident Hotspots
           </div>
           <table class="clay-table">
             <thead>
               <tr>
-                <th>Campus Location</th>
-                <th>Zone</th>
-                <th>Lost Incidents</th>
-                <th>Found</th>
+                <th>Location</th>
+                <th>Floor</th>
+                <th>Lost Reports</th>
+                <th>Found Reports</th>
               </tr>
             </thead>
             <tbody id="hotspotsTableBody">
-              <!-- Injected via JavaScript -->
+              <!-- Dynamically populated via app.js -->
             </tbody>
           </table>
         </div>
+
       </div>
 
-      <!-- Campus Visual Hotspot Grid -->
-      <div style="margin-top: 28px;">
-        <h4 style="font-size: 17px; font-weight: 700; color: var(--color-ink); margin-bottom: 12px;">Campus Zone Incident Intensity Map (vw_location_hotspots)</h4>
-        <div id="hotspotZoneGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px;">
-          <!-- Injected via JavaScript -->
-        </div>
+      <!-- Visual Hotspot Density Grid -->
+      <div class="section-heading-cluster">
+        <h3>UBIT Spatial Zone Grid</h3>
+        <p>Department zones color-coded by incident activity</p>
+      </div>
+      <div id="hotspotZoneGrid" class="quick-actions-grid">
+        <!-- Dynamically populated via app.js -->
       </div>
     </section>
 
   </main>
 
   <!-- ========================================================
-       MODAL: FILE CLAIM WITH CONCURRENCY LOCK
+       MODALS
        ======================================================== -->
+
+  <!-- Modal 1: Claim Submission -->
   <div id="claimModal" class="modal-backdrop">
     <div class="modal-box">
       <div class="modal-header">
-        <h4>Submit Ownership Claim</h4>
-        <button class="btn-close" onclick="closeModal('claimModal')">&times;</button>
+        <h3>Submit Ownership Claim</h3>
+        <button class="modal-close-btn" onclick="closeModal('claimModal')">&times;</button>
       </div>
-      <p style="font-size: 14px; color: var(--color-muted); margin-bottom: 16px;">
-        Transactions use row-level pessimistic locking (<code>SELECT ... FOR UPDATE</code>) to guarantee no race conditions.
-      </p>
       <form id="claimForm" onsubmit="handleClaimSubmit(event)">
         <input type="hidden" id="claimFoundId">
         <input type="hidden" id="claimLostId">
-
+        
         <div class="form-group">
-          <label>Item to Claim</label>
-          <input type="text" id="claimItemName" class="clay-input" readonly style="background-color: var(--color-surface-soft);">
+          <label>Target Found Item</label>
+          <input type="text" id="claimItemName" readonly style="font-weight: 700;">
         </div>
 
         <div class="form-group">
-          <label for="claimProof">Verification Proof / Identifying Evidence *</label>
-          <textarea id="claimProof" class="clay-textarea" placeholder="Detail specific evidence (e.g. student ID enrollment number, CNIC, lock screen wallpaper, laptop MAC address, or serial number)..." required></textarea>
+          <label for="claimProof">Verification Proof Details *</label>
+          <textarea id="claimProof" rows="4" placeholder="Describe unique identifying marks, serial numbers, password patterns, or stickers to verify your ownership..." required></textarea>
         </div>
 
-        <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
           <button type="button" class="btn-secondary" onclick="closeModal('claimModal')">Cancel</button>
-          <button type="submit" class="btn-primary">Submit Claim Under Concurrency Lock 🔒</button>
+          <button type="submit" class="btn-primary">Submit Claim Under Concurrency Lock</button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- ========================================================
-       MODAL: SECURITY REVIEW (APPROVE / REJECT)
-       ======================================================== -->
+  <!-- Modal 2: Security Review -->
   <div id="reviewModal" class="modal-backdrop">
     <div class="modal-box">
       <div class="modal-header">
-        <h4 id="reviewModalTitle">Review Claim #0</h4>
-        <button class="btn-close" onclick="closeModal('reviewModal')">&times;</button>
+        <h3 id="reviewModalTitle">Review Claim</h3>
+        <button class="modal-close-btn" onclick="closeModal('reviewModal')">&times;</button>
       </div>
-      <p style="font-size: 14px; color: var(--color-muted); margin-bottom: 16px;">
-        Approving this claim will transition the item to <code>RESOLVED</code> and automatically reject conflicting claims.
-      </p>
       <form id="reviewForm" onsubmit="handleReviewSubmit(event)">
         <input type="hidden" id="reviewClaimId">
         <input type="hidden" id="reviewDecision">
 
         <div class="form-group">
           <label>Claimant &amp; Item</label>
-          <input type="text" id="reviewSummary" class="clay-input" readonly style="background-color: var(--color-surface-soft);">
+          <input type="text" id="reviewSummary" readonly style="font-weight: 700;">
         </div>
 
         <div class="form-group">
-          <label>Submitted Proof</label>
-          <textarea id="reviewProofDetails" class="clay-textarea" readonly style="background-color: var(--color-surface-soft);"></textarea>
+          <label>Submitted Ownership Proof</label>
+          <textarea id="reviewProofDetails" rows="3" readonly style="background: var(--color-surface-soft);"></textarea>
         </div>
 
         <div class="form-group">
-          <label for="reviewNotes">Security Officer Notes *</label>
-          <textarea id="reviewNotes" class="clay-textarea" placeholder="Enter physical verification notes (e.g. Verified with Student Affairs card database)..." required></textarea>
+          <label for="reviewNotes">Officer Resolution Notes</label>
+          <textarea id="reviewNotes" rows="2" placeholder="e.g. Student ID inspected and verified against university record."></textarea>
         </div>
 
-        <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
           <button type="button" class="btn-secondary" onclick="closeModal('reviewModal')">Cancel</button>
           <button type="submit" id="btnReviewAction" class="btn-primary">Confirm Decision</button>
         </div>
@@ -413,19 +573,17 @@
     </div>
   </div>
 
-  <!-- ========================================================
-       MODAL: AUDIT LOG VIEWER
-       ======================================================== -->
+  <!-- Modal 3: Audit Log -->
   <div id="auditModal" class="modal-backdrop">
     <div class="modal-box" style="max-width: 680px;">
       <div class="modal-header">
-        <h4>Claim Lifecycle Audit Log</h4>
-        <button class="btn-close" onclick="closeModal('auditModal')">&times;</button>
+        <h3>Immutable Claim Audit Trail</h3>
+        <button class="modal-close-btn" onclick="closeModal('auditModal')">&times;</button>
       </div>
-      <p style="font-size: 14px; color: var(--color-muted); margin-bottom: 16px;">
-        Immutable audit records populated by database triggers (<code>trg_after_claim_status_update</code>).
+      <p style="font-size: 13px; color: var(--color-text-muted); margin-bottom: 14px;">
+        Recorded automatically by database trigger <code>trg_after_claim_status_update</code> directly into <code>claim_audit_log</code>.
       </p>
-      <div class="table-card">
+      <div class="table-clay-wrap" style="margin-top: 0;">
         <table class="clay-table">
           <thead>
             <tr>
@@ -436,7 +594,7 @@
             </tr>
           </thead>
           <tbody id="auditTableBody">
-            <!-- Injected via JavaScript -->
+            <!-- Dynamically populated via app.js -->
           </tbody>
         </table>
       </div>
@@ -446,175 +604,157 @@
     </div>
   </div>
 
-  <!-- ========================================================
-       MODAL: CONCURRENCY RACE CONDITION TESTER (VIVA TOOL)
-       ======================================================== -->
+  <!-- Modal 4: Concurrency Race Demo -->
   <div id="concurrencyModal" class="modal-backdrop">
-    <div class="modal-box" style="max-width: 740px;">
+    <div class="modal-box" style="max-width: 720px;">
       <div class="modal-header">
         <div>
-          <h4>ACID Concurrency Race Condition Demo</h4>
-          <span style="font-size: 12px; color: var(--color-muted);">Demonstrates InnoDB Row-Level Locking (<code>SELECT ... FOR UPDATE</code>)</span>
+          <h3>⚡ Live Concurrency Race Simulator</h3>
+          <p style="font-size: 12px; color: var(--color-text-muted); margin-top: 2px;">
+            Demonstrates ACID Isolation via InnoDB <code>SELECT ... FOR UPDATE</code> row lock
+          </p>
         </div>
-        <button class="btn-close" onclick="closeModal('concurrencyModal')">&times;</button>
+        <button class="modal-close-btn" onclick="closeModal('concurrencyModal')">&times;</button>
       </div>
 
-      <p style="font-size: 13.5px; color: var(--color-body); line-height: 1.5;">
-        Simulates two students (<strong>Maaz Malick</strong> &amp; <strong>Muzammil Rizwan</strong>) clicking "Claim" on the <em>exact same found item</em> at the exact same millisecond via concurrent database threads.
+      <p style="font-size: 13px; color: var(--color-text-body); margin-bottom: 14px;">
+        Fires two concurrent HTTP requests at the exact same millisecond to claim <strong>Found Item #2 (Dell 65W Power Adapter)</strong>.
       </p>
 
-      <div style="display: flex; align-items: center; justify-content: space-between; background: var(--color-surface-soft); padding: 12px 16px; border-radius: var(--radius-md); border: 1px solid var(--color-hairline); margin: 14px 0;">
-        <span style="font-size: 13px; font-weight: 600;">Target Item: Found Item #2 (Dell USB-C 65W Power Adapter)</span>
-        <button class="btn-primary" id="btnRunRace" onclick="runConcurrencyRace()" style="height: 38px;">
-          🚀 Fire Concurrent Transactions
-        </button>
-      </div>
-
-      <div class="concurrency-grid" id="raceResultsGrid">
-        <!-- Thread A Card -->
-        <div class="thread-card" id="threadACard">
-          <div class="thread-header">
-            <span class="thread-title">Thread A: Maaz Malick</span>
-            <span class="thread-time" id="threadATime">T+0ms</span>
+      <div class="race-container">
+        <div id="threadACard" class="thread-card">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <strong style="color: var(--color-primary);">Thread A (Maaz Malick)</strong>
+            <span id="threadATime" style="font-family: var(--font-mono); font-size: 11px;">T+0ms</span>
           </div>
-          <span class="thread-status-badge" id="threadABadge">Ready to Run</span>
-          <p style="font-size: 12.5px; color: var(--color-muted);" id="threadAMsg">Awaiting trigger...</p>
-          <div class="sql-trace-box" id="threadASql">
-            START TRANSACTION;<br>
-            SELECT status FROM found_reports<br>
-            WHERE found_id = 2 FOR UPDATE;
-          </div>
+          <div id="threadABadge" style="font-size: 12px; font-weight: 600;">Ready</div>
+          <p id="threadAMsg" style="font-size: 12px; color: var(--color-text-muted);">Waiting to execute sp_SubmitClaim...</p>
         </div>
 
-        <!-- Thread B Card -->
-        <div class="thread-card" id="threadBCard">
-          <div class="thread-header">
-            <span class="thread-title">Thread B: Muzammil Rizwan</span>
-            <span class="thread-time" id="threadBTime">T+0ms</span>
+        <div id="threadBCard" class="thread-card">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <strong style="color: var(--color-primary);">Thread B (Muzammil Rizwan)</strong>
+            <span id="threadBTime" style="font-family: var(--font-mono); font-size: 11px;">T+0ms</span>
           </div>
-          <span class="thread-status-badge" id="threadBBadge">Ready to Run</span>
-          <p style="font-size: 12.5px; color: var(--color-muted);" id="threadBMsg">Awaiting trigger...</p>
-          <div class="sql-trace-box" id="threadBSql">
-            START TRANSACTION;<br>
-            SELECT status FROM found_reports<br>
-            WHERE found_id = 2 FOR UPDATE;
-          </div>
+          <div id="threadBBadge" style="font-size: 12px; font-weight: 600;">Ready</div>
+          <p id="threadBMsg" style="font-size: 12px; color: var(--color-text-muted);">Waiting to execute sp_SubmitClaim...</p>
         </div>
       </div>
 
-      <div class="acid-card" id="concurrencyExplanation">
-        <strong>💡 Academic Viva Explanation:</strong> Both threads executed <code>sp_SubmitClaim</code> simultaneously. The InnoDB lock manager granted an exclusive write lock (X-lock) to the first arriving thread. The second thread was forced into a lock wait state. Once the winner committed, the second thread was evaluated against <code>UNDER_CLAIM</code> and safely aborted, preventing a phantom duplicate claim anomaly.
-      </div>
-
-      <div style="display: flex; justify-content: flex-end; margin-top: 18px;">
+      <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
         <button class="btn-secondary" onclick="closeModal('concurrencyModal')">Close</button>
+        <button id="btnRunRace" class="btn-gold" onclick="runConcurrencyRace()">🚀 Fire Concurrent Race</button>
       </div>
     </div>
   </div>
 
-  <!-- ========================================================
-       MODAL: MATCH SCORE EXPLAINER BREAKDOWN
-       ======================================================== -->
+  <!-- Modal 5: Score Explainer -->
   <div id="scoreExplainerModal" class="modal-backdrop">
-    <div class="modal-box" style="max-width: 600px;">
+    <div class="modal-box" style="max-width: 580px;">
       <div class="modal-header">
         <div>
-          <h4 id="explainerTitle">Match Score Breakdown</h4>
-          <span style="font-size: 12px; color: var(--color-muted);">Calculated by Stored Procedure <code>sp_GenerateMatchesForLostReport</code></span>
+          <h3>Match Formula Breakdown</h3>
+          <p id="explainerItemName" style="font-size: 13px; color: var(--color-text-muted); font-weight: 600;"></p>
         </div>
-        <button class="btn-close" onclick="closeModal('scoreExplainerModal')">&times;</button>
+        <button class="modal-close-btn" onclick="closeModal('scoreExplainerModal')">&times;</button>
       </div>
 
-      <div style="background-color: var(--color-surface-soft); padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--color-hairline); margin-bottom: 20px;">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <span style="font-size: 16px; font-weight: 700; color: var(--color-ink);" id="explainerItemName">Item Match</span>
-          <span class="score-badge perfect" id="explainerTotalScore" style="font-size: 15px; padding: 6px 14px;">100% Match</span>
+      <div style="display: flex; justify-content: space-between; align-items: center; background: var(--color-gold-soft); padding: 12px 16px; border-radius: var(--radius-md); margin-bottom: 18px;">
+        <span style="font-size: 13px; font-weight: 700; color: #8C6B14;">Composite Match Confidence</span>
+        <span id="explainerTotalScore" style="font-family: var(--font-display); font-size: 20px; font-weight: 800; color: var(--color-primary);">100% Match</span>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 14px; font-size: 13px;">
+        <div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+            <span><strong>Category Exact Match</strong> (Weight: 40%)</span>
+            <span style="color: var(--color-success); font-weight: 700;">+40 pts</span>
+          </div>
+          <div style="width: 100%; height: 8px; background: var(--color-surface-sunken); border-radius: var(--radius-pill); overflow: hidden;">
+            <div style="width: 100%; height: 100%; background: var(--color-primary);"></div>
+          </div>
+        </div>
+
+        <div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+            <span><strong>Location / Campus Room Proximity</strong> (Weight: 25%)</span>
+            <span style="color: var(--color-success); font-weight: 700;">+25 pts</span>
+          </div>
+          <div style="width: 100%; height: 8px; background: var(--color-surface-sunken); border-radius: var(--radius-pill); overflow: hidden;">
+            <div style="width: 100%; height: 100%; background: var(--color-gold);"></div>
+          </div>
+        </div>
+
+        <div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+            <span><strong>Temporal Proximity</strong> (Weight: 25%)</span>
+            <span style="color: var(--color-success); font-weight: 700;">+25 pts</span>
+          </div>
+          <div style="width: 100%; height: 8px; background: var(--color-surface-sunken); border-radius: var(--radius-pill); overflow: hidden;">
+            <div style="width: 100%; height: 100%; background: var(--color-info);"></div>
+          </div>
+        </div>
+
+        <div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+            <span><strong>Brand / Color Match</strong> (Weight: 10%)</span>
+            <span style="color: var(--color-success); font-weight: 700;">+10 pts</span>
+          </div>
+          <div style="width: 100%; height: 8px; background: var(--color-surface-sunken); border-radius: var(--radius-pill); overflow: hidden;">
+            <div style="width: 100%; height: 100%; background: var(--color-success);"></div>
+          </div>
         </div>
       </div>
 
-      <!-- Breakdown Bars -->
-      <div class="score-breakdown-row">
-        <div class="score-row-header">
-          <span>1. Category Match (Exact Match)</span>
-          <span style="color: var(--brand-pink);">+40% / 40%</span>
-        </div>
-        <div class="score-bar-bg"><div class="score-bar-fill" style="width: 100%;"></div></div>
-      </div>
-
-      <div class="score-breakdown-row">
-        <div class="score-row-header">
-          <span>2. Location Match (Same Room / Floor)</span>
-          <span style="color: var(--brand-pink);">+25% / 25%</span>
-        </div>
-        <div class="score-bar-bg"><div class="score-bar-fill" style="width: 100%;"></div></div>
-      </div>
-
-      <div class="score-breakdown-row">
-        <div class="score-row-header">
-          <span>3. Date &amp; Time Proximity (&le; 24h Window)</span>
-          <span style="color: var(--brand-pink);">+25% / 25%</span>
-        </div>
-        <div class="score-bar-bg"><div class="score-bar-fill" style="width: 100%;"></div></div>
-      </div>
-
-      <div class="score-breakdown-row">
-        <div class="score-row-header">
-          <span>4. Attribute Match (Color &amp; Brand)</span>
-          <span style="color: var(--brand-pink);">+10% / 10%</span>
-        </div>
-        <div class="score-bar-bg"><div class="score-bar-fill" style="width: 100%;"></div></div>
-      </div>
-
-      <div class="acid-card" style="margin-top: 16px;">
-        <strong>Formula:</strong> <code>Score = W(category: 40) + W(location: 25) + W(time: 25) + W(attribute: 10)</code>. Items with &ge; 40% are proposed; items with &ge; 60% mark the lost report as <code>MATCHED</code>.
-      </div>
-
-      <div style="display: flex; justify-content: flex-end; margin-top: 20px;">
+      <div style="display: flex; justify-content: flex-end; margin-top: 24px;">
         <button class="btn-secondary" onclick="closeModal('scoreExplainerModal')">Close</button>
       </div>
     </div>
   </div>
 
-  <!-- ========================================================
-       MODAL: PRINTABLE OFFICIAL CUSTODY HANDOVER RECEIPT
-       ======================================================== -->
+  <!-- Modal 6: Printable Official Custody Handover Voucher -->
   <div id="receiptModal" class="modal-backdrop">
-    <div class="modal-box" style="max-width: 620px; border: 2px solid var(--color-ink); padding: 32px;">
-      <div style="text-align: center; border-bottom: 2px solid var(--color-ink); padding-bottom: 14px; margin-bottom: 18px;">
-        <span style="font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--color-muted);">University of Karachi</span>
-        <h3 style="font-size: 18px; font-weight: 800; color: var(--color-ink); margin: 2px 0;">UMAER BASHA INSTITUTE OF INFORMATION TECHNOLOGY</h3>
-        <p style="font-size: 12px; font-weight: 600; color: var(--color-body); text-transform: uppercase; letter-spacing: 0.5px;">Campus Property Verification &amp; Handover Voucher</p>
+    <div class="modal-box" style="max-width: 640px; padding: 36px; border: 2px solid var(--color-primary);">
+      
+      <!-- Voucher Header with Official Logo -->
+      <div style="display: flex; align-items: center; gap: 16px; border-bottom: 2px solid var(--color-primary); padding-bottom: 16px; margin-bottom: 20px;">
+        <img src="ubit-logo.jpg" alt="UBIT Crest" style="width: 64px; height: 64px; border-radius: 50%; object-fit: cover; flex-shrink: 0;">
+        <div style="text-align: left;">
+          <span style="font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--color-primary);">University of Karachi</span>
+          <h3 style="font-size: 17px; font-weight: 800; color: var(--color-primary); margin: 2px 0;">UMAER BASHA INSTITUTE OF INFORMATION TECHNOLOGY</h3>
+          <p style="font-size: 12px; font-weight: 700; color: var(--color-text-main); text-transform: uppercase;">Official Property Verification &amp; Handover Voucher</p>
+        </div>
       </div>
 
       <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 16px;">
-        <span><strong>Voucher ID:</strong> <span id="rcptVoucherId">UBIT-REC-0001</span></span>
-        <span><strong>Date &amp; Time:</strong> <span id="rcptDateTime">2026-10-21</span></span>
+        <span><strong>Voucher ID:</strong> <span id="rcptVoucherId" style="font-family: var(--font-mono); font-weight: 700; color: var(--color-primary);">UBIT-REC-0001</span></span>
+        <span><strong>Date &amp; Time:</strong> <span id="rcptDateTime">2026-10-24</span></span>
       </div>
 
-      <div style="background-color: var(--color-surface-soft); border: 1px solid var(--color-hairline); border-radius: var(--radius-md); padding: 14px; margin-bottom: 16px; font-size: 13px;">
+      <div style="background: var(--color-surface-soft); border: 1px solid var(--color-hairline); border-radius: var(--radius-md); padding: 14px; margin-bottom: 16px; font-size: 13px;">
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
-          <div><strong style="color: var(--color-muted);">Claimant Name:</strong> <span id="rcptClaimantName"></span></div>
-          <div><strong style="color: var(--color-muted);">Enrollment No:</strong> <span id="rcptEnrollment"></span></div>
+          <div><strong style="color: var(--color-text-muted);">Claimant Name:</strong> <span id="rcptClaimantName"></span></div>
+          <div><strong style="color: var(--color-text-muted);">Enrollment No:</strong> <span id="rcptEnrollment" style="font-family: var(--font-mono); font-weight: 600;"></span></div>
         </div>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-          <div><strong style="color: var(--color-muted);">Contact Phone:</strong> <span id="rcptPhone"></span></div>
-          <div><strong style="color: var(--color-muted);">Status:</strong> <span style="color: var(--color-success); font-weight: 700;">VERIFIED &amp; RELEASED</span></div>
+          <div><strong style="color: var(--color-text-muted);">Contact Phone:</strong> <span id="rcptPhone"></span></div>
+          <div><strong style="color: var(--color-text-muted);">Status:</strong> <span style="color: var(--color-success); font-weight: 700;">VERIFIED &amp; RELEASED</span></div>
         </div>
       </div>
 
       <div style="border: 1px solid var(--color-hairline); border-radius: var(--radius-md); padding: 14px; margin-bottom: 18px; font-size: 13px;">
-        <div style="margin-bottom: 6px;"><strong style="color: var(--color-muted);">Item Handed Over:</strong> <span id="rcptItemName" style="font-weight: 700;"></span></div>
-        <div style="margin-bottom: 6px;"><strong style="color: var(--color-muted);">Category &amp; Custody:</strong> <span id="rcptCategoryCustody"></span></div>
-        <div><strong style="color: var(--color-muted);">Verification Proof Details:</strong> <span id="rcptProof"></span></div>
+        <div style="margin-bottom: 6px;"><strong style="color: var(--color-text-muted);">Item Handed Over:</strong> <span id="rcptItemName" style="font-weight: 700; color: var(--color-primary);"></span></div>
+        <div style="margin-bottom: 6px;"><strong style="color: var(--color-text-muted);">Category &amp; Custody:</strong> <span id="rcptCategoryCustody"></span></div>
+        <div><strong style="color: var(--color-text-muted);">Verification Proof Details:</strong> <span id="rcptProof"></span></div>
       </div>
 
       <div style="display: flex; justify-content: space-between; align-items: flex-end; padding-top: 14px; border-top: 1px dashed var(--color-hairline);">
-        <div style="font-size: 11px; color: var(--color-muted); max-width: 300px;">
-          This voucher confirms legal verification and handover under UBIT DBMS lost-and-found protocol.
+        <div style="font-size: 11px; color: var(--color-text-muted); max-width: 320px;">
+          This voucher confirms legal ownership verification and physical handover under official UBIT DBMS protocol.
         </div>
         <div style="text-align: center;">
-          <div style="width: 140px; border-bottom: 1px solid var(--color-ink); margin-bottom: 4px;"></div>
-          <span style="font-size: 11px; font-weight: 600; text-transform: uppercase;">Officer Signature</span>
+          <div style="width: 140px; border-bottom: 1px solid var(--color-text-main); margin-bottom: 4px;"></div>
+          <span style="font-size: 11px; font-weight: 700; text-transform: uppercase;">Officer Signature</span>
         </div>
       </div>
 
@@ -622,11 +762,57 @@
         <button class="btn-secondary" onclick="closeModal('receiptModal')">Close</button>
         <button class="btn-primary" onclick="window.print()">🖨️ Print / Save Voucher</button>
       </div>
+
     </div>
   </div>
 
-  <!-- Toast Container -->
+  <!-- Toast Notifications Container -->
   <div id="toastContainer" class="toast-container"></div>
+
+  <!-- ========================================================
+       OFFICIAL ACADEMIC FOOTER
+       ======================================================== -->
+  <footer class="official-footer">
+    <div class="footer-container">
+      
+      <div class="footer-brand-wrap">
+        <img src="ubit-logo.jpg" alt="UBIT Department Logo" class="footer-logo-img">
+        <div>
+          <div class="footer-brand-title">Department of Computer Science (UBIT)</div>
+          <p class="footer-brand-desc">
+            Umaer Basha Institute of Information Technology, University of Karachi, KU Circular Road, Karachi.
+          </p>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h5>Quick Links</h5>
+        <ul>
+          <li><a href="#" onclick="switchView('view-home'); return false;">Home Portal</a></li>
+          <li><a href="#" onclick="switchView('view-catalog'); return false;">Browse Catalog</a></li>
+          <li><a href="#" onclick="switchView('view-file-lost'); return false;">Report Lost Property</a></li>
+          <li><a href="#" onclick="switchView('view-file-found'); return false;">Report Found Property</a></li>
+          <li><a href="#" onclick="switchView('view-security'); return false;">Security Desk</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5>Academic Project Team</h5>
+        <ul>
+          <li><strong>Syed Umer Hashmi</strong> (EB25210006105)</li>
+          <li><strong>Maaz Malick</strong> (EB25210006036)</li>
+          <li><strong>Muzammil Rizwan</strong> (EB25210006079)</li>
+          <li>Course: Database Management Systems (4th Semester)</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="footer-bottom">
+      <div>&copy; 2026 Department of Computer Science (UBIT), University of Karachi. All rights reserved.</div>
+      <div>Powered by MySQL 8.0 ACID Storage Engine &amp; Claymorphism UI</div>
+    </div>
+  </footer>
 
   <script src="app.js"></script>
 </body>

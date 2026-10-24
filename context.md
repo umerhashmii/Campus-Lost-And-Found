@@ -109,37 +109,36 @@ c:\University\DBMS Project 4th Semester\
 | **M5: Frontend Prototype UI (Phase 1)** | DONE | Precision rebuilt navbar with Clay pill tabs, brand cluster, and avatar profile pill. |
 | **M6: Advanced Academic Features (Phase 2-4)** | DONE | Live concurrency race simulator, match score explainer, campus hotspot map, custody handover voucher. |
 | **M7: GitHub Sync & Viva Defense (Phase 5)** | DONE | Complete VIVA_PREP.md guide, finalize README.md, local Git commits clean on main (user will push remote later). |
-| **M8: Official Campus App Overhaul (Next)** | 🟡 PLANNED | Integrating real UBIT department floor plan map, official logo & seal, and full mobile-first UI/UX overhaul. |
+| **M7: GitHub Sync & Viva Defense (Phase 5)** | DONE | Complete VIVA_PREP.md guide, finalize README.md, local Git commits clean on main (user will push remote later). |
+| **M8: Official Campus App Overhaul** | DONE | Pulled TypeUI claymorphism skill, blended with UBIT official logo/maroon/gold branding in DESIGN.md, launched complete multi-page portal with Home Hub & Browse Catalog. |
 
 ---
 
 ## 6. Official Campus Application Strategy (Pragmatic Scope)
 
-Per user directive on 2026-10-21 (post-Phase 5 review), the scope is strictly grounded in real UBIT operational constraints:
+Per user directive, the scope is strictly grounded in real UBIT operational constraints:
 
 * **Pruned Out (Not needed / No hardware at UBIT):**
   * ❌ No barcode / RFID scanners.
   * ❌ No WhatsApp / SMS gateway APIs.
   * ❌ No complex storage bin / cabinet matrix (Admin Officer simply keeps items safely in the office).
   * ❌ No in-app secret challenge questions (Admin Officer investigates verbally face-to-face).
-* **Approved Core Scope for Official Rollout:**
-  * ✅ **Interactive Multi-Floor SVG Map:** Ground Floor (Labs, Chairman Office, Canteen) & 1st Floor (Classrooms, Seminar Library, Faculty Offices). User will bring the real floor plan blueprint tomorrow.
-  * ✅ **Official Department Branding:** UBIT Crest & University of Karachi official logo (user will bring tomorrow).
+  * ❌ Internal map shelved for now.
+* **Approved Core Scope Deployed:**
+  * ✅ **Official Department Branding:** DCS UBIT Circular Seal (`ubit-logo.jpg`), Academic Maroon (`#7A1521`), Prestige Gold (`#D4AF37`), Poppins & Montserrat typography.
+  * ✅ **Flagship Home Hub Landing Page:** Welcome hero, real-time campus counters, 4 quick-action clay cards, 3-step guided student journey, live recent activity ticker, institutional notice banner.
+  * ✅ **Browse Property Directory:** Search-as-you-type filter with category pills (`ID Cards`, `Electronics`, `Bags`, `Books`, `Keys`), status badges, and claim initiation.
   * ✅ **90-Day Unclaimed Item Charity & Disposal Lifecycle:** Database-driven tracking with administrative sign-off report.
-  * ✅ **In-Person Admin Officer Verification Workflow:** Simple, clean queue with official handover voucher printing.
-* **Top Priority for Tomorrow: COMPLETE UI & UX OVERHAUL:**
-  * Complete redesign away from prototype data tables into clean, beautiful, tactile cards.
-  * Mobile-first navigation and layout so students can report/search items effortlessly on their phones.
-  * Clean typography, balanced whitespace, and intuitive interaction design.
+  * ✅ **In-Person Admin Officer Verification Workflow:** Simple, clean queue with official handover voucher printing with UBIT crest.
+  * ✅ **ACID Concurrency Locking:** Live simulation proving pessimistic row locks (`SELECT ... FOR UPDATE`).
 
 ---
 
-## 7. How to Resume Work (For Future AI Sessions / Tomorrow)
+## 7. How to Resume Work (For Future AI Sessions)
 1. Read this `context.md` file completely to restore full project state.
-2. Review [`docs/CAMPUS_SCALE_BLUEPRINT.md`](file:///c:/University/DBMS%20Project%204th%20Semester/docs/CAMPUS_SCALE_BLUEPRINT.md) for the pragmatic feature specifications.
-3. Check for user-provided real UBIT floor plan blueprint and department logos.
-4. Verify MySQL service is active: `mysql -u root -padmin123 campus_lost_and_found -e "SELECT COUNT(*) FROM users;"`
-5. Verify Node server is active on `http://localhost:3000`.
-6. Proceed directly with the complete UI & UX redesign and interactive SVG map integration.
+2. Review [`DESIGN.md`](file:///c:/University/DBMS%20Project%204th%20Semester/DESIGN.md) for the unified UBIT Claymorphism tokens.
+3. Verify MySQL service is active: `mysql -u root -padmin123 campus_lost_and_found -e "SELECT COUNT(*) FROM users;"`
+4. Verify Node server is running on `http://localhost:3000`.
+
 
 
