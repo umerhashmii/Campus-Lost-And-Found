@@ -13,7 +13,8 @@ $files = @(
     "02_seed_data.sql",
     "03_procedures_and_concurrency.sql",
     "04_triggers.sql",
-    "05_views.sql"
+    "05_views.sql",
+    "06_production_migration.sql"
 )
 
 Write-Host "================================================="
@@ -51,7 +52,9 @@ UNION ALL SELECT 'locations', COUNT(*) FROM locations
 UNION ALL SELECT 'categories', COUNT(*) FROM categories
 UNION ALL SELECT 'lost_reports', COUNT(*) FROM lost_reports
 UNION ALL SELECT 'found_reports', COUNT(*) FROM found_reports
-UNION ALL SELECT 'matches', COUNT(*) FROM matches;
+UNION ALL SELECT 'matches', COUNT(*) FROM matches
+UNION ALL SELECT 'claims', COUNT(*) FROM claims
+UNION ALL SELECT 'notifications', COUNT(*) FROM notifications;
 "@
 $verifySql | & $mysqlBin -u $user "-p$pass" -t
 
