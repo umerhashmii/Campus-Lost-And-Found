@@ -30,6 +30,18 @@ PREPARE stmt_pin FROM @sql_claim_pin;
 EXECUTE stmt_pin;
 DEALLOCATE PREPARE stmt_pin;
 
+-- 3b. Update claims status ENUM to include HANDED_OVER
+ALTER TABLE claims MODIFY COLUMN status ENUM('PENDING', 'UNDER_REVIEW', 'APPROVED', 'REJECTED', 'HANDED_OVER') NOT NULL DEFAULT 'PENDING';
+
+-- 3c. Safe add disposal columns to found_reports if not exist
+SET @exist_found_disposal := (SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='campus_lost_and_found' AND TABLE_NAME='found_reports' AND COLUMN_NAME='disposal_type');
+SET @sql_found_disposal := IF(@exist_found_disposal = 0, 
+    'ALTER TABLE found_reports ADD COLUMN disposal_type ENUM(\'DONATED_TO_WELFARE\', \'E_WASTE\', \'AUCTION\', \'DESTROYED\') NULL DEFAULT NULL AFTER status, ADD COLUMN disposed_at DATETIME NULL DEFAULT NULL AFTER disposal_type, ADD COLUMN disposed_by INT NULL DEFAULT NULL AFTER disposed_at, ADD COLUMN disposal_notes TEXT NULL DEFAULT NULL AFTER disposed_by, ADD CONSTRAINT fk_found_disposed_by FOREIGN KEY (disposed_by) REFERENCES users(user_id) ON DELETE SET NULL;', 
+    'SELECT 1;');
+PREPARE stmt_disposal FROM @sql_found_disposal;
+EXECUTE stmt_disposal;
+DEALLOCATE PREPARE stmt_disposal;
+
 -- 4. Create notifications table
 CREATE TABLE IF NOT EXISTS notifications (
     notification_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -230,6 +242,9 @@ proc_label: BEGIN
     -- Lock and resolve the found item
     UPDATE found_reports SET status = 'RESOLVED' WHERE found_id = v_found_id;
 
+    -- Update claim record to HANDED_OVER
+    UPDATE claims SET status = 'HANDED_OVER' WHERE claim_id = p_claim_id;
+
     -- If linked to a Lost Report, mark it as CLAIMED
     IF v_lost_id IS NOT NULL THEN
         UPDATE lost_reports SET status = 'CLAIMED' WHERE lost_id = v_lost_id;
@@ -261,7 +276,7 @@ proc_label: BEGIN
     SET p_message = 'PIN verified successfully! Custody handover completed and item resolved.';
 END$$
 
--- 7. Stored Procedure for 90-Day Unclaimed Property & Student Welfare Donation
+-- 7. Stored Procedure for Bulk Statutory Unclaimed Property & Student Welfare Donation
 DROP PROCEDURE IF EXISTS sp_ProcessUnclaimedDisposals$$
 CREATE PROCEDURE sp_ProcessUnclaimedDisposals(
     IN p_days_threshold INT,
@@ -298,9 +313,13 @@ proc_label: BEGIN
         LEAVE proc_label;
     END IF;
 
-    -- Update eligible found reports status to DISPOSED
+    -- Update eligible found reports status to DISPOSED with audit metadata
     UPDATE found_reports
-    SET status = 'DISPOSED'
+    SET status = 'DISPOSED',
+        disposal_type = p_action,
+        disposed_at = NOW(),
+        disposed_by = p_authorized_by,
+        disposal_notes = CONCAT('Bulk statutory disposal executed for threshold ', p_days_threshold, '+ days.')
     WHERE status = 'AVAILABLE'
       AND DATEDIFF(NOW(), found_date) >= p_days_threshold;
 
@@ -316,5 +335,69 @@ proc_label: BEGIN
     SET p_result_code = 'SUCCESS';
     SET p_message = CONCAT(v_count, ' item(s) processed for: ', p_action, ' under authorization of Officer #', p_authorized_by);
 END$$
+
+-- 8. Stored Procedure for Single-Item Selective Disposal / Donation
+DROP PROCEDURE IF EXISTS sp_ProcessSingleItemDisposal$$
+CREATE PROCEDURE sp_ProcessSingleItemDisposal(
+    IN p_found_id INT,
+    IN p_action_type VARCHAR(50),
+    IN p_notes TEXT,
+    IN p_officer_id INT,
+    OUT p_result_code VARCHAR(30),
+    OUT p_message VARCHAR(255)
+)
+proc_label: BEGIN
+    DECLARE v_status VARCHAR(20);
+    DECLARE v_item_name VARCHAR(100);
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+        SET p_result_code = 'ERROR';
+        SET p_message = 'Database error during single item disposal. Transaction rolled back.';
+    END;
+
+    START TRANSACTION;
+
+    SELECT status, item_name INTO v_status, v_item_name
+    FROM found_reports
+    WHERE found_id = p_found_id
+    FOR UPDATE;
+
+    IF v_status IS NULL THEN
+        ROLLBACK;
+        SET p_result_code = 'NOT_FOUND';
+        SET p_message = 'Found report record not found.';
+        LEAVE proc_label;
+    END IF;
+
+    IF v_status <> 'AVAILABLE' THEN
+        ROLLBACK;
+        SET p_result_code = 'INVALID_STATUS';
+        SET p_message = CONCAT('Cannot dispose item. Current status is: ', v_status);
+        LEAVE proc_label;
+    END IF;
+
+    -- Update found report with disposal record
+    UPDATE found_reports
+    SET status = 'DISPOSED',
+        disposal_type = p_action_type,
+        disposed_at = NOW(),
+        disposed_by = p_officer_id,
+        disposal_notes = p_notes
+    WHERE found_id = p_found_id;
+
+    -- Expire any pending match proposals
+    UPDATE matches
+    SET status = 'EXPIRED'
+    WHERE found_id = p_found_id AND status = 'PROPOSED';
+
+    COMMIT;
+
+    SET p_result_code = 'SUCCESS';
+    SET p_message = CONCAT('Item #', p_found_id, ' ("', v_item_name, '") successfully processed for ', p_action_type, '.');
+END$$
+
+DELIMITER ;
 
 DELIMITER ;

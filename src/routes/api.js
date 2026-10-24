@@ -623,6 +623,102 @@ router.post('/admin/unclaimed/process', async (req, res) => {
   }
 });
 
+// Single-Item Granular Disposal / Donation
+router.post('/admin/unclaimed/dispose-single', async (req, res) => {
+  const connection = await db.getConnection();
+  try {
+    const { found_id, action_type, notes, officer_id } = req.body;
+    if (!found_id) {
+      return res.status(400).json({ success: false, message: 'found_id is required.' });
+    }
+    const action = action_type || 'DONATED_TO_WELFARE';
+    const officer = parseInt(officer_id || '4', 10);
+    const adminNotes = notes || 'Processed via single item custody disposal.';
+
+    await connection.query('SET @res = "", @msg = "";');
+    await connection.query(
+      'CALL sp_ProcessSingleItemDisposal(?, ?, ?, ?, @res, @msg);',
+      [parseInt(found_id, 10), action, adminNotes, officer]
+    );
+
+    const [outRows] = await connection.query('SELECT @res AS result_code, @msg AS message;');
+    const { result_code, message } = outRows[0];
+
+    if (result_code === 'SUCCESS') {
+      res.json({ success: true, message });
+    } else {
+      res.status(400).json({ success: false, code: result_code, message });
+    }
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  } finally {
+    connection.release();
+  }
+});
+
+// Batch Selection Disposal / Donation
+router.post('/admin/unclaimed/dispose-batch', async (req, res) => {
+  const connection = await db.getConnection();
+  try {
+    const { found_ids, action_type, notes, officer_id } = req.body;
+    if (!Array.isArray(found_ids) || found_ids.length === 0) {
+      return res.status(400).json({ success: false, message: 'found_ids must be a non-empty array of IDs.' });
+    }
+    const action = action_type || 'DONATED_TO_WELFARE';
+    const officer = parseInt(officer_id || '4', 10);
+    const adminNotes = notes || `Batch processed for ${found_ids.length} selected item(s).`;
+
+    let successCount = 0;
+    const errors = [];
+
+    for (const fId of found_ids) {
+      await connection.query('SET @res = "", @msg = "";');
+      await connection.query(
+        'CALL sp_ProcessSingleItemDisposal(?, ?, ?, ?, @res, @msg);',
+        [parseInt(fId, 10), action, adminNotes, officer]
+      );
+      const [outRows] = await connection.query('SELECT @res AS result_code, @msg AS message;');
+      if (outRows[0].result_code === 'SUCCESS') {
+        successCount++;
+      } else {
+        errors.push(`Item #${fId}: ${outRows[0].message}`);
+      }
+    }
+
+    res.json({
+      success: successCount > 0,
+      processed_count: successCount,
+      total_requested: found_ids.length,
+      errors: errors.length > 0 ? errors : undefined,
+      message: `Successfully processed ${successCount} of ${found_ids.length} selected item(s) for ${action}.`
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  } finally {
+    connection.release();
+  }
+});
+
+// Custody Handover History (Items Given to Person)
+router.get('/admin/history/handovers', async (req, res) => {
+  try {
+    const [rows] = await db.query('SELECT * FROM vw_custody_handover_history LIMIT 100;');
+    res.json({ success: true, count: rows.length, data: rows });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// Depository Disposal & Welfare Manifest History
+router.get('/admin/history/disposals', async (req, res) => {
+  try {
+    const [rows] = await db.query('SELECT * FROM vw_depository_disposal_history LIMIT 100;');
+    res.json({ success: true, count: rows.length, data: rows });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // ==========================================
 // 9. NOTIFICATIONS MANAGEMENT
 // ==========================================

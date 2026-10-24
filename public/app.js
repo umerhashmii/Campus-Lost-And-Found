@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 // ========================================================
 function switchView(viewId) {
   // Guard admin views
-  if ((viewId === 'view-security' || viewId === 'view-unclaimed' || viewId === 'view-analytics') && 
+  if ((viewId === 'view-security' || viewId === 'view-unclaimed' || viewId === 'view-analytics' || viewId === 'view-history') && 
       currentUser && currentUser.role === 'STUDENT') {
     showToast('Restricted Area: Admin & Security Officer access only.', 'error');
     openAuthModal();
@@ -78,6 +78,7 @@ function switchView(viewId) {
   if (viewId === 'view-security') loadSecurityQueue();
   if (viewId === 'view-unclaimed') loadUnclaimedDepository();
   if (viewId === 'view-analytics') loadAnalytics();
+  if (viewId === 'view-history') loadHistoryView();
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -181,7 +182,7 @@ function applyCurrentUserSession(user) {
 
   // If student was on an admin-only view, bounce back to Home
   const activeSec = document.querySelector('.view-section.active');
-  if (!isOfficer && activeSec && (activeSec.id === 'view-security' || activeSec.id === 'view-unclaimed' || activeSec.id === 'view-analytics')) {
+  if (!isOfficer && activeSec && (activeSec.id === 'view-security' || activeSec.id === 'view-unclaimed' || activeSec.id === 'view-analytics' || activeSec.id === 'view-history')) {
     switchView('view-home');
   }
 
@@ -1266,9 +1267,22 @@ async function handlePINVerificationSubmit(e) {
 }
 
 // ========================================================
-// 90-DAY UNCLAIMED DEPOSITORY & DISPOSAL MANAGEMENT
+// Safe string escaping for inline attributes
+function escapeQuotes(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/\\/g, '\\\\')
+    .replace(/'/g, "\\'")
+    .replace(/"/g, '&quot;')
+    .replace(/\n/g, ' ');
+}
+
+// ========================================================
+// 90-DAY UNCLAIMED DEPOSITORY & SELECTIVE DISPOSAL
 // ========================================================
 let currentUnclaimedDaysThreshold = 90;
+let currentUnclaimedItems = [];
+let selectedUnclaimedIds = new Set();
 
 function setUnclaimedThreshold(days) {
   currentUnclaimedDaysThreshold = days;
@@ -1289,27 +1303,37 @@ async function loadUnclaimedDepository(days = currentUnclaimedDaysThreshold) {
   const periodBadge = document.getElementById('unclaimedPeriodLabel');
   if (!tbody) return;
 
+  selectedUnclaimedIds.clear();
+  updateUnclaimedBatchBar();
+  const masterCheck = document.getElementById('unclaimedSelectAll');
+  if (masterCheck) masterCheck.checked = false;
+
   if (periodBadge) periodBadge.textContent = days === 0 ? 'All Active (0+ Days)' : `${days} Days`;
-  tbody.innerHTML = '<tr><td colspan="7">Loading overdue depository inventory...</td></tr>';
+  tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 24px;">Loading overdue depository inventory...</td></tr>';
 
   try {
     const res = await fetch(`${API_BASE}/admin/unclaimed?days=${days}`);
     const data = await res.json();
 
     if (data.success) {
-      const eligibleCount = data.data.filter(i => i.days_in_custody >= 90).length;
+      currentUnclaimedItems = data.data || [];
+      const eligibleCount = currentUnclaimedItems.filter(i => i.days_in_custody >= 90).length;
       if (countBadge) countBadge.textContent = eligibleCount;
 
-      if (data.data.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 32px; color: var(--color-text-muted);">No found property currently exceeds the ${days}-day holding threshold.</td></tr>`;
+      if (currentUnclaimedItems.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="9" style="text-align: center; padding: 36px; color: var(--color-text-muted);">No found property currently exceeds the ${days}-day holding threshold.</td></tr>`;
         return;
       }
 
       tbody.innerHTML = '';
-      data.data.forEach(item => {
+      currentUnclaimedItems.forEach(item => {
         const isOverdue = item.days_in_custody >= 90;
         const tr = document.createElement('tr');
+        tr.id = `depository-row-${item.found_id}`;
         tr.innerHTML = `
+          <td style="text-align: center;">
+            <input type="checkbox" class="unclaimed-item-check" data-id="${item.found_id}" onchange="handleUnclaimedCheckChange(${item.found_id}, this.checked)">
+          </td>
           <td><strong>#F-${item.found_id}</strong></td>
           <td>
             <div style="display: flex; align-items: center; gap: 10px;">
@@ -1338,34 +1362,209 @@ async function loadUnclaimedDepository(days = currentUnclaimedDaysThreshold) {
           <td><span style="font-size: 12px;">${item.custody_location}</span></td>
           <td>
             ${isOverdue ? `
-              <span class="card-status-badge expired" style="background: #FEE2E2; color: #991B1B; border: 1px solid #FCA5A5; font-weight: 700;">OVERDUE (ELIGIBLE FOR DISPOSAL)</span>
+              <span class="card-status-badge expired" style="background: #FEE2E2; color: #991B1B; border: 1px solid #FCA5A5; font-weight: 700;">OVERDUE</span>
             ` : `
-              <span class="card-status-badge available" style="background: #DCFCE7; color: #166534; border: 1px solid #86EFAC; font-weight: 700;">SAFEGUARDED (IN HOLDING)</span>
+              <span class="card-status-badge available" style="background: #DCFCE7; color: #166534; border: 1px solid #86EFAC; font-weight: 700;">IN HOLDING</span>
             `}
+          </td>
+          <td style="text-align: right;">
+            <div style="display: flex; gap: 6px; justify-content: flex-end;">
+              <button class="btn-success" style="padding: 4px 9px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;" onclick="openSingleDisposalModal(${item.found_id}, 'WELFARE')" title="Donate this specific item to UBIT Student Welfare">
+                <span>💖 Donate</span>
+              </button>
+              <button class="btn-danger" style="padding: 4px 9px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;" onclick="openSingleDisposalModal(${item.found_id}, 'E_WASTE')" title="Send this specific item to E-Waste Recycling">
+                <span>♻️ Dispose</span>
+              </button>
+            </div>
           </td>
         `;
         tbody.appendChild(tr);
       });
     }
   } catch (err) {
-    tbody.innerHTML = `<tr><td colspan="7" style="color: var(--color-danger);">Error: ${err.message}</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="9" style="color: var(--color-danger);">Error: ${err.message}</td></tr>`;
   }
 }
 
-function openDisposalModal(actionType) {
+// Checkbox selection management
+function handleUnclaimedCheckChange(foundId, isChecked) {
+  if (isChecked) {
+    selectedUnclaimedIds.add(foundId);
+  } else {
+    selectedUnclaimedIds.delete(foundId);
+  }
+  updateUnclaimedBatchBar();
+}
+
+function toggleSelectAllUnclaimed(masterCheck) {
+  const isChecked = masterCheck.checked;
+  const checks = document.querySelectorAll('.unclaimed-item-check');
+  selectedUnclaimedIds.clear();
+  checks.forEach(chk => {
+    chk.checked = isChecked;
+    if (isChecked) {
+      selectedUnclaimedIds.add(parseInt(chk.dataset.id, 10));
+    }
+  });
+  updateUnclaimedBatchBar();
+}
+
+function clearUnclaimedCheckboxes() {
+  selectedUnclaimedIds.clear();
+  const checks = document.querySelectorAll('.unclaimed-item-check');
+  checks.forEach(chk => (chk.checked = false));
+  const masterCheck = document.getElementById('unclaimedSelectAll');
+  if (masterCheck) masterCheck.checked = false;
+  updateUnclaimedBatchBar();
+}
+
+function updateUnclaimedBatchBar() {
+  const bar = document.getElementById('unclaimedBatchBar');
+  const countSpan = document.getElementById('unclaimedBatchCount');
+  if (!bar) return;
+  const count = selectedUnclaimedIds.size;
+  if (count > 0) {
+    bar.style.display = 'flex';
+    if (countSpan) countSpan.textContent = count;
+  } else {
+    bar.style.display = 'none';
+  }
+}
+
+// Modal opening functions: Single Item vs Batch Selection vs Statutory Bulk
+function openSingleDisposalModal(foundId, actionType) {
+  const item = currentUnclaimedItems.find(i => i.found_id === foundId);
+  if (!item) {
+    showToast('Item details could not be found.', 'error');
+    return;
+  }
+
   const modal = document.getElementById('disposalModal');
   const title = document.getElementById('disposalModalTitle');
   const recipient = document.getElementById('disposalRecipient');
   const actionHidden = document.getElementById('disposalActionType');
+  const modeHidden = document.getElementById('disposalMode');
+  const singleIdHidden = document.getElementById('disposalSingleFoundId');
+  const daysGroup = document.getElementById('disposalDaysGroup');
+  const preview = document.getElementById('disposalItemPreview');
+  const notes = document.getElementById('disposalNotes');
+
+  modeHidden.value = 'single';
+  singleIdHidden.value = foundId;
+  daysGroup.style.display = 'none';
 
   if (actionType === 'WELFARE') {
-    title.textContent = 'Donate Overdue Items to UBIT Student Welfare';
-    recipient.value = 'UBIT Student Welfare Society (Books, Electronics & Usables)';
-    actionHidden.value = 'DONATED_TO_UBIT_WELFARE';
+    title.textContent = `Donate Item #F-${foundId} to UBIT Student Welfare`;
+    recipient.value = 'UBIT Student Welfare Society (Student Book Bank & Tech Aid)';
+    actionHidden.value = 'DONATED_TO_WELFARE';
+    notes.value = `Approved for semester distribution by UBIT Student Welfare Committee. Item held ${item.days_in_custody} days.`;
   } else {
-    title.textContent = 'Authorize E-Waste & Secure Disposal';
+    title.textContent = `Authorize E-Waste Disposal for Item #F-${foundId}`;
     recipient.value = 'Department Technical Recycling & Electronic Waste Protocol';
-    actionHidden.value = 'E_WASTE_RECYCLING';
+    actionHidden.value = 'E_WASTE';
+    notes.value = `Authorized for compliant green recycling. Item held ${item.days_in_custody} days without active claim.`;
+  }
+
+  // Populate preview card
+  preview.style.display = 'block';
+  preview.innerHTML = `
+    <div style="display: flex; gap: 12px; align-items: center;">
+      ${item.image_url ? `
+        <img src="${item.image_url}" alt="${item.item_name}" style="width: 54px; height: 54px; object-fit: cover; border-radius: 8px; border: 1px solid var(--color-hairline); flex-shrink: 0;">
+      ` : ''}
+      <div>
+        <h4 style="margin: 0 0 2px 0; font-size: 14px; font-weight: 700; color: var(--color-text-main);">${item.item_name}</h4>
+        <div style="font-size: 11.5px; color: var(--color-text-muted);">
+          Category: <strong>${item.category_name}</strong> · Held: <strong style="color: var(--color-primary);">${item.days_in_custody} days</strong>
+        </div>
+        <div style="font-size: 11px; color: var(--color-text-muted); margin-top: 2px;">
+          Custody: ${item.custody_location}
+        </div>
+      </div>
+    </div>
+  `;
+
+  modal.classList.add('open');
+}
+
+function openBatchDisposalModal(actionType) {
+  if (selectedUnclaimedIds.size === 0) {
+    showToast('Please check at least one item using the table checkboxes.', 'error');
+    return;
+  }
+
+  const selectedItems = currentUnclaimedItems.filter(i => selectedUnclaimedIds.has(i.found_id));
+  const modal = document.getElementById('disposalModal');
+  const title = document.getElementById('disposalModalTitle');
+  const recipient = document.getElementById('disposalRecipient');
+  const actionHidden = document.getElementById('disposalActionType');
+  const modeHidden = document.getElementById('disposalMode');
+  const singleIdHidden = document.getElementById('disposalSingleFoundId');
+  const daysGroup = document.getElementById('disposalDaysGroup');
+  const preview = document.getElementById('disposalItemPreview');
+  const notes = document.getElementById('disposalNotes');
+
+  modeHidden.value = 'batch';
+  singleIdHidden.value = '';
+  daysGroup.style.display = 'none';
+
+  if (actionType === 'WELFARE') {
+    title.textContent = `Donate ${selectedItems.length} Selected Item(s) to UBIT Welfare`;
+    recipient.value = 'UBIT Student Welfare Society (Student Book Bank & Tech Aid)';
+    actionHidden.value = 'DONATED_TO_WELFARE';
+    notes.value = `Bulk batch transfer of ${selectedItems.length} verified unclaimed items to Student Welfare.`;
+  } else {
+    title.textContent = `Authorize E-Waste Disposal for ${selectedItems.length} Selected Item(s)`;
+    recipient.value = 'Department Technical Recycling & Electronic Waste Protocol';
+    actionHidden.value = 'E_WASTE';
+    notes.value = `Batch institutional scrap authorization for ${selectedItems.length} electronic / unusable items.`;
+  }
+
+  // Populate preview card with chips
+  preview.style.display = 'block';
+  preview.innerHTML = `
+    <div style="font-size: 12.5px; font-weight: 700; margin-bottom: 6px; color: var(--color-text-main);">
+      Selected Inventory Items (${selectedItems.length}):
+    </div>
+    <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+      ${selectedItems.map(i => `
+        <span style="font-size: 11px; background: var(--color-surface); border: 1px solid var(--color-hairline); border-radius: var(--radius-sm); padding: 3px 8px; font-weight: 600;">
+          #F-${i.found_id} ${i.item_name} (${i.days_in_custody}d)
+        </span>
+      `).join('')}
+    </div>
+  `;
+
+  modal.classList.add('open');
+}
+
+function openDisposalModal(actionType) {
+  // Statutory bulk threshold mode
+  const modal = document.getElementById('disposalModal');
+  const title = document.getElementById('disposalModalTitle');
+  const recipient = document.getElementById('disposalRecipient');
+  const actionHidden = document.getElementById('disposalActionType');
+  const modeHidden = document.getElementById('disposalMode');
+  const singleIdHidden = document.getElementById('disposalSingleFoundId');
+  const daysGroup = document.getElementById('disposalDaysGroup');
+  const preview = document.getElementById('disposalItemPreview');
+  const notes = document.getElementById('disposalNotes');
+
+  modeHidden.value = 'statutory';
+  singleIdHidden.value = '';
+  daysGroup.style.display = 'block';
+  preview.style.display = 'none';
+
+  if (actionType === 'WELFARE') {
+    title.textContent = 'Bulk Statutory Donation to UBIT Student Welfare';
+    recipient.value = 'UBIT Student Welfare Society (Student Book Bank & Tech Aid)';
+    actionHidden.value = 'DONATED_TO_WELFARE';
+    notes.value = 'Approved under Department of Computer Science student welfare protocol.';
+  } else {
+    title.textContent = 'Bulk Statutory E-Waste & Scrap Disposal';
+    recipient.value = 'Department Technical Recycling & Electronic Waste Protocol';
+    actionHidden.value = 'E_WASTE';
+    notes.value = 'Compliant electronic waste disposal authorized for items exceeding statutory retention.';
   }
 
   modal.classList.add('open');
@@ -1373,33 +1572,315 @@ function openDisposalModal(actionType) {
 
 async function handleDisposalSubmit(e) {
   e.preventDefault();
+  const mode = document.getElementById('disposalMode').value;
   const action_type = document.getElementById('disposalActionType').value;
-  const days_threshold = parseInt(document.getElementById('disposalDays').value, 10);
-  const notes = document.getElementById('disposalNotes').value;
+  const notes = document.getElementById('disposalNotes').value.trim();
+  const officer_id = currentUser ? currentUser.user_id : 4;
+  const submitBtn = document.getElementById('disposalSubmitBtn');
+
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Processing in Database...';
+  }
 
   try {
-    const res = await fetch(`${API_BASE}/admin/unclaimed/process`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        days_threshold,
-        action_type,
-        officer_id: currentUser ? currentUser.user_id : 4
-      })
-    });
-    const data = await res.json();
+    let res, data;
+
+    if (mode === 'single') {
+      const found_id = parseInt(document.getElementById('disposalSingleFoundId').value, 10);
+      res = await fetch(`${API_BASE}/admin/unclaimed/dispose-single`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ found_id, action_type, notes, officer_id })
+      });
+      data = await res.json();
+    } else if (mode === 'batch') {
+      const found_ids = Array.from(selectedUnclaimedIds);
+      res = await fetch(`${API_BASE}/admin/unclaimed/dispose-batch`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ found_ids, action_type, notes, officer_id })
+      });
+      data = await res.json();
+    } else {
+      // Statutory bulk threshold mode
+      const days_threshold = parseInt(document.getElementById('disposalDays').value, 10);
+      res = await fetch(`${API_BASE}/admin/unclaimed/process`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ days_threshold, action_type, officer_id })
+      });
+      data = await res.json();
+    }
 
     if (data.success) {
       closeModal('disposalModal');
       showToast(`Disposal complete: ${data.message}`, 'success');
+      clearUnclaimedCheckboxes();
       await refreshAll();
       loadUnclaimedDepository();
+      // Also update history view in background
+      loadHistoryView();
     } else {
       showToast(`Error: ${data.message}`, 'error');
     }
   } catch (err) {
     showToast(`Network error: ${err.message}`, 'error');
+  } finally {
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Execute Database Disposal';
+    }
   }
+}
+
+// ========================================================
+// CUSTODY HANDOVER & DISPOSAL HISTORY ARCHIVE
+// ========================================================
+let currentHistorySubTab = 'handovers';
+let cachedHistoryHandovers = [];
+let cachedHistoryDisposals = [];
+
+function switchHistorySubTab(tab) {
+  currentHistorySubTab = tab;
+  const pillHandovers = document.getElementById('historySubTabHandovers');
+  const pillDisposals = document.getElementById('historySubTabDisposals');
+  const containerHandovers = document.getElementById('historyHandoverContainer');
+  const containerDisposals = document.getElementById('historyDisposalContainer');
+
+  if (tab === 'handovers') {
+    if (pillHandovers) pillHandovers.classList.add('active');
+    if (pillDisposals) pillDisposals.classList.remove('active');
+    if (containerHandovers) containerHandovers.style.display = 'block';
+    if (containerDisposals) containerDisposals.style.display = 'none';
+  } else {
+    if (pillHandovers) pillHandovers.classList.remove('active');
+    if (pillDisposals) pillDisposals.classList.add('active');
+    if (containerHandovers) containerHandovers.style.display = 'none';
+    if (containerDisposals) containerDisposals.style.display = 'block';
+  }
+  filterHistoryTable();
+}
+
+async function loadHistoryView() {
+  const tbodyHandovers = document.getElementById('historyHandoverTableBody');
+  const tbodyDisposals = document.getElementById('historyDisposalTableBody');
+  const countHandover = document.getElementById('historyHandoverCount');
+  const countDonated = document.getElementById('historyDonatedCount');
+  const countDisposed = document.getElementById('historyDisposedCount');
+
+  if (tbodyHandovers) tbodyHandovers.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 24px;">Loading verified handover records...</td></tr>';
+  if (tbodyDisposals) tbodyDisposals.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 24px;">Loading depository disposal manifests...</td></tr>';
+
+  try {
+    const [resHandovers, resDisposals] = await Promise.all([
+      fetch(`${API_BASE}/admin/history/handovers`),
+      fetch(`${API_BASE}/admin/history/disposals`)
+    ]);
+
+    const dataHandovers = await resHandovers.json();
+    const dataDisposals = await resDisposals.json();
+
+    cachedHistoryHandovers = dataHandovers.data || [];
+    cachedHistoryDisposals = dataDisposals.data || [];
+
+    // Update Stats
+    if (countHandover) countHandover.textContent = cachedHistoryHandovers.length;
+    const donatedCount = cachedHistoryDisposals.filter(d => d.disposal_type === 'DONATED_TO_WELFARE').length;
+    const scrappedCount = cachedHistoryDisposals.filter(d => d.disposal_type !== 'DONATED_TO_WELFARE').length;
+    if (countDonated) countDonated.textContent = donatedCount;
+    if (countDisposed) countDisposed.textContent = scrappedCount;
+
+    renderHistoryHandovers(cachedHistoryHandovers);
+    renderHistoryDisposals(cachedHistoryDisposals);
+  } catch (err) {
+    if (tbodyHandovers) tbodyHandovers.innerHTML = `<tr><td colspan="8" style="color: var(--color-danger);">Error loading handovers: ${err.message}</td></tr>`;
+    if (tbodyDisposals) tbodyDisposals.innerHTML = `<tr><td colspan="8" style="color: var(--color-danger);">Error loading disposals: ${err.message}</td></tr>`;
+  }
+}
+
+function renderHistoryHandovers(list) {
+  const tbody = document.getElementById('historyHandoverTableBody');
+  if (!tbody) return;
+
+  if (list.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 32px; color: var(--color-text-muted);">No custody handover records logged yet.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = '';
+  list.forEach(h => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><strong>#CLM-${h.claim_id}</strong></td>
+      <td>
+        <span style="font-weight: 600;">${new Date(h.handover_date || h.claim_date).toLocaleDateString()}</span><br>
+        <span style="font-size: 11px; color: var(--color-text-muted);">${new Date(h.handover_date || h.claim_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+      </td>
+      <td>
+        <strong>${h.claimant_name}</strong><br>
+        <span style="font-size: 11px; font-family: var(--font-mono); color: var(--color-text-muted);">${h.claimant_enrollment || 'Visitor'} · ${h.claimant_phone}</span>
+      </td>
+      <td>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          ${h.found_image_url ? `
+            <img src="${h.found_image_url}" alt="${h.found_item_name}" style="width: 44px; height: 44px; object-fit: cover; border-radius: 8px; border: 1px solid var(--color-hairline); flex-shrink: 0; box-shadow: var(--clay-button-shadow);">
+          ` : `
+            <div style="width: 44px; height: 44px; border-radius: 8px; background: var(--color-surface-soft); display: flex; align-items: center; justify-content: center; color: var(--color-text-muted); flex-shrink: 0; border: 1px solid var(--color-hairline);">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            </div>
+          `}
+          <div>
+            <strong>${h.found_item_name}</strong><br>
+            <span style="font-size: 11px; color: var(--color-text-muted);">${h.category_name}</span>
+          </div>
+        </div>
+      </td>
+      <td><span style="font-size: 12px;">${h.custody_location}</span></td>
+      <td>
+        <span style="display: inline-flex; align-items: center; gap: 4px; background: rgba(16, 185, 129, 0.12); color: #065F46; padding: 3px 8px; border-radius: 6px; font-family: var(--font-mono); font-weight: 800; font-size: 12px; border: 1px solid rgba(16, 185, 129, 0.3);">
+          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          ${h.pickup_pin || 'VERIFIED'}
+        </span>
+      </td>
+      <td><span style="font-size: 12px; font-weight: 600;">${h.officer_name}</span></td>
+      <td style="text-align: right;">
+        <button class="btn-secondary" style="padding: 4px 10px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 5px;" onclick="openReceiptModal(${h.claim_id}, '${escapeQuotes(h.claimant_name)}', '${escapeQuotes(h.claimant_enrollment || 'Visitor')}', '${escapeQuotes(h.claimant_phone)}', '${escapeQuotes(h.found_item_name)}', '${escapeQuotes(h.category_name)}', '${escapeQuotes(h.custody_location)}', '${escapeQuotes(h.proof_details || '')}', '${escapeQuotes(h.found_image_url || '')}')">
+          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          <span>Handover Slip</span>
+        </button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function renderHistoryDisposals(list) {
+  const tbody = document.getElementById('historyDisposalTableBody');
+  if (!tbody) return;
+
+  if (list.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 32px; color: var(--color-text-muted);">No property disposals or welfare transfers logged yet.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = '';
+  list.forEach(d => {
+    const isWelfare = d.disposal_type === 'DONATED_TO_WELFARE';
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><strong>#F-${d.found_id}</strong></td>
+      <td>
+        <span style="font-weight: 600;">${new Date(d.disposed_at || d.found_date).toLocaleDateString()}</span><br>
+        <span style="font-size: 11px; color: var(--color-text-muted);">${new Date(d.disposed_at || d.found_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+      </td>
+      <td>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          ${d.image_url ? `
+            <img src="${d.image_url}" alt="${d.item_name}" style="width: 44px; height: 44px; object-fit: cover; border-radius: 8px; border: 1px solid var(--color-hairline); flex-shrink: 0; box-shadow: var(--clay-button-shadow);">
+          ` : `
+            <div style="width: 44px; height: 44px; border-radius: 8px; background: var(--color-surface-soft); display: flex; align-items: center; justify-content: center; color: var(--color-text-muted); flex-shrink: 0; border: 1px solid var(--color-hairline);">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            </div>
+          `}
+          <div>
+            <strong>${d.item_name}</strong><br>
+            <span style="font-size: 11px; color: var(--color-text-muted);">${d.category_name}</span>
+          </div>
+        </div>
+      </td>
+      <td>
+        <span style="font-weight: 700; color: var(--color-text-main);">${d.days_in_custody} days</span>
+      </td>
+      <td>
+        ${isWelfare ? `
+          <span class="card-status-badge donated" style="font-weight: 800; display: inline-flex; align-items: center; gap: 4px;">
+            <span>💖 UBIT WELFARE</span>
+          </span>
+        ` : `
+          <span class="card-status-badge e-waste" style="font-weight: 800; display: inline-flex; align-items: center; gap: 4px;">
+            <span>♻️ E-WASTE SCRAP</span>
+          </span>
+        `}
+      </td>
+      <td><span style="font-size: 12px; font-weight: 600;">${d.officer_name || 'Campus Security'}</span></td>
+      <td style="max-width: 220px; font-size: 11.5px; color: var(--color-text-muted);">
+        ${d.disposal_notes || 'Processed under institutional chain-of-custody protocol.'}
+      </td>
+      <td style="text-align: right;">
+        <button class="btn-secondary" style="padding: 4px 10px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 5px;" onclick="openDisposalCertModal(${d.found_id})">
+          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          <span>Certificate</span>
+        </button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function filterHistoryTable() {
+  const query = (document.getElementById('historySearchInput').value || '').toLowerCase().trim();
+
+  if (currentHistorySubTab === 'handovers') {
+    const filtered = cachedHistoryHandovers.filter(h => {
+      const text = `${h.claim_id} ${h.claimant_name} ${h.claimant_enrollment} ${h.found_item_name} ${h.category_name} ${h.pickup_pin} ${h.officer_name}`.toLowerCase();
+      return text.includes(query);
+    });
+    renderHistoryHandovers(filtered);
+  } else {
+    const filtered = cachedHistoryDisposals.filter(d => {
+      const text = `${d.found_id} ${d.item_name} ${d.category_name} ${d.disposal_type} ${d.officer_name} ${d.disposal_notes}`.toLowerCase();
+      return text.includes(query);
+    });
+    renderHistoryDisposals(filtered);
+  }
+}
+
+// Official Custody Disposal Manifest Certificate Modal
+function openDisposalCertModal(foundId) {
+  const item = cachedHistoryDisposals.find(d => d.found_id === foundId);
+  if (!item) {
+    showToast('Manifest details not found.', 'error');
+    return;
+  }
+
+  const isWelfare = item.disposal_type === 'DONATED_TO_WELFARE';
+  document.getElementById('certSerialNumber').textContent = `CERT-UBIT-DISP-${String(item.found_id).padStart(4, '0')}`;
+  
+  const imgEl = document.getElementById('certItemImg');
+  if (item.image_url) {
+    imgEl.src = item.image_url;
+    imgEl.style.display = 'block';
+  } else {
+    imgEl.src = 'ubit-logo.jpg';
+  }
+
+  document.getElementById('certItemName').textContent = item.item_name;
+  const badge = document.getElementById('certDispositionBadge');
+  if (isWelfare) {
+    badge.textContent = '💖 DONATED TO UBIT WELFARE';
+    badge.className = 'card-status-badge donated';
+  } else {
+    badge.textContent = '♻️ E-WASTE RECYCLED';
+    badge.className = 'card-status-badge e-waste';
+  }
+
+  document.getElementById('certItemDesc').textContent = item.description || 'Institutional property held in university custody.';
+  document.getElementById('certCategory').textContent = item.category_name;
+  document.getElementById('certDaysHeld').textContent = `${item.days_in_custody} Days`;
+  document.getElementById('certRecipient').textContent = isWelfare 
+    ? 'UBIT Student Welfare Society (Student Aid & Book Bank)' 
+    : 'Department Electronic Waste & Recycling Protocol';
+  document.getElementById('certDisposalDate').textContent = new Date(item.disposed_at || item.found_date).toLocaleString();
+  document.getElementById('certOfficer').textContent = item.officer_name || 'Campus Administration Officer';
+  document.getElementById('certFoundMeta').textContent = `Found ${new Date(item.found_date).toLocaleDateString()} at ${item.building_name || 'UBIT'} (${item.room_floor || 'Campus'})`;
+  document.getElementById('certNotes').textContent = item.disposal_notes || 'Approved under departmental chain-of-custody protocol.';
+
+  document.getElementById('disposalCertModal').classList.add('open');
+}
+
+function printDisposalCert() {
+  window.print();
 }
 
 // ========================================================

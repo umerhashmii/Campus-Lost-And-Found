@@ -80,3 +80,29 @@
 * **`GET /api/analytics/security-queue`**
   * Source: `vw_security_claims_queue`
   * Response: Pending items awaiting officer review.
+
+---
+
+## 8. 90-Day Unclaimed Depository & Granular Disposals
+* **`GET /api/admin/unclaimed?days=90`**
+  * Returns inventory held past threshold days with custody metrics.
+* **`POST /api/admin/unclaimed/dispose-single`**
+  * Body: `{ "found_id": 7, "action_type": "DONATED_TO_WELFARE" | "E_WASTE", "notes": "...", "officer_id": 5 }`
+  * Action: Calls `sp_ProcessSingleItemDisposal`.
+  * Response: `{ "success": true, "message": "Item #7 successfully processed for DONATED_TO_WELFARE." }`
+* **`POST /api/admin/unclaimed/dispose-batch`**
+  * Body: `{ "found_ids": [7, 8], "action_type": "DONATED_TO_WELFARE", "notes": "...", "officer_id": 5 }`
+  * Action: Processes array of selected items in transaction.
+* **`POST /api/admin/unclaimed/process`**
+  * Body: `{ "days_threshold": 90, "action_type": "DONATED_TO_UBIT_WELFARE", "officer_id": 5 }`
+  * Action: Calls bulk statutory procedure `sp_ProcessUnclaimedDisposals`.
+
+---
+
+## 9. Custody Handover & Disposal History Archive
+* **`GET /api/admin/history/handovers`**
+  * Source: `vw_custody_handover_history`
+  * Response: Immutable list of items returned to students via 2FA PIN verification with student info, timestamp, and officer notes.
+* **`GET /api/admin/history/disposals`**
+  * Source: `vw_depository_disposal_history`
+  * Response: Immutable list of items donated to UBIT Welfare or recycled as E-Waste with disposition channel, dates, and administrative certificate details.

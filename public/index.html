@@ -65,6 +65,10 @@
           <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
           <span>Analytics</span>
         </button>
+        <button class="nav-tab-btn admin-only" data-view="view-history" id="navHistory" title="Custody Handover & Disposal History Archive">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span>History</span>
+        </button>
       </nav>
 
       <!-- Active User Profile & Notification Bell -->
@@ -602,20 +606,24 @@
          VIEW 8: UNCLAIMED PROPERTY DEPOSITORY (90-DAY LIFECYCLE)
          ========================================== -->
     <section id="view-unclaimed" class="view-section">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
         <div class="section-heading-cluster" style="margin-bottom: 0;">
           <span class="official-crest-tag" style="margin-bottom: 6px;">Institutional Custody Lifecycle</span>
           <h3>90-Day Unclaimed Depository &amp; Disposal Management</h3>
-          <p>Automated database lifecycle for expired found items held past statutory period without claimant</p>
+          <p>Selective item-by-item donation to UBIT Welfare, compliant e-waste disposal, or bulk statutory processing</p>
         </div>
-        <div style="display: flex; gap: 10px;">
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
           <button class="btn-primary" onclick="openDisposalModal('WELFARE')">
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-            <span>Donate to UBIT Welfare</span>
+            <span>Bulk Donate Overdue</span>
           </button>
           <button class="btn-secondary" onclick="openDisposalModal('E_WASTE')">
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-            <span>E-Waste Disposal</span>
+            <span>Bulk E-Waste</span>
+          </button>
+          <button class="btn-secondary" onclick="switchView('view-history')" style="display: inline-flex; align-items: center; gap: 6px;">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span>Custody History</span>
           </button>
           <button class="btn-secondary" onclick="loadUnclaimedDepository()">
             <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
@@ -640,19 +648,45 @@
         </div>
       </div>
 
-      <!-- Threshold Filter Bar -->
-      <div style="display: flex; gap: 8px; margin-bottom: 14px; align-items: center; flex-wrap: wrap;">
-        <span style="font-size: 12px; font-weight: 700; color: var(--color-text-muted); margin-right: 4px;">Holding Threshold:</span>
-        <button class="filter-pill active" id="unclaimedPill90" onclick="setUnclaimedThreshold(90)">90+ Days (Statutory Overdue)</button>
-        <button class="filter-pill" id="unclaimedPill60" onclick="setUnclaimedThreshold(60)">60+ Days (Approaching)</button>
-        <button class="filter-pill" id="unclaimedPill30" onclick="setUnclaimedThreshold(30)">30+ Days</button>
-        <button class="filter-pill" id="unclaimedPill0" onclick="setUnclaimedThreshold(0)">All Custody Inventory</button>
+      <!-- Threshold Filter & Search Bar -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
+        <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+          <span style="font-size: 12px; font-weight: 700; color: var(--color-text-muted); margin-right: 4px;">Holding Threshold:</span>
+          <button class="filter-pill active" id="unclaimedPill90" onclick="setUnclaimedThreshold(90)">90+ Days (Statutory Overdue)</button>
+          <button class="filter-pill" id="unclaimedPill60" onclick="setUnclaimedThreshold(60)">60+ Days (Approaching)</button>
+          <button class="filter-pill" id="unclaimedPill30" onclick="setUnclaimedThreshold(30)">30+ Days</button>
+          <button class="filter-pill" id="unclaimedPill0" onclick="setUnclaimedThreshold(0)">All Custody Inventory</button>
+        </div>
+      </div>
+
+      <!-- Dynamic Batch Action Banner for Checked Items -->
+      <div id="unclaimedBatchBar" class="batch-selection-banner" style="display: none;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <span class="batch-pill-badge" id="unclaimedBatchCount">0</span>
+          <span style="font-size: 13px; font-weight: 700; color: var(--color-text-main);">Items selected from depository</span>
+        </div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <button class="btn-success" onclick="openBatchDisposalModal('WELFARE')" style="padding: 6px 14px; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            <span>Donate Selected (Welfare)</span>
+          </button>
+          <button class="btn-danger" onclick="openBatchDisposalModal('E_WASTE')" style="padding: 6px 14px; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            <span>Dispose Selected (E-Waste)</span>
+          </button>
+          <button class="btn-secondary" onclick="clearUnclaimedCheckboxes()" style="padding: 6px 12px; font-size: 12px;">
+            Deselect All
+          </button>
+        </div>
       </div>
 
       <div class="table-clay-wrap">
         <table class="clay-table">
           <thead>
             <tr>
+              <th style="width: 38px; text-align: center;">
+                <input type="checkbox" id="unclaimedSelectAll" onchange="toggleSelectAllUnclaimed(this)" title="Select all items in current view">
+              </th>
               <th>Found ID</th>
               <th>Item Name</th>
               <th>Category</th>
@@ -660,9 +694,102 @@
               <th>Days in Custody</th>
               <th>Current Custody Office</th>
               <th>Lifecycle Status</th>
+              <th style="text-align: right;">Item Action</th>
             </tr>
           </thead>
           <tbody id="unclaimedTableBody">
+            <!-- Dynamically populated via app.js -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         VIEW 9: CUSTODY & DISPOSAL HISTORY ARCHIVE
+         ========================================== -->
+    <section id="view-history" class="view-section">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+        <div class="section-heading-cluster" style="margin-bottom: 0;">
+          <span class="official-crest-tag" style="margin-bottom: 6px;">Institutional Custody Records</span>
+          <h3>Custody Handover &amp; Disposal Archive</h3>
+          <p>Immutable audit trail of verified student returns, student welfare donations, and compliant disposals</p>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <button class="btn-secondary" onclick="loadHistoryView()">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+            <span>Refresh Archive</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- History Stats Summary Cards -->
+      <div class="quick-actions-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-bottom: 20px;">
+        <div class="clay-stat-card green">
+          <span class="clay-stat-label">Returned to Students</span>
+          <span class="clay-stat-value" id="historyHandoverCount">0</span>
+        </div>
+        <div class="clay-stat-card gold">
+          <span class="clay-stat-label">Donated to UBIT Welfare</span>
+          <span class="clay-stat-value" id="historyDonatedCount">0</span>
+        </div>
+        <div class="clay-stat-card">
+          <span class="clay-stat-label">E-Waste &amp; Scrapped</span>
+          <span class="clay-stat-value" id="historyDisposedCount">0</span>
+        </div>
+      </div>
+
+      <!-- Sub-Tab Navigation Bar -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
+        <div style="display: flex; gap: 8px;">
+          <button class="filter-pill active" id="historySubTabHandovers" onclick="switchHistorySubTab('handovers')">
+            🤝 Handover Records (Given to Students)
+          </button>
+          <button class="filter-pill" id="historySubTabDisposals" onclick="switchHistorySubTab('disposals')">
+            📦 Depository Disposals &amp; Welfare Manifest
+          </button>
+        </div>
+        <div style="min-width: 260px;">
+          <input type="text" id="historySearchInput" placeholder="Filter archive by name, item, PIN..." oninput="filterHistoryTable()" style="margin: 0; padding: 7px 14px; font-size: 12px;">
+        </div>
+      </div>
+
+      <!-- Sub-View 1: Handover Records Table -->
+      <div id="historyHandoverContainer" class="table-clay-wrap">
+        <table class="clay-table">
+          <thead>
+            <tr>
+              <th>Claim ID</th>
+              <th>Handover Date</th>
+              <th>Student Information</th>
+              <th>Returned Item</th>
+              <th>Custody Location</th>
+              <th>Verified PIN</th>
+              <th>Authorized Officer</th>
+              <th style="text-align: right;">Handover Slip</th>
+            </tr>
+          </thead>
+          <tbody id="historyHandoverTableBody">
+            <!-- Dynamically populated via app.js -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Sub-View 2: Depository Disposals & Welfare Manifest Table -->
+      <div id="historyDisposalContainer" class="table-clay-wrap" style="display: none;">
+        <table class="clay-table">
+          <thead>
+            <tr>
+              <th>Found ID</th>
+              <th>Disposal Date</th>
+              <th>Item Details</th>
+              <th>Days Held</th>
+              <th>Disposition Channel</th>
+              <th>Authorized Officer</th>
+              <th>Administrative Notes</th>
+              <th style="text-align: right;">Official Manifest</th>
+            </tr>
+          </thead>
+          <tbody id="historyDisposalTableBody">
             <!-- Dynamically populated via app.js -->
           </tbody>
         </table>
@@ -1193,8 +1320,15 @@
 
       <form id="disposalForm" onsubmit="handleDisposalSubmit(event)">
         <input type="hidden" id="disposalActionType">
+        <input type="hidden" id="disposalMode" value="statutory">
+        <input type="hidden" id="disposalSingleFoundId">
 
-        <div class="form-group">
+        <!-- Selected Item(s) Dynamic Preview Card -->
+        <div id="disposalItemPreview" style="display: none; background: var(--color-surface-soft); border: 1px solid var(--color-hairline); border-radius: var(--radius-md); padding: 12px; margin-bottom: 16px;">
+          <!-- Injected via JavaScript -->
+        </div>
+
+        <div class="form-group" id="disposalDaysGroup">
           <label for="disposalDays">Statutory Threshold (Days in Custody)</label>
           <select id="disposalDays">
             <option value="30">Over 30 Days (Demo / Fast cycle)</option>
@@ -1209,15 +1343,97 @@
         </div>
 
         <div class="form-group">
-          <label for="disposalNotes">Administrative Authorization Note</label>
-          <textarea id="disposalNotes" rows="2" placeholder="e.g. Approved under Department of Computer Science student welfare protocol."></textarea>
+          <label for="disposalNotes">Administrative Authorization Note *</label>
+          <textarea id="disposalNotes" rows="2" placeholder="e.g. Approved under Department of Computer Science student welfare protocol." required></textarea>
         </div>
 
         <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
           <button type="button" class="btn-secondary" onclick="closeModal('disposalModal')">Cancel</button>
-          <button type="submit" class="btn-primary">Execute Database Disposal</button>
+          <button type="submit" class="btn-primary" id="disposalSubmitBtn">Execute Database Disposal</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- Modal 10: Official Custody Disposal & Donation Certificate -->
+  <div id="disposalCertModal" class="modal-backdrop">
+    <div class="modal-box" style="max-width: 680px;">
+      <div class="modal-header">
+        <h3>Official Custody Disposal Certificate</h3>
+        <button class="modal-close-btn" onclick="closeModal('disposalCertModal')">&times;</button>
+      </div>
+
+      <div id="disposalCertPrintArea" class="printable-voucher-card">
+        <!-- University Academic Crest & Header -->
+        <div style="text-align: center; border-bottom: 2px solid var(--color-hairline); padding-bottom: 14px; margin-bottom: 16px;">
+          <img src="ubit-logo.jpg" alt="UBIT Department Logo" style="height: 52px; margin-bottom: 6px;">
+          <h4 style="margin: 0; font-size: 16px; font-weight: 800; color: var(--color-primary); text-transform: uppercase; letter-spacing: 0.5px;">Umaer Basha Institute of Information Technology</h4>
+          <p style="margin: 2px 0 0; font-size: 11px; color: var(--color-text-muted); font-weight: 600;">Department of Computer Science · University of Karachi</p>
+          <div style="display: inline-block; margin-top: 8px; padding: 3px 12px; background: var(--color-surface-soft); border-radius: 20px; font-size: 11px; font-weight: 700; font-family: var(--font-mono); color: var(--color-text-main);" id="certSerialNumber">
+            CERT-UBIT-DISP-0000
+          </div>
+        </div>
+
+        <!-- Manifest Body Details -->
+        <div style="display: flex; gap: 16px; margin-bottom: 16px; align-items: center;">
+          <img id="certItemImg" src="" alt="Item photo" style="width: 80px; height: 80px; object-fit: cover; border-radius: var(--radius-md); border: 1px solid var(--color-hairline); box-shadow: var(--clay-button-shadow); flex-shrink: 0;">
+          <div style="flex: 1;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+              <h4 id="certItemName" style="font-size: 16px; font-weight: 800; color: var(--color-text-main); margin-bottom: 4px;">Item Name</h4>
+              <span id="certDispositionBadge" class="card-status-badge">DONATED</span>
+            </div>
+            <p id="certItemDesc" style="font-size: 12px; color: var(--color-text-muted); margin: 0 0 6px 0;">Item description</p>
+            <div style="font-size: 11px; color: var(--color-text-muted);">
+              Category: <strong id="certCategory">-</strong> · Days Held: <strong id="certDaysHeld">-</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Meta Grid -->
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; background: var(--color-surface-soft); padding: 12px; border-radius: var(--radius-sm); margin-bottom: 16px; font-size: 12px;">
+          <div>
+            <span style="color: var(--color-text-muted); display: block; font-size: 11px;">Designated Recipient / Channel:</span>
+            <strong id="certRecipient" style="color: var(--color-primary);">-</strong>
+          </div>
+          <div>
+            <span style="color: var(--color-text-muted); display: block; font-size: 11px;">Disposal / Donation Date:</span>
+            <strong id="certDisposalDate">-</strong>
+          </div>
+          <div>
+            <span style="color: var(--color-text-muted); display: block; font-size: 11px;">Authorizing Officer:</span>
+            <strong id="certOfficer">-</strong>
+          </div>
+          <div>
+            <span style="color: var(--color-text-muted); display: block; font-size: 11px;">Original Found Date &amp; Location:</span>
+            <strong id="certFoundMeta">-</strong>
+          </div>
+        </div>
+
+        <div>
+          <span style="color: var(--color-text-muted); display: block; font-size: 11px; margin-bottom: 3px;">Administrative Protocol Notes:</span>
+          <p id="certNotes" style="font-size: 12px; margin: 0; background: var(--color-surface); padding: 8px 12px; border-radius: var(--radius-sm); border: 1px solid var(--color-hairline); font-style: italic;">Notes</p>
+        </div>
+
+        <!-- Institutional Signature Strip -->
+        <div style="display: flex; justify-content: space-between; margin-top: 24px; padding-top: 14px; border-top: 1px dashed var(--color-hairline); font-size: 11px; color: var(--color-text-muted);">
+          <div style="text-align: center;">
+            <div style="width: 140px; border-bottom: 1px solid var(--color-hairline); height: 26px; margin: 0 auto 4px auto;"></div>
+            <span>Department Custody Officer</span>
+          </div>
+          <div style="text-align: center;">
+            <div style="width: 140px; border-bottom: 1px solid var(--color-hairline); height: 26px; margin: 0 auto 4px auto;"></div>
+            <span>Institutional Witness / Head of Dept</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px;">
+        <button type="button" class="btn-secondary" onclick="closeModal('disposalCertModal')">Close</button>
+        <button type="button" class="btn-primary" onclick="printDisposalCert()">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          <span>Print Certificate</span>
+        </button>
+      </div>
     </div>
   </div>
 

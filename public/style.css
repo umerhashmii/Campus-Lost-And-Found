@@ -2175,3 +2175,89 @@ button {
   margin-top: 6px;
 }
 
+/* ========================================================
+   BATCH SELECTION BANNER & CUSTODY DISPOSAL ENHANCEMENTS
+   ======================================================== */
+.batch-selection-banner {
+  background: linear-gradient(135deg, rgba(122, 21, 33, 0.06) 0%, rgba(212, 175, 55, 0.12) 100%);
+  border: 1.5px solid var(--color-gold);
+  border-radius: var(--radius-lg);
+  padding: 12px 18px;
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  box-shadow: 0 4px 14px rgba(212, 175, 55, 0.15), inset 0 1px 2px rgba(255, 255, 255, 0.8);
+  animation: slideDownFade 0.25s ease-out;
+}
+
+@keyframes slideDownFade {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.batch-pill-badge {
+  background: var(--color-primary);
+  color: #FFFFFF;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  box-shadow: 0 2px 5px rgba(122, 21, 33, 0.25);
+}
+
+.card-status-badge.handed_over {
+  background: rgba(16, 185, 129, 0.15);
+  color: #065F46;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+}
+
+.card-status-badge.donated, .card-status-badge.donated_to_welfare {
+  background: rgba(16, 185, 129, 0.15);
+  color: #065F46;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+}
+
+.card-status-badge.e-waste, .card-status-badge.e_waste {
+  background: rgba(239, 68, 68, 0.12);
+  color: #991B1B;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.card-status-badge.auction {
+  background: rgba(245, 158, 11, 0.15);
+  color: #92400E;
+  border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #disposalCertModal, #disposalCertModal *, #voucherPrintArea, #voucherPrintArea * {
+    visibility: visible;
+  }
+  #disposalCertModal {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    background: transparent !important;
+    display: block !important;
+  }
+  #disposalCertPrintArea, #voucherPrintArea {
+    box-shadow: none !important;
+    border: 1px solid #CCC !important;
+    padding: 20px !important;
+    margin: 0 !important;
+    width: 100% !important;
+  }
+  .modal-header, .modal-close-btn, .modal-box > div:last-child {
+    display: none !important;
+  }
+}
+
+

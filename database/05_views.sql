@@ -112,3 +112,73 @@ JOIN locations loc_lost ON l.location_id = loc_lost.location_id
 JOIN locations loc_found ON f.location_id = loc_found.location_id
 WHERE m.status IN ('PROPOSED', 'CLAIM_INITIATED')
 ORDER BY m.match_score DESC;
+
+-- --------------------------------------------------------
+-- VIEW 5: Custody Handover History (Successfully Returned)
+-- Complete immutable audit log of verified item pickups
+-- --------------------------------------------------------
+CREATE OR REPLACE VIEW vw_custody_handover_history AS
+SELECT 
+    cl.claim_id,
+    cl.claim_date,
+    cl.pickup_pin,
+    cl.proof_details,
+    u_claimant.user_id AS claimant_id,
+    u_claimant.full_name AS claimant_name,
+    u_claimant.enrollment_no AS claimant_enrollment,
+    u_claimant.phone AS claimant_phone,
+    u_claimant.email AS claimant_email,
+    f.found_id,
+    f.item_name AS found_item_name,
+    f.description AS found_description,
+    f.image_url AS found_image_url,
+    f.custody_location,
+    cat.name AS category_name,
+    loc.building_name AS found_building,
+    loc.room_floor AS found_room,
+    cal.action_timestamp AS handover_date,
+    u_officer.user_id AS officer_id,
+    COALESCE(u_officer.full_name, 'Campus Security Desk') AS officer_name,
+    cal.comments AS handover_comments
+FROM claims cl
+JOIN users u_claimant ON cl.claimant_id = u_claimant.user_id
+JOIN found_reports f ON cl.found_id = f.found_id
+JOIN categories cat ON f.category_id = cat.category_id
+JOIN locations loc ON f.location_id = loc.location_id
+LEFT JOIN claim_audit_log cal ON (cal.claim_id = cl.claim_id AND cal.new_status = 'HANDED_OVER')
+LEFT JOIN users u_officer ON cal.action_by = u_officer.user_id
+WHERE cl.status = 'HANDED_OVER' OR f.status = 'RESOLVED'
+ORDER BY COALESCE(cal.action_timestamp, cl.reviewed_at, cl.claim_date) DESC;
+
+-- --------------------------------------------------------
+-- VIEW 6: Depository Disposal & Welfare Manifest
+-- Comprehensive audit trail of donated & recycled items
+-- --------------------------------------------------------
+CREATE OR REPLACE VIEW vw_depository_disposal_history AS
+SELECT 
+    f.found_id,
+    f.item_name,
+    f.description,
+    f.image_url,
+    f.color,
+    f.brand,
+    f.found_date,
+    f.custody_location,
+    f.disposal_type,
+    f.disposed_at,
+    f.disposal_notes,
+    cat.name AS category_name,
+    loc.building_name,
+    loc.room_floor,
+    DATEDIFF(COALESCE(f.disposed_at, NOW()), f.found_date) AS days_in_custody,
+    u_officer.user_id AS officer_id,
+    COALESCE(u_officer.full_name, 'Campus Administration') AS officer_name,
+    u_finder.full_name AS finder_name
+FROM found_reports f
+JOIN categories cat ON f.category_id = cat.category_id
+JOIN locations loc ON f.location_id = loc.location_id
+JOIN users u_finder ON f.finder_id = u_finder.user_id
+LEFT JOIN users u_officer ON f.disposed_by = u_officer.user_id
+WHERE f.status = 'DISPOSED'
+ORDER BY COALESCE(f.disposed_at, f.found_date) DESC;
+
