@@ -76,7 +76,7 @@ The database `campus_lost_and_found` has been completely created, seeded, and ve
 
 ## 4. Project File Map
 ```text
-c:\University\DBMS Project 4th Semester\
+campus-lost-and-found/
 ├── .gitignore                          # Git ignore rules for node_modules, .env, build files
 ├── README.md                           # University project description & team details
 ├── context.md                          # Living state tracker (THIS FILE)

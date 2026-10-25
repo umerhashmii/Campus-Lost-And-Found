@@ -4,9 +4,9 @@
 # ========================================================
 
 $mysqlBin = "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe"
-$user = "root"
-$pass = "admin123"
-$baseDir = "c:\University\DBMS Project 4th Semester\database"
+$user = if ($env:DB_USER) { $env:DB_USER } else { "root" }
+$pass = if ($env:DB_PASSWORD) { $env:DB_PASSWORD } else { "admin123" }
+$baseDir = $PSScriptRoot
 
 $files = @(
     "01_schema.sql",

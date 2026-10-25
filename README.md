@@ -154,14 +154,14 @@ erDiagram
 ### 2. Database Setup
 Launch PowerShell as Administrator and run the automated deployment script:
 ```powershell
-cd "c:\University\DBMS Project 4th Semester\database"
+cd database
 powershell -ExecutionPolicy Bypass -File .\setup_database.ps1
+cd ..
 ```
-*Default root password is set to `admin123` in `src/config/db.js`.*
+*Default root password is set to `admin123` in `.env.example` and `src/config/db.js`.*
 
 ### 3. Install Dependencies & Start Server
 ```powershell
-cd "c:\University\DBMS Project 4th Semester"
 npm install
 npm run dev
 ```

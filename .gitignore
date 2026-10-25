@@ -2,25 +2,49 @@
 node_modules/
 package-lock.json
 
-# Environment variables
+# Environment variables & Secrets
 .env
-.env.local
-.env.*.local
+.env.*
+!.env.example
+*.pem
+*.key
+*.cert
+*.pfx
 
 # Logs
-logs
+logs/
 *.log
 npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
 # OS Files
 Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
 .DS_Store
+[Dd]esktop.ini
 
 # IDE / Editor
 .vscode/
 .idea/
+*.sublime-project
+*.sublime-workspace
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
 
-# Temporary / Build
+# Temporary & Scratch Files
 dist/
 build/
 scratch/
+tmp/
+temp/
+
+# User Uploads (Preserve demo seed images, ignore user uploaded runtime files)
+public/uploads/*
+!public/uploads/seed-*
+!public/uploads/.gitkeep
+
