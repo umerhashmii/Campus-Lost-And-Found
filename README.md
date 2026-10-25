@@ -3,7 +3,7 @@
 [![MySQL](https://img.shields.io/badge/MySQL-8.0_Community-00758F?style=for-the-badge&logo=mysql&logoColor=white)](https://www.mysql.com/)
 [![Node.js](https://img.shields.io/badge/Node.js-v24_LTS-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 [![Express](https://img.shields.io/badge/Express-4.x-000000?style=for-the-badge&logo=express&logoColor=white)](https://expressjs.com/)
-[![Design](https://img.shields.io/badge/Design_System-Clay_UI-C85A17?style=for-the-badge)](DESIGN.md)
+[![UI](https://img.shields.io/badge/UI-Responsive_Web-2563EB?style=for-the-badge)](#)
 [![Status](https://img.shields.io/badge/Academic_DBMS-100%25_Complete-success?style=for-the-badge)](#)
 
 * **Department:** Umaer Basha Institute of Information Technology (UBIT)
@@ -34,7 +34,7 @@ The **Campus Lost & Found Recovery System** is a normalized relational database 
 3. **Automated 4-Factor Stored Procedure Matching:** Evaluates Category (40%), Location (25%), Temporal Proximity (25%), and Brand/Color (10%) to compute match scores (0–100%).
 4. **Autonomous Database Triggers:** Watches claim lifecycle events to produce an immutable, tamper-proof audit trail (`claim_audit_log`).
 5. **Real-time Analytical Views:** Aggregates departmental recovery rates and campus loss hotspots (Labs, Library, Canteen).
-6. **Clay Design System UI:** Tactile, warm-cream aesthetic (`#fffaf0`) featuring interactive score explainers, live concurrency test split-screen, and printable custody handover vouchers.
+6. **Modern Responsive UI:** Intuitive interface featuring interactive score explainers, live concurrency test split-screen, and printable custody handover vouchers.
 
 ---
 
@@ -42,8 +42,8 @@ The **Campus Lost & Found Recovery System** is a normalized relational database 
 
 ```text
 ┌────────────────────────────────────────────────────────────────────────┐
-│                          CLAY DESIGN SYSTEM UI                         │
-│        (Warm cream canvas, tactile cards, responsive navigation)       │
+│                     RESPONSIVE WEB FRONTEND UI                         │
+│       (Interactive cards, real-time feedback, responsive navigation)   │
 └───────────────────────────────────┬────────────────────────────────────┘
                                     │ HTTP REST / JSON
 ┌───────────────────────────────────▼────────────────────────────────────┐
@@ -183,11 +183,9 @@ To test MySQL ACID row locking in real time:
 
 ---
 
-## 📚 Project Documentation
+## 📁 Key Project Components
 
-* 📖 **[Viva Defense Guide](docs/VIVA_PREP.md):** Complete answers to top 10 examiner questions & live presentation script.
-* 📋 **[Product Requirements Document (PRD)](docs/PRD.md):** Detailed functional & non-functional requirements.
-* 📐 **[System Design & 3NF Proofs](docs/design.md):** Normalization proofs, functional dependencies, and ER diagrams.
-* 🔌 **[REST API Specification](docs/API.md):** Complete endpoints, request/response JSON contracts.
-* 🎨 **[Clay Design System](DESIGN.md):** Typography, color tokens, and layout guidelines.
-* ✅ **[Task Checklist](docs/TASKS.md):** Progress tracking from Phase 1 through Phase 5.
+* 🗄️ **Database Layer (`database/`):** 3NF normalized schema, seed data, stored procedures, audit triggers, and views.
+* 🖥️ **Backend Server (`src/`):** Express.js REST API with MySQL connection pooling and file upload support.
+* 🎨 **Frontend Application (`public/`):** Single-page application with responsive layouts, modal verification, and live activity ticker.
+* ⚡ **Serverless Ready (`api/`, `vercel.json`):** Pre-configured for cloud deployment on Vercel.

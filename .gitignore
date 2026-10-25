@@ -48,3 +48,12 @@ public/uploads/*
 !public/uploads/seed-*
 !public/uploads/.gitkeep
 
+# Internal Project Planning, Context & Skills (Kept Locally Only)
+context.md
+DESIGN.md
+.cursor/
+docs/
+DBMS_Project_Proposal_LostAndFound.xlsx
+Images/
+
+

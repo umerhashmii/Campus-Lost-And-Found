@@ -50,7 +50,7 @@ if (require.main === module) {
     console.log(`🎓 Campus Lost & Found System - UBIT DBMS Project`);
     console.log(`🚀 Server running live on: http://localhost:${PORT}`);
     console.log(`📦 Database: MySQL 8.0 [campus_lost_and_found]`);
-    console.log(`🎨 UI Design System: Clay.com (DESIGN.md)`);
+    console.log(`🎨 UI: Modern Responsive Web Interface`);
     console.log(`=======================================================`);
   });
 }
