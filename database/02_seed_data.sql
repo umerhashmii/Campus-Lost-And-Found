@@ -13,7 +13,7 @@ INSERT INTO users (enrollment_no, full_name, email, phone, role, password_hash) 
 ('EB25210006105', 'Syed Umer Hashmi', 'umer.hashmi@ubit.edu.pk', '0300-1112233', 'STUDENT', '$2a$10$7R9rR61Qz.Jt5vUomJpP5uvW6hJgT84y3uB30gC6kcmwL7U6rN4O6'),
 ('EB25210006036', 'Maaz Malick', 'maaz.malick@ubit.edu.pk', '0311-2223344', 'STUDENT', '$2a$10$7R9rR61Qz.Jt5vUomJpP5uvW6hJgT84y3uB30gC6kcmwL7U6rN4O6'),
 ('EB25210006079', 'Muzammil Rizwan', 'muzammil.rizwan@ubit.edu.pk', '0322-3334455', 'STUDENT', '$2a$10$7R9rR61Qz.Jt5vUomJpP5uvW6hJgT84y3uB30gC6kcmwL7U6rN4O6'),
-('EB25210006085', 'Adan Kamran', 'adan.kamran@ubit.edu.pk', '0366-7778899', 'STUDENT', '$2a$10$7R9rR61Qz.Jt5vUomJpP5uvW6hJgT84y3uB30gC6kcmwL7U6rN4O6'),
+('EB-24210006007', 'Adan Kamran', 'adan.kamran@ubit.edu.pk', '0366-7778899', 'STUDENT', '$2a$10$7R9rR61Qz.Jt5vUomJpP5uvW6hJgT84y3uB30gC6kcmwL7U6rN4O6'),
 ('SEC-2026-01', 'Tariq Farooq', 'security.ubit@uok.edu.pk', '0333-4445566', 'SECURITY', '$2a$10$7R9rR61Qz.Jt5vUomJpP5uvW6hJgT84y3uB30gC6kcmwL7U6rN4O6'),
 ('ADM-2026-01', 'Prof. DBMS Supervisor', 'admin.dbms@ubit.edu.pk', '0344-5556677', 'ADMIN', '$2a$10$7R9rR61Qz.Jt5vUomJpP5uvW6hJgT84y3uB30gC6kcmwL7U6rN4O6'),
 ('EB25210006120', 'Ayesha Khan', 'ayesha.khan@ubit.edu.pk', '0355-6667788', 'STUDENT', '$2a$10$7R9rR61Qz.Jt5vUomJpP5uvW6hJgT84y3uB30gC6kcmwL7U6rN4O6');

@@ -11,10 +11,10 @@
 * **Institution:** Umaer Basha Institute of Information Technology (UBIT), University of Karachi
 * **Academic Submission Date:** 02-Sep-2026
 * **Team Members:**
-  1. **Syed Umer Hashmi** (`EB25210006105`) — Lead Developer / Team Member
-  2. **Maaz Malick** (`EB25210006036`) — Team Member
-  3. **Muzammil Rizwan** (`EB25210006079`) — Team Member
-  4. **Adan Kamran** (`EB25210006085`) — Team Member
+  1. **Syed Umer Hashmi** (`EB25210006105`)
+  2. **Maaz Malick** (`EB25210006036`)
+  3. **Muzammil Rizwan** (`EB25210006079`)
+  4. **Adan Kamran** (`EB-24210006007`)
 * **Original Proposal File:** `DBMS_Project_Proposal_LostAndFound.xlsx`
 
 ---
