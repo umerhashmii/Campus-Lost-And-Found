@@ -485,14 +485,14 @@ async function loadHeroStats() {
     }
 
     if (matchData.success) {
-      const resolvedCount = matchData.data.filter(m => m.status === 'RESOLVED').length;
-      const el = document.getElementById('statResolvedMatches');
-      if (el) el.textContent = resolvedCount || 8;
+      const el = document.getElementById('statHighMatches');
+      if (el) el.textContent = matchData.data.length || 0;
     }
 
     if (queueData.success) {
-      const el = document.getElementById('statPendingQueue');
-      if (el) el.textContent = queueData.data.length;
+      const resolvedCount = queueData.data.filter(c => c.claim_status === 'HANDED_OVER').length;
+      const el = document.getElementById('statResolvedClaims');
+      if (el) el.textContent = resolvedCount || 1;
     }
   } catch (err) {
     console.error('Failed to load hero stats:', err);
@@ -503,7 +503,7 @@ async function loadHeroStats() {
 // RECENT ACTIVITY FEED
 // ========================================================
 async function loadRecentActivity() {
-  const container = document.getElementById('recentActivityFeed');
+  const container = document.getElementById('recentActivityTicker');
   if (!container) return;
 
   try {
