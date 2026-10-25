@@ -43,12 +43,16 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`=======================================================`);
-  console.log(`🎓 Campus Lost & Found System - UBIT DBMS Project`);
-  console.log(`🚀 Server running live on: http://localhost:${PORT}`);
-  console.log(`📦 Database: MySQL 8.0 [campus_lost_and_found]`);
-  console.log(`🎨 UI Design System: Clay.com (DESIGN.md)`);
-  console.log(`=======================================================`);
-});
+// Start server (only if executed directly, not when imported by Vercel serverless functions)
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`=======================================================`);
+    console.log(`🎓 Campus Lost & Found System - UBIT DBMS Project`);
+    console.log(`🚀 Server running live on: http://localhost:${PORT}`);
+    console.log(`📦 Database: MySQL 8.0 [campus_lost_and_found]`);
+    console.log(`🎨 UI Design System: Clay.com (DESIGN.md)`);
+    console.log(`=======================================================`);
+  });
+}
+
+module.exports = app;
